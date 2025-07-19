@@ -1,4 +1,5 @@
 import '../Header/Header.css'
+import { Link } from 'react-router-dom';
 import logo from '../../assets/stock2sell-logo.png'
 import iconsearch from '../../assets/icons/icon-search-header.png'
 import cartIcon from '../../assets/icons/icon-cart-header.png'
@@ -17,7 +18,9 @@ const Header = () => {
             <span className="create-account-link">Criar Conta</span>
           </div>
           <div className="divider" />
-          <span className="login-text">Entrar</span>
+          <Link to="/login">
+            <span className="login-text">Entrar</span>
+          </Link>
         </div>   
     </header>
   );
