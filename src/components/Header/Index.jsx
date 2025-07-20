@@ -15,7 +15,9 @@ const Header = () => {
         <div className="auth-section">
           <div className="create-account">
             <img src={cartIcon} alt="Carrinho" className="cart-icon" />
-            <span className="create-account-link">Criar Conta</span>
+            <Link to="/signUp">
+              <span className="create-account-link">Criar Conta</span>
+            </Link>
           </div>
           <div className="divider" />
           <Link to="/login">

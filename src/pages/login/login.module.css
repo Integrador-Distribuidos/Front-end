@@ -1,0 +1,45 @@
+.loginBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ContentText {
+    color: #000;
+    font-size: 16px;
+}
+
+.logo {
+    width: 163px;
+    height: 103px;
+}
+
+.signupLink {
+  text-align: center;
+  margin-top: 32px;
+  color: #111111;
+  font-size: 16px;
+
+}
+
+.orContainer {
+  text-align: center;
+  color: #111111;
+  font-size: 16px;
+
+}
+
+.googleButton {
+  background-color: #F5F5F4;
+  color: #111111;
+  border: 1px solid #ccc;
+  padding: 12px;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
