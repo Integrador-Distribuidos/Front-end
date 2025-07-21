@@ -1,0 +1,99 @@
+.site-footer-in-pd {
+    width: 100%;
+    height: 165px;
+    border-top: 1px solid #E5E5E5;
+
+    position: absolute;
+    top: 150%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+}
+
+.div-of-content-footer-in-pd {
+    width: 30%;
+    height: 100%;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+}
+
+.logo-footer-image-in-pd {
+    width: 95px;
+    height: 65px;
+
+    position: absolute;
+    top: 22%;
+    left: 33%;
+    transform: translate(-50%, -50%); 
+}
+
+.p-in-footer-s2s-in-pd {
+    color: #000000;
+    font-size: 20px;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
+
+    position: absolute;
+    top: 10%;
+    left: 57%;
+    transform: translate(-50%, -50%); 
+}
+
+.div-of-links-of-footer-in-pd {
+    width: 100%;
+    height: 30px;
+
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+}
+
+.link-of-footer-1-in-pd {
+    color: #000000;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
+
+    position: absolute;
+    top: 50%;
+    left: 28%;
+    transform: translate(-50%, -50%); 
+}
+
+.link-of-footer-2-in-pd {
+    color: #000000;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+}
+
+.link-of-footer-3-in-pd {
+    color: #000000;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: "Inter", sans-serif;
+
+    position: absolute;
+    top: 50%;
+    left: 75%;
+    transform: translate(-50%, -50%); 
+}
+
+.p-copyrigth-footer-in-pd {
+    color: #000000;
+    font-size: 15px;
+    font-family: "Inter", sans-serif;
+
+    position: absolute;
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+}
