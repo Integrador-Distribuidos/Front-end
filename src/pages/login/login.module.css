@@ -20,7 +20,10 @@
   margin-top: 32px;
   color: #111111;
   font-size: 16px;
+}
 
+.signupLink:hover {
+  color: #033D62;
 }
 
 .orContainer {
@@ -35,11 +38,15 @@
   color: #111111;
   border: 1px solid #ccc;
   padding: 12px;
-  width: 100%;
+  width: 300px;
   text-align: center;
   font-size: 16px;
   border-radius: 5px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+}
+
+.googleButton:hover{
+  color: #033D62;
 }
