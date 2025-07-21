@@ -51,5 +51,5 @@
 
 .nameBox {
   display: flex;
-  gap: 15px;        /* Usando flexbox para colocar os elementos lado a lado */               /* Espaço entre o Nome e o Sobrenome */
+  gap: 15px;
 }
