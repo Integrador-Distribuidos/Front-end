@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header/Index.jsx'
 import Login from './pages/login/index.jsx';
 import SignUp from './pages/signUp/index.jsx';
+import ProductDetail from './pages/productdetail/index.jsx';
 
 function App() {
   
@@ -12,7 +13,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signUp" element={<SignUp />} />
-
+        <Route path="/product_detail" element={<ProductDetail />} />
         <Route path="/" element={<Header />} />
       </Routes>
     </Router>
