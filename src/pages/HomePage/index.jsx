@@ -7,6 +7,7 @@ import ProductFilter from '../../components/HomePage/ProductFilter/index.jsx';
 import Header from '../../components/Header/Index.jsx';
 import './HomePage.css';
 import axios from 'axios';
+import Footer from '../../components/Footer/index.jsx'
 
 import mockProducts from './mockProducts.js';//importando dados ficticios
 import mockStores from './mockStores.js';
@@ -166,6 +167,7 @@ function HomePage() {
       />
       </div>
     </div>
+    <Footer />
     </>
   );
 }

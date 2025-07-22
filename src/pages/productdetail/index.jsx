@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styles from '../productdetail/productDetail.module.css'
 import Header from '../../components/Header/Index.jsx'
 import Stepper from '../../components/Stepper/index.jsx'
@@ -10,7 +11,9 @@ const ProductDetailContent = () => {
     
     <Header />
       <div className={styles['breadcrumb-detailpage-product']}>
-      <a href="#" className={styles['element-1-breadcrumb']}>Página Inicial</a>
+        <Link to="/">
+        <a href="#" className={styles['element-1-breadcrumb']}>Página Inicial</a>
+        </Link>
       <p className={styles['div-contentegt-1']}>&gt;</p>
       <a href="#" className={styles['element-2-breadcrumb']}>Nome Produto</a>
       <p className={styles['lol']}>_</p>
