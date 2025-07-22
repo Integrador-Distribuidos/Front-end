@@ -6,6 +6,7 @@ import Header from '../../components/Header/Index';
 import ProductFilter from '../../components/HomePage/ProductFilter';
 import Pagination from '../../components/HomePage/Pagination';
 import Footer from '../../components/Footer';
+import SearchNotFound from '../../components/SearchNotFound'
 import axios from 'axios';
 
 function SearchPage() {
@@ -82,7 +83,7 @@ function SearchPage() {
   return (
     <>
     <Header />
-    <div className='homepage-container'>
+    <div className='searchpage-container'>
 
     <div className="section">
       <div className="div_tittle_session1">

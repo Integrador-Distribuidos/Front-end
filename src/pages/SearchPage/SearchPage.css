@@ -10,7 +10,7 @@ body {
 }
 
 /* CONTAINER PRINCIPAL */
-.homepage-container {
+.searchpage-container {
   background-color: #F9FAFB;
   padding: 20px;
       margin-top: 20px;
@@ -44,16 +44,6 @@ body {
   line-height: 18px;
   color: #000000;
 }
-
-/* LINHA DIVISÓRIA */
-.line {
-  width: 100%;
-  max-width: 1095px;
-  height: 0;
-  border: 1px solid #99A1AF;
-  margin: 0;
-}
-
 /* TÍTULOS ESTRUTURA */
 .tittle_line {
   display: flex;
@@ -83,15 +73,6 @@ body {
   flex-wrap: wrap;
   width: 100%;
   max-width: 1095px;
-}
-
-.cards-container-store {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-  width: 100%;
-  max-width: 1095px;
-  justify-content: space-between;
 }
 
 .pagination{
