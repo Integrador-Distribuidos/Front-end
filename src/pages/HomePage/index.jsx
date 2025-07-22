@@ -5,6 +5,7 @@ import StoreCard from '../../components/HomePage/StoreCard/index.jsx';
 import Pagination from '../../components/HomePage/Pagination/index.jsx';
 import ProductFilter from '../../components/HomePage/ProductFilter/index.jsx';
 import Header from '../../components/Header/Index.jsx';
+import Footer from '../../components/Footer/index.jsx';
 import './HomePage.css';
 import axios from 'axios';
 
@@ -166,6 +167,7 @@ function HomePage() {
       />
       </div>
     </div>
+    <Footer />
     </>
   );
 }

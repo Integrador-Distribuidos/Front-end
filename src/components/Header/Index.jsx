@@ -7,14 +7,18 @@ import cartIcon from '../../assets/icons/icon-cart-header.png'
 const Header = () => {
   return (
     <header className="header-logged">
-        <img src={logo} alt="Logo do app" className="logo-header" />
+        <Link to="/">
+          <img src={logo} alt="Logo do app" className="logo-header" />
+        </Link>
         <div className="div-of-icon-header-logged">
           <img src={iconsearch} alt="Icon-search-header" className="icon-search-header" />
           <input type="text" placeholder="Busque por produtos, lojas..." className="input-search-header-logged" />
         </div>
         <div className="auth-section">
           <div className="create-account">
-            <img src={cartIcon} alt="Carrinho" className="cart-icon" />
+            <Link to="/myCart">
+              <img src={cartIcon} alt="Carrinho" className="cart-icon" />
+            </Link>
             <Link to="/signUp">
               <span className="create-account-link">Criar Conta</span>
             </Link>
