@@ -1,4 +1,3 @@
-
 import React from 'react';
 import styles from '../Footer/Footer.module.css'
 import imageLogoFooter from '../../assets/stock2sell-logo.png'
