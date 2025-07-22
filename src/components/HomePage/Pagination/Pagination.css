@@ -1,0 +1,66 @@
+/* Paginação */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+  border: 1px solid #ccc;
+  width: 450px;
+  height: 44px;
+  border-radius: 4px;
+}
+
+.button_left, .button_hight{
+    background-color: transparent;
+    color: black;
+    border: none;
+}
+
+
+.page_box{
+/* Rectangle 194 */
+display: flex;
+align-items: center;
+justify-content: center;
+width: 23px;
+height: 27px;
+background: #CAD5E2;
+border-radius: 4px;
+}
+
+.atual_page_box{
+background: #90A1B9;
+}
+
+.pontos{
+    /* ... */
+
+width: 12px;
+height: 17px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* identical to box height */
+
+color: #000000;
+
+
+}
+
+.num_page{
+   /* 1 */
+width: 23px;
+height: 17px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* identical to box height */
+color: #000000;
+}

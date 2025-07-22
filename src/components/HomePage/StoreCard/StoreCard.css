@@ -1,0 +1,87 @@
+
+body {
+  font-family: sans-serif;
+  padding: 40px;
+  background-color: #f4f4f4;
+}
+
+/* Card da Loja */
+.store-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 500px;
+  padding: 16px 20px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 40px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+box-sizing: border-box;
+width: 334px;
+height: 109px;
+background: #FAFAF9;
+border: 1px solid #99A1AF;
+border-radius: 4px;
+
+}
+
+.loja-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.loja-logo {
+  width: 103px;
+  height: 81px;
+  border-radius: 4px;
+  background-color: black;
+  object-fit: cover;
+}
+
+.loja-nome {
+/* PointCell */
+
+width: 86px;
+height: 24px;
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 500;
+font-size: 20px;
+line-height: 24px;
+
+color: #000000;
+margin: 0;
+
+
+}
+
+/* Botão */
+.btn-acessar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 174px;
+  height: 27px;
+
+width: 174px;
+height: 27px;
+
+
+background: #033D62;
+border-radius: 4px;
+}
+
+.btn-acessar:hover {
+  background-color: #1d4ed8;
+}
