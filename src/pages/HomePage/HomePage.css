@@ -83,6 +83,7 @@ body {
   flex-wrap: wrap;
   width: 100%;
   max-width: 1095px;
+  justify-content: center;
 }
 
 .cards-container-store {
