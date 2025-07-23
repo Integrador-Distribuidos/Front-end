@@ -6,7 +6,6 @@ import SignUp from './pages/signUp/index.jsx';
 import ProductDetail from './pages/productdetail/index.jsx';
 import HomePage from './pages/HomePage/index.jsx';
 import SearchPage from './pages/SearchPage/index.jsx';
-
 function App() {
   
 

@@ -96,3 +96,10 @@ height: 29px;
 display: flex;
 align-items: center;
 }
+
+
+.hidden {
+  top: 70px;
+  left: 10%;
+  position: fixed;
+}

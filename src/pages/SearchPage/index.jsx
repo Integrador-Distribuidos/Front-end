@@ -6,18 +6,21 @@ import Header from '../../components/Header/Index';
 import ProductFilter from '../../components/HomePage/ProductFilter';
 import Pagination from '../../components/HomePage/Pagination';
 import Footer from '../../components/Footer';
-import SearchNotFound from '../../components/SearchNotFound'
+import SearchNotFound from '../../components/SearchNotFound';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
 function SearchPage() {
-
-
-  
 
   const [products] = useState(mockProducts); // dados ficticios de mocprod
   const [filteredProducts, setFilteredProducts] = useState(mockProducts); // dados ficticios de 
 
 
+
+
+  const location = useLocation();
+  const query = new URLSearchParams(location.search).get('query') || '';
+  const [searchText, setSearchText] = useState('');
 
   const PRODUCTS_PER_PAGE = 15;
 
@@ -46,7 +49,7 @@ function SearchPage() {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
- // 🔽 Função chamada pelo filtro
+ // Função chamada pelo filtro
   const handleFilterChange = ({ category, option }) => {
     setFilter({ category, option });
 
@@ -68,6 +71,42 @@ function SearchPage() {
     setCurrentPage(1);
   };
 
+
+
+  const handleSearch = (text) => {
+  setSearchText(text);
+
+  let filtered = [...products];
+
+  // Filtragem por nome do produto
+  if (text.trim() !== '') {
+    filtered = filtered.filter((prod) =>
+      prod.name.toLowerCase().includes(text.toLowerCase())
+    );
+  }
+
+  // Aplicar filtros existentes (categoria e preço)
+  if (filter.category) {
+    filtered = filtered.filter((prod) => prod.category === filter.category);
+  }
+
+  if (filter.option === 'less_price') {
+    filtered.sort((a, b) => a.price - b.price);
+  } else if (filter.option === 'more_price') {
+    filtered.sort((a, b) => b.price - a.price);
+  }
+
+  setFilteredProducts(filtered);
+  setCurrentPage(1);
+};
+
+useEffect(() => {
+  if (query) {
+    handleSearch(query);
+  }
+}, [query]);
+
+
   // Buscar produtos
   useEffect(() => {
     axios.get('http://localhost:8000/api/products')
@@ -80,20 +119,29 @@ function SearchPage() {
       });
   }, []);
 
+  const hasProducts = () => {
+    return currentProducts && currentProducts.length > 0; 
+  };
+
+
   return (
     <>
     <Header />
+
     <div className='searchpage-container'>
 
     <div className="section">
       <div className="div_tittle_session1">
-        <div className="pagetittle_search_text">
-            <h2 class="tittle_session">Resultados da Busca</h2>
-            <h3 class="search_text"> -  Camisa do Palmeiras</h3>
+        <div className={filteredProducts.length === 0 ? 'hidden pagetittle_search_text' : 'pagetittle_search_text'}>
+            <h2 className="tittle_session">Resultados da Busca</h2>
+            <h3 className="search_text"> - {query}</h3>
         </div>
-        <ProductFilter onFilter={handleFilterChange}/>
+
+      {filteredProducts.length > 0 && (
+        <ProductFilter onFilter={handleFilterChange} />
+      )}
       </div>
-      
+      {filteredProducts.length > 0 && (
       <div className="cards-container">
         {currentProducts.map((product) => (
           <ProductCard
@@ -103,17 +151,26 @@ function SearchPage() {
           />
         ))}
       </div>
+      )}
     </div>
 
-      <div className="section">
-
+{
+  filteredProducts.length === 0 ? (
+    <SearchNotFound 
+      redirect_url={'/'}/>
+  ) : (
+    <div className="section">
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onNext={handleNext}
         onPrev={handlePrev}
       />
-      </div>
+    </div>
+  )
+}
+
+
 
       <Footer />
     </div>
@@ -122,3 +179,29 @@ function SearchPage() {
 }
 
 export default SearchPage;
+
+/*
+Código de teste usado no input de busca para chamar a página
+
+
+const [searchText, setSearchText] = useState('');
+const navigate = useNavigate();
+
+const handleSearch = (e) => {
+  e.preventDefault(); // PREVINE O RELOAD
+  if (searchText.trim() !== '') {
+    navigate(`/search_page?query=${encodeURIComponent(searchText)}`);
+  }
+};
+
+
+<form onSubmit={handleSearch}>
+  <input
+    type="text"
+    placeholder="Buscar produtos..."
+    value={searchText}
+    onChange={(e) => setSearchText(e.target.value)}
+  />
+  <button type="submit">Buscar</button>
+</form>
+*/
