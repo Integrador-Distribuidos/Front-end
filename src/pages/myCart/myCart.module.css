@@ -1,14 +1,16 @@
 .pageWrapper {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
 }
 
 .container {
-  flex: 1;
+  flex-grow: 0;
   padding: 24px;
   background-color: #f9fafb;
-  min-height: 100vh;
+
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .title {
@@ -30,13 +32,32 @@
     flex-direction: row;
     align-items: flex-start;
   }
+
+}
+
+@media (max-width: 1023px) {
+
+  .content {
+    align-items: center;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0 auto;
+    align-self: center;
+  }
+
+  .sidebar > * {
+    width: 100%;
+  }
 }
 
 .itemsList {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  flex: 1;
 }
 
 .sidebar {

@@ -6,18 +6,25 @@ const Footer = () => {
 
     return (
         <>
-            <footer className={styles['site-footer-in-pd']}>
-                  <div className={styles['div-of-content-footer-in-pd']}>
-                    <img src={ imageLogoFooter } alt="image-logo-footer" className={styles['logo-footer-image-in-pd']} />
-                    <p className={styles['p-in-footer-s2s-in-pd']}>Stock2Sell</p>
-                    <div className={styles['div-of-links-of-footer-in-pd']}>
-                      <a href="#" className={styles['link-of-footer-1-in-pd']}>Produtos</a>
-                      <a href="#" className={styles['link-of-footer-2-in-pd']}>Lojas</a>
-                      <a href="#" className={styles['link-of-footer-3-in-pd']}>Minha Conta</a>
-                    </div>
-                    <p className={styles['p-copyrigth-footer-in-pd']}>© 2025 - Stock2Sell</p>
-                  </div>
+            <footer className={styles['footer-container']}>
+              <div className={styles['footer-content']}>
+                <div className={styles['footer-logo-wrapper']}>
+                  <img
+                    src={imageLogoFooter}
+                    alt="image-logo-footer"
+                    className={styles['logo-footer-image-in-pd']}
+                  />
+                  <h3 className={styles['footer-title']}>Stock2Sell</h3>
+                </div>
+                <nav className={styles['footer-nav']}>
+                  <a href="#">Produtos</a>
+                  <a href="#">Lojas</a>
+                  <a href="#">Minha Conta</a>
+                </nav>
+                <p className={styles['footer-copy']}>&copy; 2025 - Stock2Sell</p>
+              </div>
             </footer>
+
         </>
     )
 }

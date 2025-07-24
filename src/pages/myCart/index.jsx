@@ -30,6 +30,30 @@ const MyCart = () => {
       price: 629.99,
       quantity: 1,
     },
+    {
+      id: 4,
+      image: "/placeholder.png",
+      name: "Camisa Palmeiras X Kidsuper 25/26",
+      store: "Palmeiras Oficial",
+      price: 629.99,
+      quantity: 1,
+    },
+    {
+      id: 5,
+      image: "/placeholder.png",
+      name: "Camisa Palmeiras X Kidsuper 25/26",
+      store: "Palmeiras Oficial",
+      price: 629.99,
+      quantity: 1,
+    },
+    {
+      id: 5,
+      image: "/placeholder.png",
+      name: "Camisa Palmeiras X Kidsuper 25/26",
+      store: "Palmeiras Oficial",
+      price: 629.99,
+      quantity: 1,
+    },
   ]);
 
   const handleRemoveItem = (id) => {
@@ -47,7 +71,7 @@ const MyCart = () => {
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
-    <div className={styles.pageWrapper}>
+    <div className={`${styles.pageWrapper} my-cart-wrapper`}>
         <Header />
         <div className={styles.container}>
         <h1 className={styles.title}>Meu Carrinho</h1>
