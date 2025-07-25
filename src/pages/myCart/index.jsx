@@ -3,6 +3,7 @@ import styles from "./MyCart.module.css";
 import CartItem from '../../components/CartItem/index.jsx';
 import Header from '../../components/Header/Index.jsx';
 import Footer from '../../components/Footer/index.jsx';
+import NewAddressModal from '../../components/NewAddressModal/index.jsx';
 
 const MyCart = () => {
   const [cartItems, setCartItems] = useState([
@@ -82,6 +83,7 @@ const MyCart = () => {
             </div>
         </div>
         </div>
+        <NewAddressModal />
         <Footer />
     </div>
   );
