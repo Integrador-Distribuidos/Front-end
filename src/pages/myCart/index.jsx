@@ -47,7 +47,7 @@ const MyCart = () => {
       quantity: 1,
     },
     {
-      id: 5,
+      id: 6,
       image: "/placeholder.png",
       name: "Camisa Palmeiras X Kidsuper 25/26",
       store: "Palmeiras Oficial",
