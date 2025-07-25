@@ -14,7 +14,9 @@ const [lastName, setLastName] = useState('');
 const [cpf, setCpf] = useState('');
     return (
         <div className={styles.signUpBox}>
-            <img src={logo} alt="Logo do app" className={styles.logo} />
+            <Link to="/">
+                <img src={logo} alt="Logo do app" className={styles.logo} />
+            </Link>
             <p className={styles.ContentText}>Insira seus dados abaixo, para criar uma conta</p>
             <div className={styles.nameBox}>
                 <InputField 
