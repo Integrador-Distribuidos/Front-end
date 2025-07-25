@@ -1,0 +1,45 @@
+.filter-container {
+  margin: 1rem 0;
+  text-align: left;
+}
+
+
+.filter-group {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+
+}
+
+.filter-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+
+.filter-group input,
+.filter-group select {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+
+
+.tittle_filter{
+font-family: 'Inter';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 19px;
+color: #000000;
+}
+
+
+.campo_select{
+    /* Rectangle 64 */
+width: 130px;
+height: 28px;
+background: #6A7282;
+border-radius: 4px;
+
+}
