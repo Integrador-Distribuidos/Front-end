@@ -6,12 +6,11 @@ const NewAddressModal = ({ city, street, neighborhood, uf, zip_code, number, onC
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
-        <button className={styles.closeButton} onClick={onClose}>×</button>
-        <h2 style={{ marginBottom: '12px' }}>Novo Endereço</h2>
+        <h2 className={styles.modalTitle}>Novo Endereço</h2>
 
-        <InputField label="Cidade" type="text" value={city} width="100%" height="22px" />
-        <InputField label="Rua" type="text" value={street} width="100%" height="22px" />
-        <InputField label="Bairro" type="text" value={neighborhood} width="100%" height="22px" />
+        <InputField label="Cidade" type="text" value={city} width="288px" height="22px" />
+        <InputField label="Rua" type="text" value={street} width="288px" height="22px" />
+        <InputField label="Bairro" type="text" value={neighborhood} width="288px" height="22px" />
 
         <div className={styles.row}>
           <InputField label="UF" type="text" value={uf} width="40px" height="22px" />

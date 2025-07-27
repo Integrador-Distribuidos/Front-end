@@ -107,7 +107,7 @@ const MyCart = () => {
             </div>
         </div>
         </div>
-        <NewAddressModal />
+       
         <Footer />
     </div>
   );
