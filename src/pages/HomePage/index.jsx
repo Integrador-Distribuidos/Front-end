@@ -125,49 +125,49 @@ function HomePage() {
 
   return (
     <>
-    <Header />
-    <div className="homepage-container">
-    <div class='tittle_line'>
-    <h2 class="page_tittle">Página Inicial</h2>
-    <div class="line"></div>
-    </div>
-
-    <div className="section">
-      <div className="div_tittle_session1">
-        <h2 class="tittle_session">Ofertas do Dia</h2>
-        <ProductFilter onFilter={handleFilterChange}/>
+      <Header />
+      <div className="homepage-container">
+      <div className='tittle_line'>
+      <h2 className="page_tittle">Página Inicial</h2>
+      <div className="line"></div>
       </div>
-      
-      <div className="cards-container">
-        {currentProducts.map((product) => (
-          <ProductCard
-            key={product.id_product}
-            name={product.name}
-            price={product.price}
-          />
-        ))}
-      </div>
-    </div>
 
       <div className="section">
-        <div className="div_tittle_session">
-        <h2 className="tittle_session">Lojas Recomendadas</h2>
+        <div className="div_tittle_session1">
+          <h2 class="tittle_session">Ofertas do Dia</h2>
+          <ProductFilter onFilter={handleFilterChange}/>
         </div>
-        <div className="cards-container-store">
-        {randomStores.map((store, index) => (
-            <StoreCard key={index} name={store.name} />
-        ))}
+        
+        <div className="cards-container">
+          {currentProducts.map((product) => (
+            <ProductCard
+              key={product.id_product}
+              name={product.name}
+              price={product.price}
+            />
+          ))}
         </div>
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onNext={handleNext}
-        onPrev={handlePrev}
-      />
       </div>
-    </div>
-    <Footer />
+
+        <div className="section">
+          <div className="div_tittle_session">
+          <h2 className="tittle_session">Lojas Recomendadas</h2>
+          </div>
+          <div className="cards-container-store">
+          {randomStores.map((store, index) => (
+              <StoreCard key={index} name={store.name} />
+          ))}
+          </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onNext={handleNext}
+          onPrev={handlePrev}
+        />
+        </div>
+      </div>
+      <Footer />
     </>
   );
 }
