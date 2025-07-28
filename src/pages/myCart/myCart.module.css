@@ -1,14 +1,16 @@
 .pageWrapper {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  background-color: #f9fafb;
 }
 
 .container {
-  flex: 1;
+  flex-grow: 0;
   padding: 24px;
   background-color: #f9fafb;
-  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .title {
@@ -32,11 +34,28 @@
   }
 }
 
+@media (max-width: 1023px) {
+  .content {
+    align-items: center;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0 auto;
+    align-self: center;
+  }
+
+  .sidebar > * {
+    width: 100%;
+  }
+}
+
 .itemsList {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  flex: 1;
 }
 
 .sidebar {
@@ -54,6 +73,13 @@
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.addressBox:hover {
+  background-color: #f4f4f4;
+  border-color: #1e3a8a;
 }
 
 .username {
@@ -90,9 +116,12 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.3s;
 }
 
 .orderButton:hover {
   background-color: #1c357a;
+}
+
+button {
+  transition: none;
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './InputField.module.css';
 
-const InputField = ({ label, type, value, onChange, width}) => {
+const InputField = ({ label, type, value, onChange, width, height}) => {
     return (
         <div className={styles.inputContainer}>
             <label className={styles.inputLabel}>{label}</label>
@@ -9,7 +9,7 @@ const InputField = ({ label, type, value, onChange, width}) => {
                 type = {type}
                 value = {value}
                 onChange = {onChange}
-                style = {{width: width}}
+                style = {{width: width, height: height}}
                 className = {styles.inputField}
             />
         </div>
