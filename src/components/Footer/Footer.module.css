@@ -1,13 +1,12 @@
 .footer-container {
   width: 100%;  
-  background-color: #f7f7f7; 
+  background-color: #ffffff; 
   border-top: 2px solid #C8C8C8;
   padding: 1rem;
   text-align: center;
   font-family: Arial, sans-serif;
   display: flex;
   justify-content: center;
-  
   margin-top: auto;
 }
 
