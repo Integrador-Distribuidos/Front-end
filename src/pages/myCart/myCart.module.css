@@ -2,13 +2,13 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  background-color: #f9fafb;
 }
 
 .container {
   flex-grow: 0;
   padding: 24px;
   background-color: #f9fafb;
-
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -32,11 +32,9 @@
     flex-direction: row;
     align-items: flex-start;
   }
-
 }
 
 @media (max-width: 1023px) {
-
   .content {
     align-items: center;
   }
@@ -75,6 +73,13 @@
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.addressBox:hover {
+  background-color: #f4f4f4;
+  border-color: #1e3a8a;
 }
 
 .username {
@@ -111,9 +116,12 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.3s;
 }
 
 .orderButton:hover {
   background-color: #1c357a;
+}
+
+button {
+  transition: none;
 }
