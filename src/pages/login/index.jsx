@@ -21,6 +21,8 @@ const [password, setPassword] = useState('');
                 type="email"
                 value ={emailAddress}
                 onChange={e => setEmailAddress(e.target.value)}
+                width="350px"
+                height="25px"
             />
             <PasswordInput
                 label="Senha"
