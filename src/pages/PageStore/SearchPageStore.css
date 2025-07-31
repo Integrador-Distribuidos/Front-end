@@ -13,7 +13,7 @@ body {
 .searchpage-container {
   background-color: #F9FAFB;
   padding: 20px;
-      margin-top: 20px;
+  margin-top: 50px;
 }
 
 .line {
@@ -33,7 +33,7 @@ body {
 
 /* TÍTULOS */
 .tittle_session {
-  width: 240px;
+  width: 170px;
   height: 29px;
   font-family: 'Inter', sans-serif;
   font-style: normal;
@@ -157,7 +157,8 @@ border-radius: 150px;
 
 .text_products{
   /* Produtos */
-width: 113px;
+display: flex;
+width: 350px;
 height: 31px;
 font-family: 'Inter';
 font-style: normal;
@@ -165,5 +166,4 @@ font-weight: 500;
 font-size: 26px;
 line-height: 31px;
 color: #000000;
-
 }

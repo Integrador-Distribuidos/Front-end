@@ -9,7 +9,7 @@ function StoreCard({ name, id }) {
     <img src={image} alt="PointCell" class="loja-logo" />
     <div class="loja-info">
       <h2 class="loja-nome">{name}</h2>
-      <Link to={`/`}>
+      <Link to={`/page_store/${id}`}>
       <button class="btn-acessar">Acessar Loja</button>
       </Link>
     </div>

@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import './SearchPageStore.css';
-
 import ProductCard from "../../components/HomePage/ProductCard";
 import mockProducts from '../HomePage/mockProducts';
+import mockStores from '../HomePage/mockStores';
 import Header from '../../components/Header/Index';
 import ProductFilter from '../../components/HomePage/ProductFilter';
 import Pagination from '../../components/HomePage/Pagination';
 import Footer from '../../components/Footer';
 import SearchNotFound from '../../components/SearchNotFound';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
-function SearchPageStore() {
+
+function PageStore() {
+
+  const { id } = useParams();
+  //const [product, setProduct] = useState(null);
+  const store = mockStores.find(p => p.id_store === parseInt(id));
+
+
+
   const [products] = useState(mockProducts);
   const [filteredProducts, setFilteredProducts] = useState(mockProducts);
 
@@ -98,20 +106,20 @@ function SearchPageStore() {
 
           <div className="div_tittle_session1">
             <div className={filteredProducts.length === 0 ? 'hidden pagetittle_search_text' : 'pagetittle_search_text'}>
-              <h2 className="tittle_session">Resultados da Busca</h2>
-              <h3 className="search_text"> - Nome Loja {query}</h3>
+              <h2 className="tittle_session">Página da Loja</h2>
+              <h3 className="search_text"> - {store.name}</h3>
             </div>
           </div>
 
           <div className='store_name_img'>
             <img className='store_img' src="http://localhost:8000/images/product_20.jpeg" alt="Imagem da Loja" />
-            <h3 className="store_name">Nome Loja</h3>
+            <h3 className="store_name">{store.name}</h3>
           </div>
 
           <div className="line"></div>
 
           <div className='product_filter'>
-            <h2 className='text_products'>Produtos</h2>
+            <h2 className='text_products'>Produtos Mais Vendidos</h2>
             {filteredProducts.length > 0 && (
               <ProductFilter onFilter={handleFilterChange} />
             )}
@@ -148,4 +156,4 @@ function SearchPageStore() {
   );
 }
 
-export default SearchPageStore;
+export default PageStore;

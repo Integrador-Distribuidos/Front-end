@@ -8,9 +8,9 @@ function ProductCard({ name, price, id}) {
   return (
     <Link to={`/product_detail/${id}`}>
     <div className="product-card">
-      <img class='product_img' src={image1} alt="Imagem do produto" />
-      <h3 class="product_name">{name}</h3>
-      <h3 class="product_price">R$ {price}</h3>
+      <img className='product_img' src={image1} alt="Imagem do produto" />
+      <h3 className="product_name">{name}</h3>
+      <h3 className="product_price">R$ {price}</h3>
     </div>
     </Link>
   );
