@@ -132,32 +132,37 @@ function HomePage() {
       <div className="line"></div>
       </div>
 
-      <div className="section">
-        <div className="div_tittle_session1">
-          <h2 class="tittle_session">Ofertas do Dia</h2>
-          <ProductFilter onFilter={handleFilterChange}/>
-        </div>
-        
-        <div className="cards-container">
-          {currentProducts.map((product) => (
-            <ProductCard
-              key={product.id_product}
-              name={product.name}
-              price={product.price}
-            />
-          ))}
-        </div>
+    <div className="section">
+      <div className="div_tittle_session1">
+        <h2 class="tittle_session">Ofertas do Dia</h2>
+        <ProductFilter onFilter={handleFilterChange}/>
       </div>
+      
+      <div className="cards-container">
+        {currentProducts.map((product) => (
+          <ProductCard
+            key={product.id_product}
+            name={product.name}
+            price={product.price}
+            id={product.id_product}
+          />
+        ))}
+      </div>
+    </div>
 
-        <div className="section">
-          <div className="div_tittle_session">
-          <h2 className="tittle_session">Lojas Recomendadas</h2>
-          </div>
-          <div className="cards-container-store">
-          {randomStores.map((store, index) => (
-              <StoreCard key={index} name={store.name} />
-          ))}
-          </div>
+      <div className="section">
+        <div className="div_tittle_session">
+        <h2 className="tittle_session">Lojas Recomendadas</h2>
+        </div>
+        <div className="cards-container-store">
+        {randomStores.map((store, index) => (
+            <StoreCard 
+              key={index} 
+              name={store.name}
+              id={store.id_store} 
+              />
+        ))}
+        </div>
 
         <Pagination
           currentPage={currentPage}

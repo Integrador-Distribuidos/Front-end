@@ -23,14 +23,16 @@ const [cpf, setCpf] = useState('');
                     label="Nome"
                     type="text"
                     value={name}
-                    width="180px"
+                    width="155px"
+                    height="25px"
                     onChange={e => setName(e.target.value)}
                 />
                 <InputField 
                     label="Sobrenome"
                     type="text"
                     value={lastName}
-                    width="180px"
+                    width="155px"
+                    height="25px"
                     onChange={e => setLastName(e.target.value)}
                 />
             </div>
@@ -39,12 +41,16 @@ const [cpf, setCpf] = useState('');
                 type="text"
                 value={cpf}
                 onChange={e => setCpf(e.target.value)}
+                width="350px"
+                height="25px"
             />
             <InputField 
                 label="E-mail"
                 type="email"
                 value ={emailAddress}
                 onChange={e => setEmailAddress(e.target.value)}
+                width="350px"
+                height="25px"
             />
             <PasswordInput
                 label="Senha"
