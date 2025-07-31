@@ -125,12 +125,12 @@ function HomePage() {
 
   return (
     <>
-    <Header />
-    <div className="homepage-container">
-    <div class='tittle_line'>
-    <h2 class="page_tittle">Página Inicial</h2>
-    <div class="line"></div>
-    </div>
+      <Header />
+      <div className="homepage-container">
+      <div className='tittle_line'>
+      <h2 className="page_tittle">Página Inicial</h2>
+      <div className="line"></div>
+      </div>
 
     <div className="section">
       <div className="div_tittle_session1">
@@ -164,15 +164,15 @@ function HomePage() {
         ))}
         </div>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onNext={handleNext}
-        onPrev={handlePrev}
-      />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onNext={handleNext}
+          onPrev={handlePrev}
+        />
+        </div>
       </div>
-    </div>
-    <Footer />
+      <Footer />
     </>
   );
 }

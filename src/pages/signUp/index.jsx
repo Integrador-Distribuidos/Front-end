@@ -14,21 +14,25 @@ const [lastName, setLastName] = useState('');
 const [cpf, setCpf] = useState('');
     return (
         <div className={styles.signUpBox}>
-            <img src={logo} alt="Logo do app" className={styles.logo} />
+            <Link to="/">
+                <img src={logo} alt="Logo do app" className={styles.logo} />
+            </Link>
             <p className={styles.ContentText}>Insira seus dados abaixo, para criar uma conta</p>
             <div className={styles.nameBox}>
                 <InputField 
                     label="Nome"
                     type="text"
                     value={name}
-                    width="180px"
+                    width="155px"
+                    height="25px"
                     onChange={e => setName(e.target.value)}
                 />
                 <InputField 
                     label="Sobrenome"
                     type="text"
                     value={lastName}
-                    width="180px"
+                    width="155px"
+                    height="25px"
                     onChange={e => setLastName(e.target.value)}
                 />
             </div>
@@ -37,12 +41,16 @@ const [cpf, setCpf] = useState('');
                 type="text"
                 value={cpf}
                 onChange={e => setCpf(e.target.value)}
+                width="350px"
+                height="25px"
             />
             <InputField 
                 label="E-mail"
                 type="email"
                 value ={emailAddress}
                 onChange={e => setEmailAddress(e.target.value)}
+                width="350px"
+                height="25px"
             />
             <PasswordInput
                 label="Senha"

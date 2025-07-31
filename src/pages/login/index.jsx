@@ -12,13 +12,17 @@ const [password, setPassword] = useState('');
 
     return (
         <div className={styles.loginBox}>
-            <img src={logo} alt="Logo do app" className={styles.logo} />
+            <Link to="/">
+                <img src={logo} alt="Logo do app" className={styles.logo} />
+            </Link>
             <p className={styles.ContentText}>Insira seus dados abaixo, para entrar na sua conta</p>
             <InputField
                 label="E-mail"
                 type="email"
                 value ={emailAddress}
                 onChange={e => setEmailAddress(e.target.value)}
+                width="350px"
+                height="25px"
             />
             <PasswordInput
                 label="Senha"

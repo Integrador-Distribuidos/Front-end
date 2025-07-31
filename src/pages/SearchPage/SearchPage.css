@@ -1,18 +1,19 @@
+/* src/pages/home_page/homepage.css */
+
+
+
 body {
   background-color: #F9FAFB;
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-
-  overflow-x: hidden;
 }
 
 /* CONTAINER PRINCIPAL */
-.homepage-container {
+.searchpage-container {
   background-color: #F9FAFB;
   padding: 20px;
-  margin-top: 50px;
+      margin-top: 20px;
 }
 
 /* SEÇÕES */
@@ -43,26 +44,12 @@ body {
   line-height: 18px;
   color: #000000;
 }
-
-/* LINHA DIVISÓRIA */
-.line {
-  width: 100%;
-  max-width: 1095px;
-  height: 0;
-  border: 1px solid #99A1AF;
-  margin: 0;
-}
-
 /* TÍTULOS ESTRUTURA */
 .tittle_line {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-
-  max-width: 1095px;
-  margin: 0 auto;
-  padding: 0 16px;
 }
 
 .div_tittle_session,
@@ -86,14 +73,33 @@ body {
   flex-wrap: wrap;
   width: 100%;
   max-width: 1095px;
-  justify-content: center;
 }
 
-.cards-container-store {
+.pagination{
+  margin-top: 37px;
+}
+
+
+.pagetittle_search_text{
   display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-  width: 100%;
-  max-width: 1095px;
-  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+}
+.search_text{
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 18px;
+line-height: 22px;
+color: #000000;
+height: 29px;
+display: flex;
+align-items: center;
+}
+
+
+.hidden {
+  top: 70px;
+  left: 10%;
+  position: fixed;
 }
