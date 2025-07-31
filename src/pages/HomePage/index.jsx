@@ -144,6 +144,7 @@ function HomePage() {
             key={product.id_product}
             name={product.name}
             price={product.price}
+            id={product.id_product}
           />
         ))}
       </div>
@@ -155,7 +156,11 @@ function HomePage() {
         </div>
         <div className="cards-container-store">
         {randomStores.map((store, index) => (
-            <StoreCard key={index} name={store.name} />
+            <StoreCard 
+              key={index} 
+              name={store.name}
+              id={store.id_store} 
+              />
         ))}
         </div>
 
