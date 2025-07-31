@@ -11,7 +11,6 @@ import AdmProductManage from './pages/AdmPM/index.jsx';
 
 function App() {
   
-
   return (
     <Router>
       <Routes>
@@ -22,6 +21,7 @@ function App() {
         <Route path="/myCart" element={<MyCart />} />
         <Route path="/search_page" element={<SearchPage />} />
         <Route path="/control_panel/products" element={<AdmProductManage />} />
+        <Route path="/search_page_store" element={<SearchPageStore />} />
       </Routes>
     </Router>
   )
