@@ -100,6 +100,19 @@
   font-weight: bold;
 }
 
+.login-text-logout-text {
+  font-weight: 500;
+  color: #E7000B;
+  cursor: pointer;
+  font-weight: bold;
+}
+.login-text-logout-text:hover {
+  font-weight: 500;
+  color: #bd0812;
+  font-weight: bold;
+  transition: 0.4s;
+}
+
 .user-icon-mobile {
   display: none;
   cursor: pointer;
