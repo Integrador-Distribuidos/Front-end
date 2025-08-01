@@ -1,19 +1,24 @@
 /* src/components/HomePage/ProductCard.css */
 .product-card {
-  width: 193px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
   height: 243px;
-box-sizing: border-box;
-background: #FAFAF9;
-border: 1px solid #E5E5E5;
-border-radius: 4px;
+  box-sizing: border-box;
+  background: #FAFAF9;
+  border: 1px solid #E5E5E5;
+  border-radius: 4px;
+  transition: box-shadow 0.2s ease;
+  
 }
 
 .product_img{
-  width: 189px;
+  width: 180px;
   height: 143px;
+  margin-top: 10px;
   border-radius: 4px;
-background: #D9D9D9;
-border-radius: 4px 4px 0px 0px;
+  background: #D9D9D9;
 
 }
 
@@ -21,15 +26,19 @@ border-radius: 4px 4px 0px 0px;
 .product_name, .product_price {
   display: flex;
   color: #000000;
-  margin-left: 13px;
   margin-top: 10px;
-font-family: 'Inter';
-font-style: normal;
-font-weight: 600;
-font-size: 16px;
-line-height: 19px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
 
 }
 .product_price{
-  margin-top: 20px;
+  margin-top: 210px;
+  position: absolute;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }

@@ -1,12 +1,39 @@
 import React, { useState } from 'react';
 import '../Header/Header.css'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/stock2sell-logo.png'
 import iconsearch from '../../assets/icons/icon-search-header.png'
 import cartIcon from '../../assets/icons/icon-cart-header.png'
 import profileMobile from '../../assets/icons/account_circle.png'
 
+
+/*
+Código de teste usado no input de busca para chamar a página
+
+
+
+
+
+
+  <input
+
+  />
+  <button type="submit">Buscar</button>
+</form>
+*/
+
+
 const Header = () => {
+
+  const [searchText, setSearchText] = useState('');
+const navigate = useNavigate();
+
+const handleSearch = (e) => {
+  e.preventDefault(); // PREVINE O RELOAD
+  if (searchText.trim() !== '') {
+    navigate(`/search_page?query=${encodeURIComponent(searchText)}`);
+  }
+};
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -20,7 +47,9 @@ const Header = () => {
         </Link>
         <div className="div-of-icon-header-logged">
           <img src={iconsearch} alt="Icon-search-header" className="icon-search-header" />
-          <input type="text" placeholder="Busque por produtos, lojas..." className="input-search-header-logged" />
+          <form onSubmit={handleSearch}>
+          <input type="text" placeholder="Buscar produtos..." value={searchText} onChange={(e) => setSearchText(e.target.value)}
+            className="input-search-header-logged" /></form>
         </div>
         <div className="auth-section">
           <div className="create-account">

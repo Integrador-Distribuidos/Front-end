@@ -1,21 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import './SearchPageStore.css';
+import './PageStore.css';
+import { getStoreById } from '../../services/apiStore';
 import ProductCard from "../../components/HomePage/ProductCard";
 import mockProducts from '../HomePage/mockProducts';
-import mockStores from '../HomePage/mockStores';
 import Header from '../../components/Header/Index';
 import ProductFilter from '../../components/HomePage/ProductFilter';
 import Pagination from '../../components/HomePage/Pagination';
 import Footer from '../../components/Footer';
 import SearchNotFound from '../../components/SearchNotFound';
 import { useLocation, useParams } from 'react-router-dom';
-
+import defaultImage from "../../assets/default/image_store_default.png";
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 function PageStore() {
+    
+    const { id } = useParams();
+    const [store, setStore] = useState([]);
+  
+    useEffect(() => {
+      getStoreById(id).then(response => {
+        setStore(response.data);
+      });
+    }, []);
 
-  const { id } = useParams();
-  //const [product, setProduct] = useState(null);
-  const store = mockStores.find(p => p.id_store === parseInt(id));
+  const imageSrc = store.image ? `${baseURL}/images/${store.image}` : defaultImage;
 
 
 
@@ -112,7 +120,7 @@ function PageStore() {
           </div>
 
           <div className='store_name_img'>
-            <img className='store_img' src="http://localhost:8000/images/product_20.jpeg" alt="Imagem da Loja" />
+            <img className='store_img' src={imageSrc} alt="Imagem da Loja" />
             <h3 className="store_name">{store.name}</h3>
           </div>
 

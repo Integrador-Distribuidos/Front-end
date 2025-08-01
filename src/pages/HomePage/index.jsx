@@ -1,5 +1,7 @@
 // src/pages/home_page/homepage.jsx
 import React, { useEffect, useState } from 'react';
+import { getAllProducts } from '../../services/apiProducts.js';
+import { getAllStores } from '../../services/apiStore.js';
 import ProductCard from '../../components/HomePage/ProductCard/index.jsx';
 import StoreCard from '../../components/HomePage/StoreCard/index.jsx';
 import Pagination from '../../components/HomePage/Pagination/index.jsx';
@@ -7,44 +9,46 @@ import ProductFilter from '../../components/HomePage/ProductFilter/index.jsx';
 import Header from '../../components/Header/Index.jsx';
 import Footer from '../../components/Footer/index.jsx';
 import './HomePage.css';
-import axios from 'axios';
-
-import mockProducts from './mockProducts.js';//importando dados ficticios
-import mockStores from './mockStores.js';
-
 
 
 function HomePage() {
+  const PRODUCTS_PER_PAGE = 10;
+  const [products, setProducts] = useState([]);
+  const [stores, setStores] = useState([]);
 
-
-
+  useEffect(() => {
+    getAllProducts().then(response => {
+      setProducts(response.data);
+    });
+  }, []);
+  
+  useEffect(() => {
+    getAllStores().then(response => {
+      setStores(response.data);
+    });
+  }, []);
   
 
-  const [products] = useState(mockProducts); // dados ficticios de mocprod
-  const [filteredProducts, setFilteredProducts] = useState(mockProducts); // dados ficticios de 
+  //const [products] = useState(mockProducts); // dados ficticios de mocprod
+  const [filteredProducts, setFilteredProducts] = useState([]); // dados ficticios de 
   const [randomStores, setRandomStores] = useState([]) //dados ficticios
-  const [stores, setStores] = useState(mockStores);
+  //const [stores, setStores] = useState(mockStores);
+
+useEffect(() => {
+  setFilteredProducts(products);
+}, [products]);
+
 
   useEffect(() => {//dados ficticios
     const shuffled = [...stores].sort(() => 0.5 - Math.random());
     setRandomStores(shuffled.slice(0, 3));
   }, [stores]);
 
-
-
-
-
-  const PRODUCTS_PER_PAGE = 10;
-
   const [currentPage, setCurrentPage] = useState(1);
   //const [products, setProducts] = useState([]);
   //const [filteredProducts, setFilteredProducts] = useState([]);
   //const [randomStores, setRandomStores] = useState([]);
   const [filter, setFilter] = useState({ category: '', option: '' });
-
-
-
-
 
 
   // Cálculo de páginas totais
@@ -64,10 +68,6 @@ function HomePage() {
   const handlePrev = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
-
-
-
-
 
  // 🔽 Função chamada pelo filtro
   const handleFilterChange = ({ category, option }) => {
@@ -91,38 +91,6 @@ function HomePage() {
     setCurrentPage(1);
   };
 
-
-
-
-
-
-  // Buscar produtos
-  useEffect(() => {
-    axios.get('http://localhost:8000/api/products')
-      .then(response => {
-        //setProducts(response.data);descomentar
-        //setFilteredProducts(response.data);descomentar
-      })
-      .catch(error => {
-        console.error('Erro ao buscar produtos:', error);
-      });
-  }, []);
-
-  // Buscar lojas
-  useEffect(() => {
-    axios.get('http://localhost:8000/api/stores/')
-      .then(response => {
-        //setStores(response.data); descomentar
-
-                // Embaralha e seleciona 3 lojas aleatórias
-        const shuffled = [...response.data].sort(() => 0.5 - Math.random());
-        //setRandomStores(shuffled.slice(0, 3));descomentar
-      })
-      .catch(error => {
-        console.error('Erro ao buscar lojas:', error);
-      });
-  }, []);
-
   return (
     <>
       <Header />
@@ -134,17 +102,18 @@ function HomePage() {
 
     <div className="section">
       <div className="div_tittle_session1">
-        <h2 class="tittle_session">Ofertas do Dia</h2>
+        <h2 className="tittle_session_homepage">Ofertas do Dia</h2>
         <ProductFilter onFilter={handleFilterChange}/>
       </div>
       
-      <div className="cards-container">
+      <div className="cards-container-home">
         {currentProducts.map((product) => (
           <ProductCard
             key={product.id_product}
             name={product.name}
             price={product.price}
             id={product.id_product}
+            image_url={product.image}
           />
         ))}
       </div>
@@ -152,7 +121,7 @@ function HomePage() {
 
       <div className="section">
         <div className="div_tittle_session">
-        <h2 className="tittle_session">Lojas Recomendadas</h2>
+        <h2 className="tittle_session_homepage">Lojas Recomendadas</h2>
         </div>
         <div className="cards-container-store">
         {randomStores.map((store, index) => (
@@ -160,6 +129,7 @@ function HomePage() {
               key={index} 
               name={store.name}
               id={store.id_store} 
+              image_url={store.image}
               />
         ))}
         </div>
