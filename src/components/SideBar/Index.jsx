@@ -1,36 +1,38 @@
 import React from 'react';
-import { useState } from "react";
-import styles from './Sidebar.module.css';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import styles from './NavBar.module.css';
 
-const Sidebar = () => {
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
-
-    const toggleSidebar = () => {
-        setSidebarOpen(!isSidebarOpen);
-    };
-
+const NavBar = () => {
   return (
-    <>
-        <aside className={styles.sidebar}>
-        <h2 className={styles.title}>Painel do Administrador</h2>
+    <div className={styles['nav-container']}>
         <nav className={styles.nav}>
-            <Link to="/control_panel/products" className={styles.link}>Produtos</Link>
-            <Link to="/control_panel/stores" className={styles.link}>Lojas</Link>
-            <Link to="/control_panel/stock" className={styles.link}>Estoques</Link>
+        <NavLink
+            to="/control_panel/products"
+            className={({ isActive }) => isActive ? `${styles.link} ${styles.active}` : styles.link}
+        >
+            Produtos
+        </NavLink>
+        <NavLink
+            to="/control_panel/stores"
+            className={({ isActive }) => isActive ? `${styles.link} ${styles.active}` : styles.link}
+        >
+            Lojas
+        </NavLink>
+        <NavLink
+            to="/control_panel/stock"
+            className={({ isActive }) => isActive ? `${styles.link} ${styles.active}` : styles.link}
+        >
+            Estoques
+        </NavLink>
+        <NavLink
+            to="/control_panel/sales_report"
+            className={({ isActive }) => isActive ? `${styles.link} ${styles.active}` : styles.link}
+        >
+            Relatório de Vendas
+        </NavLink>
         </nav>
-        </aside>
-
-        <div className={styles["topbar-mobile"]}> 
-            <button onClick={toggleSidebar}>☰</button>
-            <nav className={`${styles['top-nav']} ${isSidebarOpen ? styles.show : styles.hide}`}>
-            <Link to="/control_panel/products" className={styles['element-nav-1']}>Produtos</Link>
-            <Link to="/control_panel/stores" className={styles['element-nav-2']}>Lojas</Link>
-            <Link to="/control_panel/stock" className={styles['element-nav-3']}>Estoques</Link>
-            </nav>
-        </div>
-    </>
+    </div>
   );
 };
 
-export default Sidebar;
+export default NavBar;
