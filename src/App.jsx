@@ -9,6 +9,8 @@ import MyCart from './pages/myCart/index.jsx';
 import SearchPage from './pages/SearchPage/index.jsx';
 import AdmProductManage from './pages/AdmPM/index.jsx';
 import PageStore from './pages/PageStore/index.jsx';
+import AdmStoreManage from './pages/AdmSM/index.jsx';
+
 function App() {
   
   return (
@@ -21,6 +23,7 @@ function App() {
         <Route path="/myCart" element={<MyCart />} />
         <Route path="/search_page" element={<SearchPage />} />
         <Route path="/control_panel/products" element={<AdmProductManage />} />
+        <Route path="/control_panel/stores" element={<AdmStoreManage />} />
         <Route path="/page_store/:id" element={<PageStore />} />
       </Routes>
     </Router>
