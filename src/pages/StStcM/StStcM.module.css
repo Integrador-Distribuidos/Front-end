@@ -69,7 +69,7 @@ body {
 
 .header-sectionst {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: flex-start;
   gap: 1.5rem;
   max-width: 1200px;
@@ -77,6 +77,8 @@ body {
 }
 
 .h1-registed-stocks {
+  display: flex;
+  align-items: start;
   font-size: 1.5rem;
   font-weight: 700;
   color: #000000;
@@ -86,13 +88,15 @@ body {
 
 .actions-containerst {
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
   gap: 1rem;
   flex-wrap: wrap;
-  width: 100%;
+  width: 800px;
 }
 
-.button-cadastrarst {
+.button-cadastrar {
   padding: 0.75rem 1rem;
   background-color: #003f69;
   color: white;
@@ -105,8 +109,25 @@ body {
   width: fit-content;
 }
 
+.button-movimentar {
+  padding: 0.75rem 1rem;
+  background-color: #193CB8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  max-width: 300px;
+  width: fit-content;
+}
+
 .button-cadastrar:hover {
   background-color: #00548a;
+}
+
+.button-movimentar:hover {
+  background-color: #1c45d9;
 }
 
 .filterst {
@@ -149,18 +170,30 @@ body {
     cursor: pointer;
     font-weight: 800;
     transition: color 0.2s ease;
-    font-size: 13px;
-    gap: 1.5px;
+    font-size: 10.5px;
+    }
+
+  .h1-registed-stocks {
+    display: flex;
+    align-items: start;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+    width: 100%;
     }
 
   .header-sectionst {
-    flex-direction: column;
-    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    /* align-items: flex-start; */
+    align-items: stretch;
     gap: 1rem;
     padding: 1rem;
   }
 
   .actions-containerst {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     width: 100%;
@@ -193,4 +226,4 @@ body {
     padding: 1rem;
     max-width: 100%;
   }
-}
+} 

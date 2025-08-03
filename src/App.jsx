@@ -11,6 +11,7 @@ import AdmProductManage from './pages/AdmPM/index.jsx';
 import PageStore from './pages/PageStore/index.jsx';
 import AdmStoreManage from './pages/AdmSM/index.jsx';
 import AdmStockManage from './pages/AdmStockM/index.jsx';
+import AdmStockStoresManage from './pages/StStcM/index.jsx';
 
 function App() {
   
@@ -27,6 +28,7 @@ function App() {
         <Route path="/control_panel/stores" element={<AdmStoreManage />} />
         <Route path="/control_panel/stock" element={<AdmStockManage />} />
         <Route path="/page_store/:id" element={<PageStore />} />
+        <Route path="/control_panel/stores/:storeId/stock" element={<AdmStockStoresManage />} />
       </Routes>
     </Router>
   )
