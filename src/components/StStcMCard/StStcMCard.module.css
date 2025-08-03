@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 320px;
+  background-color: #fff;
+}
+
+.info {
+  font-size: 14px;
+  color: rgb(0, 0, 0);
+  font-family: 'Inter', sans-serif;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #ddd;
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.actions img {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.actions img:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+  .card {
+    flex-direction: column;
+    margin: 0 auto;
+    
+  }
+
+  .editButton {
+    top: auto;
+    right: auto;
+    align-self: flex-end;
+  }
+}
