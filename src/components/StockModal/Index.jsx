@@ -52,7 +52,7 @@ const StockModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, storeData })
             <option value="" disabled>
               Selecione uma loja
             </option>
-            {storesdata.map(store => (
+            {storeData.map(store => (
               <option key={store.id_store} value={store.id_store}>
                 {store.name} - {store.cnpj}
               </option>

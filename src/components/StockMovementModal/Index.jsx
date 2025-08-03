@@ -1,36 +1,7 @@
 import React from 'react';
 import styles from './StockModal.module.css';
 
-
-const storesdata = [
-  {
-    name: "Livraria Central",
-    cnpj: "12.345.678/0001-90",
-    city: "Fortaleza",
-    uf: "CE",
-    zip_code: "60020-000",
-    address: "Rua 24 de Maio, 150",
-    creation_date: "2023-03-10",
-    email: "contato@livrariacentral.com.br",
-    phone_number: "(85) 3054-6789",
-    id_store: 1
-  },
-  {
-    name: "TecnoInfo",
-    cnpj: "23.456.789/0001-12",
-    city: "Natal",
-    uf: "RN",
-    zip_code: "59015-000",
-    address: "Av. Prudente de Morais, 230",
-    creation_date: "2022-11-05",
-    email: "vendas@tecnoinfo.com.br",
-    phone_number: "(84) 3210-1234",
-    id_store: 2
-  },
-  // ...adicione mais lojas se necessário
-];
-
-const StockMovementModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, storeData }) => {
+const StockMovementModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, productData }) => {
   if (!isOpen) return null;
 
   function handleOverlayClick(e) {
@@ -52,9 +23,9 @@ const StockMovementModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, stor
             <option value="" disabled>
               Selecione o Produto
             </option>
-            {storesdata.map(store => (
-              <option key={store.id_store} value={store.id_store}>
-                {store.name} - {store.cnpj}
+            {productData.map(product => (
+              <option key={product.id_product} value={product.id_product}>
+                {product.name} - {product.sku}
               </option>
             ))}
           </select>
@@ -63,9 +34,9 @@ const StockMovementModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, stor
             <option value="" disabled>
               Selecione o Estoque de Origem
             </option>
-            {storesdata.map(store => (
-              <option key={store.id_store} value={store.id_store}>
-                {store.name} - {store.cnpj}
+            {stockData.map(stock => (
+              <option key={stock.id_stock} value={stock.id_stock}>
+                {stock.name} - {stock.city}
               </option>
             ))}
           </select>
@@ -74,26 +45,23 @@ const StockMovementModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, stor
             <option value="" disabled>
               Selecione o Estoque de Destino
             </option>
-            {storesdata.map(store => (
-              <option key={store.id_store} value={store.id_store}>
-                {store.name} - {store.cnpj}
+            {stockData.map(stock => (
+              <option key={stock.id_stock} value={stock.id_stock}>
+                {stock.name} - {stock.city}
               </option>
             ))}
           </select>
 
           <input
             type="number"
-            name="name"
+            name="quantity"
             placeholder="Quantidade"
             defaultValue={stockData?.name || ''}
             required
           />
 
-
-
-  
           <textarea
-            name="address"
+            name="observation"
             placeholder="Observação"
             defaultValue={stockData?.address || ''}
             required
