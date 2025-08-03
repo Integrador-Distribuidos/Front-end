@@ -8,6 +8,7 @@ import Button from '../../components/Button';
 import { useGoogleLogin } from '@react-oauth/google';
 
 const SignUp = () => {
+
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
@@ -19,7 +20,7 @@ const SignUp = () => {
   const loginWithGoogle = useGoogleLogin({
   onSuccess: async (tokenResponse) => {
     try {
-      const resp = await fetch('http://localhost:8000/users/auth/google/', {
+      const resp = await fetch('http://localhost:8001/users/auth/google/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ access_token: tokenResponse.access_token }),
@@ -60,7 +61,7 @@ const SignUp = () => {
       password,
     };
     try {
-      const response = await fetch('http://localhost:8001/users/register/', {
+      const response = await fetch('http://localhost:8001/api/users/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
