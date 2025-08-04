@@ -69,7 +69,6 @@ const Profile = () => {
                 const data = await response.json();
                 setAddresses(data);
 
-                // Procurar o endereço padrão
                 const defaultAddress = data.find(address => address.is_default);
                 if (defaultAddress) {
                     setFirstAddress(defaultAddress);
@@ -81,6 +80,50 @@ const Profile = () => {
             }
         } catch (error) {
             alert('Erro na conexão: ' + error.message);
+        }
+    };
+
+    const handleMakeAdmin = async () => {
+        const token = localStorage.getItem('access_token');
+
+        if (token) {
+            try {
+                const response = await fetch('http://localhost:8001/api/users/me/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    const userId = userData.id;
+
+                    const updateResponse = await fetch(`http://localhost:8001/api/users/${userId}/make_admin/`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`,
+                        },
+                    });
+
+                    if (updateResponse.ok) {
+                        const data = await updateResponse.json();
+                        alert(`Você agora é um administrador: ${data.first_name} ${data.last_name}`);
+                        fetchUserData();
+                    } else {
+                        const error = await updateResponse.json();
+                        alert(`Erro: ${error.detail}`);
+                    }
+                } else {
+                    alert('Erro ao obter os dados do usuário.');
+                }
+            } catch (error) {
+                alert('Erro na conexão: ' + error.message);
+            }
+        } else {
+            alert('Token de autenticação não encontrado.');
         }
     };
 
@@ -119,7 +162,7 @@ const Profile = () => {
 
     useEffect(() => {
         fetchUserData();
-        fetchAddresses(); // Busca os endereços ao carregar a página
+        fetchAddresses();
     }, []);
 
     const handleSelectAddress = async (address) => {
@@ -174,8 +217,11 @@ const Profile = () => {
                     <TextContent label={"CEP"} text={firstAddress ? firstAddress.zip_code : 'Indisponível'} customClass="small"/>
                 </div>
                 <div className={styles.buttonContainer}>
-                    <Button text="Novo Endereço" onClick={openNewAddressModal} width="200px" />
+                    <Button text="Novo Endereço" onClick={openNewAddressModal} width="180px" />
                     <Button text="Meus Endereços" onClick={openListAddressModal} width="180px" customClass="meusEnderecos" />
+                    {userData.type === 'client' && (
+                        <Button text="Tornar Admin" onClick={handleMakeAdmin} width="180px" />
+                    )}
                 </div>
                 {showNewAddressModal && (
                     <NewAddressModal
