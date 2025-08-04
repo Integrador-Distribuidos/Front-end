@@ -48,7 +48,7 @@ const SignUp = () => {
     e.preventDefault();
     setErrorMessage('');
     if (password !== password2) {
-      alert('As senhas não conferem!');
+      setErrorMessage('As senhas não conferem!');
       return;
     }
 

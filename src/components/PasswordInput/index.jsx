@@ -16,7 +16,10 @@ const PasswordInput = ({ label ,password, setPassword, outline }) => {
       />
       <button
         className={styles.visibilityToggle}
-        onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+        onClick={(e) => {
+          e.preventDefault();
+          setIsPasswordVisible(!isPasswordVisible);
+        }}
       >
         {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
       </button>
