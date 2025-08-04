@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from "./MyCart.module.css";
 import CartItem from '../../components/CartItem/index.jsx';
 import Header from '../../components/Header/Index.jsx';
@@ -26,59 +27,42 @@ const MyCart = () => {
   ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState({
-    first_name: "Roger",
-    last_name: "Junior Santos",
-    street: "Avenida Paulista",
-    number: "1578",
-    neighborhood: "Bela Vista",
-    city: "São Paulo",
-    uf: "SP",
-    zip_code: "01310-000"
-  });
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [addresses, setAddresses] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("");
 
-  const addresses = [
-    {
-      first_name: "Roger",
-      last_name: "Junior Santos",
-      street: "Avenida Paulista",
-      number: "1578",
-      neighborhood: "Bela Vista",
-      city: "São Paulo",
-      uf: "SP",
-      zip_code: "01310-000"
-    },
-    {
-      first_name: "Carlos",
-      last_name: "Silva",
-      street: "Rua Augusta",
-      number: "2000",
-      neighborhood: "Consolação",
-      city: "São Paulo",
-      uf: "SP",
-      zip_code: "01305-000"
-    },
-    {
-      first_name: "Fernanda",
-      last_name: "Almeida",
-      street: "Rua do Rio",
-      number: "250",
-      neighborhood: "Vila Progredior",
-      city: "São Paulo",
-      uf: "SP",
-      zip_code: "03320-000"
-    },
-    {
-      first_name: "Lucas",
-      last_name: "Pereira",
-      street: "Avenida Faria Lima",
-      number: "800",
-      neighborhood: "Pinheiros",
-      city: "São Paulo",
-      uf: "SP",
-      zip_code: "01451-000"
+  const navigate = useNavigate();
+
+  const checkIfLoggedIn = () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      navigate('/login');
     }
-  ];
+  };
+
+  const fetchAddresses = async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      const response = await fetch('http://localhost:8001/api/addresses/', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAddresses(data);
+        if (data.length > 0) {
+          setSelectedAddress(data[0]);
+        }
+      } else {
+        alert('Faça login para continuar!');
+      }
+    } catch (error) {
+      alert('Erro na conexão: ' + error.message);
+    }
+  };
 
   const handleRemoveItem = (id) => {
     setCartItems(prev => prev.filter(item => item.id !== id));
@@ -104,7 +88,16 @@ const MyCart = () => {
     setSelectedAddress(address);
   };
 
+  const handlePaymentMethodChange = (event) => {
+    setPaymentMethod(event.target.value);
+  };
+
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+  useEffect(() => {
+    checkIfLoggedIn();
+    fetchAddresses();
+  }, []);
 
   return (
     <div className={`${styles.pageWrapper} my-cart-wrapper`}>
@@ -125,10 +118,9 @@ const MyCart = () => {
 
           <div className={styles.sidebar}>
             <div className={styles.addressBox} onClick={handleOpenModal}>
-              <p className={styles.username}>{selectedAddress.first_name} {selectedAddress.last_name}</p>
               <p className={styles.addressText}>
-                {selectedAddress.street}, {selectedAddress.number}<br />
-                {selectedAddress.neighborhood}, {selectedAddress.city}, {selectedAddress.uf}, {selectedAddress.zip_code}
+                {selectedAddress ? `${selectedAddress.street}, ${selectedAddress.number}` : 'Selecione um endereço'}<br />
+                {selectedAddress ? `${selectedAddress.neighborhood}, ${selectedAddress.city}, ${selectedAddress.uf}, ${selectedAddress.zip_code}` : ''}
               </p>
             </div>
 
@@ -137,6 +129,19 @@ const MyCart = () => {
                 <span>Subtotal:</span>
                 <strong>R$ {subtotal.toFixed(2)}</strong>
               </div>
+
+              <div className={styles.paymentMethod}>
+                <select
+                  id="paymentMethod"
+                  value={paymentMethod}
+                  onChange={handlePaymentMethodChange}
+                >
+                  <option value="">Método de pagamento</option>
+                  <option value="pix">PIX</option>
+                  <option value="cartao">Cartão de Crédito</option>
+                </select>
+              </div>
+
               <button className={styles.orderButton}>Fazer Pedido</button>
             </div>
           </div>
