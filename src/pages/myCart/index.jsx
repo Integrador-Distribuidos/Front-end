@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importando useNavigate para redirecionamento
+import { useNavigate } from 'react-router-dom';
 import styles from "./MyCart.module.css";
 import CartItem from '../../components/CartItem/index.jsx';
 import Header from '../../components/Header/Index.jsx';
@@ -39,7 +39,6 @@ const MyCart = () => {
     }
   };
 
-  // Função para buscar os endereços do usuário
   const fetchAddresses = async () => {
     try {
       const token = localStorage.getItem('access_token');
@@ -64,7 +63,6 @@ const MyCart = () => {
     }
   };
 
-  // Outras funções do carrinho
   const handleRemoveItem = (id) => {
     setCartItems(prev => prev.filter(item => item.id !== id));
   };
