@@ -1,57 +1,58 @@
 import React, { useState } from 'react';
-import styles from './SignUp.module.css'
+import styles from './SignUp.module.css';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../../assets/stock2sell-logo.png'
+import logo from '../../assets/stock2sell-logo.png';
 import InputField from '../../components/InputField';
 import PasswordInput from '../../components/PasswordInput';
 import Button from '../../components/Button';
 import { useGoogleLogin } from '@react-oauth/google';
 
 const SignUp = () => {
-
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
   const [cpf, setCpf] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const loginWithGoogle = useGoogleLogin({
-  onSuccess: async (tokenResponse) => {
-    try {
-      const resp = await fetch('http://localhost:8001/users/auth/google/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ access_token: tokenResponse.access_token }),
-      });
+    onSuccess: async (tokenResponse) => {
+      try {
+        const resp = await fetch('http://localhost:8001/users/auth/google/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ access_token: tokenResponse.access_token }),
+        });
 
-      const data = await resp.json();
-      console.log('Token do Google:', tokenResponse.access_token);
+        const data = await resp.json();
 
-      if (!resp.ok) {
-        const message = data?.detail || data?.non_field_errors?.join(', ') || 'Erro inesperado.';
-        alert('Erro no login com Google: ' + message);
-        return;
+        if (!resp.ok) {
+          const message = data?.detail || data?.non_field_errors?.join(', ') || 'Erro inesperado.';
+          setErrorMessage('Erro no login com Google: ' + message);
+          return;
+        }
+
+        localStorage.setItem('access_token', data.access);
+        localStorage.setItem('refresh_token', data.refresh);
+        navigate('/');
+      } catch (err) {
+        setErrorMessage('Erro na autenticação com Google: ' + err.message);
       }
-
-      localStorage.setItem('access_token', data.access);
-      localStorage.setItem('refresh_token', data.refresh);
-      alert('Login com Google realizado com sucesso!');
-      navigate('/');
-    } catch (err) {
-      alert('Erro na autenticação com Google: ' + err.message);
-    }
-  },
-  onError: () => alert('Falha ao tentar login com Google.'),
-});
+    },
+    onError: () => setErrorMessage('Falha ao tentar login com Google.'),
+  });
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    setErrorMessage('');
+
     if (password !== rePassword) {
-      alert('As senhas não conferem!');
+      setErrorMessage('As senhas não conferem!');
       return;
     }
+
     const cleanedCpf = cpf.replace(/\D/g, '');
     const payload = {
       name,
@@ -60,18 +61,28 @@ const SignUp = () => {
       email: emailAddress,
       password,
     };
+
     try {
       const response = await fetch('http://localhost:8001/api/users/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+
       if (!response.ok) {
         const errorData = await response.json();
-        const errorMessage = Object.entries(errorData)
-          .map(([field, msgs]) => `${field}: ${msgs.join(', ')}`)
-          .join('\n');
-        alert('Erro no cadastro:\n' + errorMessage);
+
+        if (errorData.email?.[0]?.includes('usuário com este Endereço de e-mail já existe')) {
+          setErrorMessage('Já existe um usuário associado a endereço de E-mail.');
+        } else if (errorData.non_field_errors) {
+          setErrorMessage(errorData.non_field_errors.join(', '));
+        } else {
+          const formatted = Object.entries(errorData)
+            .map(([field, msgs]) => `${field}: ${msgs.join(', ')}`)
+            .join('\n');
+          setErrorMessage('Erro no cadastro: ' + formatted);
+        }
+
         return;
       }
 
@@ -80,6 +91,7 @@ const SignUp = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: emailAddress, password }),
       });
+
       if (loginResp.ok) {
         const loginData = await loginResp.json();
         localStorage.setItem('access_token', loginData.access);
@@ -88,11 +100,11 @@ const SignUp = () => {
       } else {
         const errData = await loginResp.json();
         console.error('Erro no login automático:', errData);
-        alert('Cadastro realizado, mas falhou login automático.');
+        setErrorMessage('Cadastro realizado, mas falhou login automático.');
       }
 
     } catch (err) {
-      alert('Erro na conexão: ' + err.message);
+      setErrorMessage('Erro na conexão: ' + err.message);
     }
   };
 
@@ -102,58 +114,66 @@ const SignUp = () => {
         <img src={logo} alt="Logo do app" className={styles.logo} />
       </Link>
       <p className={styles.ContentText}>Insira seus dados abaixo, para criar uma conta</p>
+
       <form onSubmit={handleSignUp}>
         <div className={styles.nameBox}>
-            <InputField 
+          <InputField 
             label="Nome"
             type="text"
             value={name}
             width="155px"
             height="25px"
             onChange={e => setName(e.target.value)}
-            />
-            <InputField 
+          />
+          <InputField 
             label="Sobrenome"
             type="text"
             value={lastName}
             width="155px"
             height="25px"
             onChange={e => setLastName(e.target.value)}
-            />
+          />
         </div>
         <InputField
-            label="CPF"
-            type="text"
-            value={cpf}
-            onChange={e => setCpf(e.target.value)}
-            width="350px"
-            height="25px"
+          label="CPF"
+          type="text"
+          value={cpf}
+          onChange={e => setCpf(e.target.value)}
+          width="350px"
+          height="25px"
         />
         <InputField 
-            label="E-mail"
-            type="email"
-            value={emailAddress}
-            onChange={e => setEmailAddress(e.target.value)}
-            width="350px"
-            height="25px"
+          label="E-mail"
+          type="email"
+          value={emailAddress}
+          onChange={e => setEmailAddress(e.target.value)}
+          width="350px"
+          height="25px"
         />
         <PasswordInput
-            label="Senha"
-            password={password}
-            setPassword={setPassword}
-            outline={true}
+          label="Senha"
+          password={password}
+          setPassword={setPassword}
+          outline={true}
         />
         <PasswordInput
-            label="Repetir Senha"
-            password={rePassword}
-            setPassword={setRePassword}
-            outline={true}
+          label="Repetir Senha"
+          password={rePassword}
+          setPassword={setRePassword}
+          outline={true}
         />
         <Button 
-            text="Cadastrar"
-            type="submit"
+          text="Cadastrar"
+          type="submit"
         />
       </form>
+
+      {errorMessage && (
+        <div className={styles.errorMessage}>
+          {errorMessage}
+        </div>
+      )}
+
       <div className={styles.accountActions}>
         <Link to="/login">
           <p className={styles.signupLink}>
@@ -161,9 +181,12 @@ const SignUp = () => {
           </p>
         </Link>
       </div>
-      <button className={styles.googleButton} onClick={loginWithGoogle}>Continuar com Google</button>
+
+      <button className={styles.googleButton} onClick={loginWithGoogle}>
+        Continuar com Google
+      </button>
     </div>
   );
-}
+};
 
 export default SignUp;

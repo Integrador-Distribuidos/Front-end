@@ -10,10 +10,12 @@ import { useGoogleLogin } from '@react-oauth/google';
 const Login = () => {
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate(); 
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setErrorMessage(''); 
 
     const payload = {
       email: emailAddress,
@@ -31,28 +33,26 @@ const Login = () => {
 
       if (!response.ok) {
         console.error('Erro no login:', data);
-        alert('Erro: ' + (data.detail || JSON.stringify(data)));
+        setErrorMessage(data.detail || 'E-mail ou Senha inválidas');
         return;
       }
 
       localStorage.setItem('access_token', data.access);
       localStorage.setItem('refresh_token', data.refresh);
 
-      alert('Login realizado com sucesso!');
       navigate('/');
     } catch (error) {
       console.error('Erro de conexão:', error);
-      alert('Erro na conexão: ' + error.message);
+      setErrorMessage('Erro de conexão. Tente novamente mais tarde.');
     }
   };
 
   const loginGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      console.log('✅ Google token response:', tokenResponse);
       const googleAccessToken = tokenResponse.access_token;
 
       if (!googleAccessToken) {
-        alert('❌ access_token do Google não encontrado.');
+        setErrorMessage('access_token do Google não encontrado.');
         return;
       }
 
@@ -69,23 +69,22 @@ const Login = () => {
 
         if (!response.ok) {
           console.error('Erro na resposta da API do backend:', data);
-          alert('Erro no login com Google: ' + (data.detail || JSON.stringify(data)));
+          setErrorMessage(data.detail || 'Erro no login com Google.');
           return;
         }
 
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
 
-        alert('Login com Google realizado com sucesso!');
         navigate('/');
       } catch (error) {
         console.error('Erro na autenticação com Google:', error);
-        alert('Erro na autenticação com Google: ' + error.message);
+        setErrorMessage('Erro na autenticação com Google. Tente novamente.');
       }
     },
     onError: (errorResponse) => {
-      console.error('❌ Erro no login com Google:', errorResponse);
-      alert('Falha ao tentar login com Google.');
+      console.error('Erro no login com Google:', errorResponse);
+      setErrorMessage('Falha ao tentar login com Google.');
     },
   });
 
@@ -97,6 +96,7 @@ const Login = () => {
       <p className={styles.ContentText}>
         Insira seus dados abaixo, para entrar na sua conta
       </p>
+
       <InputField
         label="E-mail"
         type="email"
@@ -111,6 +111,11 @@ const Login = () => {
         setPassword={setPassword}
         outline={true}
       />
+      {errorMessage && (
+        <div className={styles.errorMessage}>
+          {errorMessage}
+        </div>
+      )}
       <Button text="Entrar" onClick={handleLogin} />
       <div className={styles.accountActions}>
         <Link to="/signUp">
