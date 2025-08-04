@@ -8,14 +8,17 @@ import ProductModal from '../../components/ProductModal/Index.jsx';
 import ProductCard from '../../components/ProductCard/Index.jsx';
 import Pagination from '../../components/HomePage/Pagination/index.jsx';
 import {
-  getAllProducts,
+  getProductsforUser,
   createProduct,
   updateProduct,
   deleteProduct
 } from '../../services/apiProducts';
 
+import { getAllStocks } from '../../services/apiStocks.js';
+
 const AdmProductManage = () => {
   const [products, setProducts] = useState([]);
+  const [stocks, setStocks] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [filter, setFilter] = useState("recent");
@@ -27,10 +30,16 @@ const AdmProductManage = () => {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    getAllStocks()
+      .then((res) => setStocks(res.data))
+      .catch((err) => console.error('Erro ao buscar estoques:', err));
+  }, []);
+
   const fetchProducts = async () => {
     console.log("fetchProducts: iniciando busca dos produtos...");
     try {
-      const res = await getAllProducts();
+      const res = await getProductsforUser();
       console.log("fetchProducts: produtos recebidos:", res.data);
       setProducts(res.data);
     } catch (err) {
@@ -51,25 +60,32 @@ const AdmProductManage = () => {
   };
 
   // handleSubmit foi ajustado para receber formData diretamente
-  const handleSubmit = async (formData) => {
+const handleSubmit = async (formData) => {
   console.log("handleSubmit: recebendo formData:", formData);
-  for (let pair of formData.entries()) {
-    console.log(`${pair[0]}:`, pair[1]);
-  }
 
   try {
-    console.log("handleSubmit: criando novo produto");
+    let createdProduct = null;
+
     if (editingProduct) {
+      console.log("Atualizando produto existente...");
       await updateProduct(editingProduct.id_product, formData);
+      createdProduct = { id_product: editingProduct.id_product };
+
     } else {
-      await createProduct(formData);
+      console.log("Criando novo produto...");
+      createdProduct = await createProduct(formData); // <-- IMPORTANTE
     }
+
     await fetchProducts();
     handleCloseModal();
+
+    return createdProduct; // <-- Retorna aqui para ser usado na imagem
   } catch (err) {
     console.error("Erro ao salvar produto:", err);
+    throw err;
   }
 };
+
 
   const handleDelete = async (productToDelete) => {
     console.log("handleDelete: produto a ser excluído id =", productToDelete.id_product);
@@ -111,7 +127,7 @@ const AdmProductManage = () => {
       <NavBar />
 
       <div className={styles["header-section"]}>
-        <h1 className={styles['h1-products-in-stock']}>Produtos Cadastrados</h1>
+        <h1 className={styles['h1-products-in-stock']}>Todos os Produtos Cadastrados</h1>
         <div className={styles["actions-container"]}>
           <button onClick={() => handleOpenModal()} className={styles["button-cadastrar"]}>
             Cadastrar Produto
@@ -136,17 +152,23 @@ const AdmProductManage = () => {
       </div>
 
       <div className={styles["content-container"]}>
-        <div className={styles['cardsWrapper']}>
-          {currentItems.map((product) => (
-            <ProductCard
-              key={product.id_product}
-              product={product}
-              onEdit={handleOpenModal}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
+        {currentItems.length === 0 ? (
+          <p className={styles["defalt-text"]}>Nenhum Produto cadastrado</p>
+        ) : (
+          <div className={styles['cardsWrapper']}>
+            {currentItems.map((product) => (
+              <ProductCard
+                key={product.id_product}
+                product={product}
+                onEdit={handleOpenModal}
+                onDelete={handleDelete}
+                image_url={product.image}
+              />
+            ))}
+          </div>
+        )}
       </div>
+
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Pagination
@@ -164,6 +186,7 @@ const AdmProductManage = () => {
         onSubmit={handleSubmit}  
         productData={editingProduct}
         isEdit={!!editingProduct}
+        stocks={stocks}
       />
       <Footer />
     </>

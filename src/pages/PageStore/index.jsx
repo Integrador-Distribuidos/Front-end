@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import './PageStore.css';
 import { getStoreById } from '../../services/apiStore';
 import ProductCard from "../../components/HomePage/ProductCard";
-import mockProducts from '../HomePage/mockProducts';
 import Header from '../../components/Header/Index';
 import ProductFilter from '../../components/HomePage/ProductFilter';
 import Pagination from '../../components/HomePage/Pagination';
@@ -10,6 +9,7 @@ import Footer from '../../components/Footer';
 import SearchNotFound from '../../components/SearchNotFound';
 import { useLocation, useParams } from 'react-router-dom';
 import defaultImage from "../../assets/default/image_store_default.png";
+import { getAllStocks } from '../../services/apiStocks';
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 function PageStore() {
@@ -27,8 +27,8 @@ function PageStore() {
 
 
 
-  const [products] = useState(mockProducts);
-  const [filteredProducts, setFilteredProducts] = useState(mockProducts);
+  const [products] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const location = useLocation();
   const query = new URLSearchParams(location.search).get('query') || '';
@@ -42,6 +42,41 @@ function PageStore() {
   const indexStart = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const indexEnd = indexStart + PRODUCTS_PER_PAGE;
   const currentProducts = filteredProducts.slice(indexStart, indexEnd);
+const [allStoreProducts, setAllStoreProducts] = React.useState([]);
+
+useEffect(() => {
+  if (!id) return;
+  console.log("Loja ID:", id);
+
+  const fetchStoreStocksAndProducts = async () => {
+    try {
+      const response = await getAllStocks(); // ou uma API que filtre por loja
+      const stocks = response.data;
+      console.log("Todos estoques recebidos:", stocks);
+
+      const estoquesDaLoja = stocks.filter(stock => stock.id_store == id);
+      console.log("Estoques da loja:", estoquesDaLoja);
+
+      const produtosArrays = estoquesDaLoja.map(stock => stock.products || []);
+      const todosProdutos = produtosArrays.flat();
+      console.log("Todos produtos:", todosProdutos);
+
+      const produtosUnicos = Array.from(
+        new Map(todosProdutos.map(prod => [prod.id_product, prod])).values()
+      );
+      console.log("Produtos únicos:", produtosUnicos);
+
+      setAllStoreProducts(produtosUnicos);
+      setFilteredProducts(produtosUnicos);
+
+    } catch (error) {
+      console.error("Erro ao buscar produtos da loja:", error);
+    }
+  };
+
+  fetchStoreStocksAndProducts();
+}, [id]);
+
 
   const handleNext = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -140,6 +175,7 @@ function PageStore() {
                   key={product.id_product}
                   name={product.name}
                   price={product.price}
+                  id={product.id_product}
                 />
               ))}
             </div>

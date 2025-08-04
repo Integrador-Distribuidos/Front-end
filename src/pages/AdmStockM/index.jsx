@@ -13,13 +13,14 @@ import {
   updateStock,
   createStock,
   deleteStock,
-  createMovementStock
+  createMovementStock,
 } from '../../services/apiStocks.js';
-import { getAllStores } from '../../services/apiStore.js';
+import { getAllStores, getStoresByUserID} from '../../services/apiStore.js';
 import { getAllProducts } from '../../services/apiProducts.js';
 
 const AdmStockManage = () => {
   const navigate = useNavigate();
+  const [filter, setFilter] = useState("recent");
   const [stocks, setStocks] = useState([]);
   const [products, setProducts] = useState([]);
   const [stores, setStores] = useState([]);
@@ -30,12 +31,19 @@ const AdmStockManage = () => {
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
-
+    const filteredStocks = [...stocks].sort((a, b) => {
+    if (filter === "alphabetical") {
+      return a.name.localeCompare(b.name);
+    }
+    return new Date(b.creation_date) - new Date(a.creation_date);
+  });
   const totalPages = Math.ceil(stocks.length / itemsPerPage);
-  const currentItems = stocks.slice(
+  const currentItems = filteredStocks.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+
 
   const handleOpenMovementModal = (stock = null) => {
     setEditingStock(stock);
@@ -133,18 +141,19 @@ const AdmStockManage = () => {
   }, []);
 
   useEffect(() => {
-    getAllStores()
+    getStoresByUserID()
       .then((res) => setStores(res.data))
       .catch((err) => console.error('Erro ao buscar lojas:', err));
   }, []);
 
 
-    
+
 
   const handleVisualize = (stock) => {
     localStorage.setItem('id_stock', stock.id_stock);
     navigate(`/control_panel/stock/${stock.id_stock}/products`);
   };
+
 
 
   return (
@@ -169,6 +178,21 @@ const AdmStockManage = () => {
           <button onClick={() => handleOpenMovementModal()} className={styles["button-movimentar"]}>
             Movimentar Estoque
           </button>
+
+          <div className={styles["filterst"]}>
+            <label htmlFor="filterst-select">Filtrar Por:</label>
+            <select
+              id="filter-select"
+              value={filter}
+              onChange={(e) => {
+                setFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+              <option value="recent">Mais Recentes</option>
+              <option value="alphabetical">A-Z</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -177,7 +201,7 @@ const AdmStockManage = () => {
           <p className={styles['defalt-text']}>Nenhum estoque cadastrado</p>
         ) : (
           <div className={styles['cardsWrapperst']}>
-            {stocks.map((stock, idx) => (
+            {currentItems.map((stock, idx) => (
               <StockCard
                 key={idx}
                 stock={stock}

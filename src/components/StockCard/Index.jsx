@@ -16,7 +16,6 @@ const StockCard = ({ stock, onEdit, onDelete, onVisualize }) => {
       <div className={styles.info}>
         <strong className={styles.storeName}>{stock.name}</strong>
         <p>{stock.city} - {stock.uf}</p>
-        <p>Criado por: {stock.author || 'Desconhecido'}</p>
         <p>Criado em: {formatarData(stock.creation_date)}</p>
       </div>
 

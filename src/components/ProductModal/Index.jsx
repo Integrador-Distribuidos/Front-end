@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ProductModal.module.css';
+import { uploadImageProduct } from '../../services/apiProducts';
+import defaultImage from '../../assets/default/product_image_default.jpg'
 
-const ProductModal = ({ isOpen, onClose, onSubmit, productData, isEdit }) => {
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+
+const ProductModal = ({ isOpen, onClose, onSubmit, productData, isEdit, stocks}) => {
   const [preview, setPreview] = useState(''); 
   const [imageFile, setImageFile] = useState(null); 
-  
+  const imageSrc = productData?.image ? `${baseURL}/images/${productData.image}` : defaultImage;
   useEffect(() => {
     if (productData?.image) {
-      setPreview(productData.image.startsWith('http') ? productData.image : `/images/${productData.image}`);
+      setPreview(imageSrc);
     } else {
       setPreview('');
     }
@@ -39,48 +43,52 @@ const ProductModal = ({ isOpen, onClose, onSubmit, productData, isEdit }) => {
     setPreview('');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();  
+const handleSubmit = async (e) => {
+  e.preventDefault();  
 
-    const form = e.target;
-    const formData = {
-      name: form.name.value,
-      price: parseFloat(form.price.value),
-      sku: form.sku.value,
-      category: form.category.value,
-      description: form.description.value,
-      quantity: parseInt(form.quantity.value),
-      creation_date: new Date().toISOString().split('T')[0], 
-    };
+  const form = e.target;
+  const formData = {
+    id_stock: Number(form.stock.value),
+    name: form.name.value,
+    price: parseFloat(form.price.value),
+    sku: form.sku.value,
+    category: form.category.value,
+    description: form.description.value,
+    quantity: parseInt(form.quantity.value),
+    image: null, // a imagem será enviada separadamente
+    creation_date: new Date().toISOString().split('T')[0],
+  };
 
+  try {
     console.log("handleSubmit: enviando formData como JSON", formData);
-    onSubmit(formData);
+    
+    const createdProduct = await onSubmit(formData); // deve retornar { id_product }
 
-    if (imageFile) {
+    console.log("id: ", createdProduct.id_product, "fim");
+
+    if (imageFile && createdProduct?.id_product) {
       const formDataImage = new FormData();
-      formDataImage.append('image', imageFile);
-      await uploadProductImage(formDataImage);  
-    }
-  };
+      formDataImage.append('file', imageFile);
 
-  
-  const uploadProductImage = async (formDataImage) => {
-    try {
-      const productId = productData?.id_product;  
-      const response = await fetch(`/api/products/${productId}/upload-image/`, {
-        method: 'POST',
-        body: formDataImage,
-      });
-
-      if (response.ok) {
-        console.log('Imagem enviada com sucesso');
-      } else {
-        console.log('Erro ao enviar a imagem');
-      }
-    } catch (error) {
-      console.error('Erro no upload da imagem:', error);
+      await uploadProductImage(formDataImage, createdProduct.id_product);
     }
-  };
+  } catch (error) {
+    console.error("Erro ao salvar produto ou imagem:", error);
+  }
+};
+
+const uploadProductImage = async (formDataImage, id) => {
+  try {
+    const response = await uploadImageProduct(id, formDataImage);
+    if (response.status === 200) {
+      console.log('Imagem enviada com sucesso');
+    } else {
+      console.log('Erro ao enviar a imagem');
+    }
+  } catch (error) {
+    console.error('Erro no upload da imagem:', error);
+  }
+};
 
   return (
     <div className={styles.modalOverlay} onClick={handleOverlayClick}>
@@ -98,6 +106,22 @@ const ProductModal = ({ isOpen, onClose, onSubmit, productData, isEdit }) => {
               value={productData?.id_product}
             />
           )}
+
+          <select
+            name="stock"
+            className={styles.storeselect}
+            defaultValue={productData?.id_stock || ''}
+            required
+          >
+            <option value="" disabled>
+              Selecione um Estoque
+            </option>
+            {stocks?.map((stock) => (
+              <option key={stock.id_stock} value={stock.id_stock}>
+                {stock.name} - {stock.city}
+              </option>
+            ))}
+          </select>
 
           <input
             type="text"

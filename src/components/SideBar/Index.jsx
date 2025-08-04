@@ -7,12 +7,6 @@ const NavBar = () => {
     <div className={styles['nav-container']}>
         <nav className={styles.nav}>
         <NavLink
-            to="/control_panel/products"
-            className={({ isActive }) => isActive ? `${styles.link} ${styles.active}` : styles.link}
-        >
-            Produtos
-        </NavLink>
-        <NavLink
             to="/control_panel/stores"
             className={({ isActive }) => isActive ? `${styles.link} ${styles.active}` : styles.link}
         >
@@ -23,6 +17,12 @@ const NavBar = () => {
             className={({ isActive }) => isActive ? `${styles.link} ${styles.active}` : styles.link}
         >
             Estoques
+        </NavLink>
+        <NavLink
+            to="/control_panel/products"
+            className={({ isActive }) => isActive ? `${styles.link} ${styles.active}` : styles.link}
+        >
+            Produtos
         </NavLink>
         <NavLink
             to="/control_panel/sales_report"

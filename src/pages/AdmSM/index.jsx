@@ -8,11 +8,9 @@ import StoreModal from '../../components/StoreModal/Index.jsx';
 import StoreCard from '../../components/StoreCard/Index.jsx';
 import Pagination from '../../components/HomePage/Pagination/index.jsx'; 
 import {
-  getStores,
-  createStore,
-  updateStore,
   deleteStore,
 } from '../../api/stores';
+import { createStore, updateStore, uploadImageStore, getAllStores, getStoresByUserID } from '../../services/apiStore.js';
 
 const AdmStoreManage = () => {
   const [stores, setStores] = useState([]);
@@ -24,7 +22,7 @@ const AdmStoreManage = () => {
   const itemsPerPage = 9;
 
   useEffect(() => {
-    getStores()
+    getStoresByUserID()
       .then((res) => {
         setStores(res.data);
       })
@@ -44,39 +42,43 @@ const AdmStoreManage = () => {
     setEditingStore(null);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = e.target;
 
-    const storeData = {
-      name: form.name.value,
-      cnpj: form.cnpj.value.replace(/\D/g, ''),
-      city: form.city.value,
-      uf: form.state.value,
-      zip_code: form.cep.value.replace(/\D/g, ''),
-      address: form.address.value,
-      creation_date: new Date().toISOString().split("T")[0],
-      email: form.email.value,
-      phone_number: form.phone.value.replace(/\D/g, ''),
-    };
-
+  const fetchStores = async () => {
+    console.log("fetchProducts: iniciando busca dos produtos...");
     try {
-      if (editingStore) {
-        await updateStore(editingStore.id_store, storeData);
-        const updatedList = stores.map((s) =>
-          s.id_store === editingStore.id_store ? { ...s, ...storeData } : s
-        );
-        setStores(updatedList);
-      } else {
-        const res = await createStore(storeData);
-        setStores([...stores, res.data]);
-      }
-      handleCloseModal();
+      const res = await getStoresByUserID();
+      console.log("fetchProducts: produtos recebidos:", res.data);
+      setStores(res.data);
     } catch (err) {
-      console.error("Erro ao salvar loja:", err.response?.data || err.message);
-      alert("Erro ao salvar loja.");
+      console.error("Erro ao buscar produtos:", err);
     }
   };
+
+const handleSubmit = async (formData) => {
+  console.log("handleSubmit: recebendo formData:", formData);
+
+  try {
+    let createdStore = null;
+
+    if (editingStore) {
+      console.log("Atualizando loja existente...");
+      await updateStore(editingStore.id_store, formData);
+      createdStore = { id_store: editingStore.id_store };
+
+    } else {
+      console.log("Criando nova loja...");
+      createdStore = await createStore(formData); // <-- IMPORTANTE
+    }
+
+    await fetchStores();
+    handleCloseModal();
+
+    return createdStore; // <-- Retorna aqui para ser usado na imagem
+  } catch (err) {
+    console.error("Erro ao salvar produto:", err);
+    throw err;
+  }
+};
 
   const handleDelete = async (storeToDelete) => {
     const confirmDelete = window.confirm('Tem certeza que deseja excluir esta loja?');
@@ -139,6 +141,10 @@ const AdmStoreManage = () => {
         </div>
       </div>
       <div className={styles["content-containerst"]}>
+
+      {stores.length === 0 ? (
+        <p className={styles['defalt-text']}>Nenhuma Loja cadastrada</p>
+      ) : (
         <div className={styles['cardsWrapperst']}>
           {currentItems.map((store) => (
             <StoreCard
@@ -149,6 +155,9 @@ const AdmStoreManage = () => {
             />
           ))}
         </div>
+      )}
+
+
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Pagination
             currentPage={currentPage}

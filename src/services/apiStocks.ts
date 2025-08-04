@@ -1,7 +1,7 @@
 import api from './index';
 import { Stock, StockMovement } from './types/stock';
 
-export const getAllStocks = () => api.get<Stock[]>('/api/stocks/');
+export const getAllStocks = () => api.get<Stock[]>('/api/stocks/all/');
 export const getStockById = (id: number) => api.get<Stock>(`/api/stocks/${id}`);
 export const createStock = (data: Stock) => api.post('/api/stocks/', data);
 export const updateStock = (id: number, data: Stock) => api.put(`/api/stocks/${id}`, data);
