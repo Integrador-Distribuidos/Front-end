@@ -9,11 +9,11 @@ import { useGoogleLogin } from '@react-oauth/google';
 
 const SignUp = () => {
 
-  const [emailAddress, setEmailAddress] = useState('');
+  const [email, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
-  const [rePassword, setRePassword] = useState('');
-  const [name, setName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [password2, setRePassword] = useState('');
+  const [first_name, setName] = useState('');
+  const [last_name, setLastName] = useState('');
   const [cpf, setCpf] = useState('');
   const navigate = useNavigate();
 
@@ -48,17 +48,18 @@ const SignUp = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    if (password !== rePassword) {
+    if (password !== password2) {
       alert('As senhas não conferem!');
       return;
     }
     const cleanedCpf = cpf.replace(/\D/g, '');
     const payload = {
-      name,
-      last_name: lastName,
+      first_name: first_name,
+      last_name: last_name,
       cpf: cleanedCpf,
-      email: emailAddress,
-      password,
+      email: email,
+      password: password,
+      password2: password2
     };
     try {
       const response = await fetch('http://localhost:8001/api/users/', {
@@ -75,10 +76,10 @@ const SignUp = () => {
         return;
       }
 
-      const loginResp = await fetch('http://localhost:8000/users/api/token/', {
+      const loginResp = await fetch('http://localhost:8001/api/token/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailAddress, password }),
+        body: JSON.stringify({ email: email, password: password }),
       });
       if (loginResp.ok) {
         const loginData = await loginResp.json();
@@ -107,7 +108,7 @@ const SignUp = () => {
             <InputField 
             label="Nome"
             type="text"
-            value={name}
+            value={first_name}
             width="155px"
             height="25px"
             onChange={e => setName(e.target.value)}
@@ -115,7 +116,7 @@ const SignUp = () => {
             <InputField 
             label="Sobrenome"
             type="text"
-            value={lastName}
+            value={last_name}
             width="155px"
             height="25px"
             onChange={e => setLastName(e.target.value)}
@@ -132,7 +133,7 @@ const SignUp = () => {
         <InputField 
             label="E-mail"
             type="email"
-            value={emailAddress}
+            value={email}
             onChange={e => setEmailAddress(e.target.value)}
             width="350px"
             height="25px"
@@ -145,7 +146,7 @@ const SignUp = () => {
         />
         <PasswordInput
             label="Repetir Senha"
-            password={rePassword}
+            password={password2}
             setPassword={setRePassword}
             outline={true}
         />
