@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from "../SalesReport/SalesReport.module.css";
 import Header from '../../components/Header/Index.jsx';
 import { Link } from 'react-router-dom';
@@ -7,9 +7,12 @@ import NavBar from '../../components/SideBar/Index.jsx';
 import axios from 'axios';
 
 const SalesReport = () => {
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [reportData, setReportData] = useState(null);
+  const [startDate, setStartDate] = useState(() => localStorage.getItem("reportStartDate") || "");
+  const [endDate, setEndDate] = useState(() => localStorage.getItem("reportEndDate") || "");
+  const [reportData, setReportData] = useState(() => {
+    const stored = localStorage.getItem("reportData");
+    return stored ? JSON.parse(stored) : null;
+  });
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -25,8 +28,13 @@ const SalesReport = () => {
           end_date: endDate
         }
       });
+
       console.log("Resposta da API:", response.data);
       setReportData(response.data);
+
+      localStorage.setItem("reportData", JSON.stringify(response.data));
+      localStorage.setItem("reportStartDate", startDate);
+      localStorage.setItem("reportEndDate", endDate);
     } catch (error) {
       setErrorMsg("Erro ao buscar o relatório. Verifique os dados ou tente novamente.");
       console.error(error);
@@ -37,7 +45,10 @@ const SalesReport = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return null;
-    const date = new Date(dateString);
+
+    const [year, month, day] = dateString.split("-");
+    const date = new Date(year, month - 1, day);
+
     return new Intl.DateTimeFormat("pt-BR", {
       day: "2-digit",
       month: "long",
@@ -55,6 +66,13 @@ const SalesReport = () => {
 
     return `${inicio || "?"} à ${fim || "?"}`;
   };
+
+  useEffect(() => {
+    const savedData = localStorage.getItem("reportData");
+    if (savedData) {
+      setReportData(JSON.parse(savedData));
+    }
+  }, []);
 
   return (
     <>
