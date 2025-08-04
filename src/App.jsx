@@ -12,6 +12,7 @@ import PageStore from './pages/PageStore/index.jsx';
 import AdmStoreManage from './pages/AdmSM/index.jsx';
 import AdmStockManage from './pages/AdmStockM/index.jsx';
 import AdmStockStoresManage from './pages/StStcM/index.jsx';
+import SalesReport from './pages/SalesReport/index.jsx';
 import Profile from './pages/profile/index.jsx';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         <Route path="/control_panel/stock" element={<AdmStockManage />} />
         <Route path="/page_store/:id" element={<PageStore />} />
         <Route path="/control_panel/stores/:storeId/stock" element={<AdmStockStoresManage />} />
+        <Route path="/control_panel/sales_report" element={<SalesReport />} />
       </Routes>
     </Router>
   )
