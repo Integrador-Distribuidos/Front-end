@@ -122,6 +122,21 @@ body {
   width: fit-content;
 }
 
+.defalt-text{
+  /* Cadastrar uma Loja */
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 500;
+font-size: 23px;
+line-height: 28px;
+
+
+color: #000000;
+
+
+}
+
 .button-cadastrar:hover {
   background-color: #00548a;
 }

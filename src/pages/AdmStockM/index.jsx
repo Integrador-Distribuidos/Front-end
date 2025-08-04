@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from "../AdmStockM/AdmStockManage.module.css";
 import Header from '../../components/Header/Index.jsx';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer/index.jsx';
 import NavBar from '../../components/SideBar/Index.jsx';
 import StockModal from '../../components/StockModal/Index.jsx';
@@ -12,6 +12,7 @@ import { getAllStores } from '../../services/apiStore.js';
 import { getAllProducts } from '../../services/apiProducts.js';
 
 const AdmStockManage = () => {
+  const navigate = useNavigate();
   const [stocks, setStocks] = useState([]);
   const [products, setProducts] = useState([]);
   const [stores, setStores] = useState([]);
@@ -132,7 +133,12 @@ const handleDelete = async (stockToDelete) => {
   }, []);
 
 
+    
 
+  const handleVisualize = (stock) => {
+    localStorage.setItem('id_stock', stock.id_stock);
+    navigate(`/control_panel/stock/${stock.id_stock}/products`);
+  };
 
 
   return (
@@ -161,17 +167,21 @@ const handleDelete = async (stockToDelete) => {
       </div>
 
       <div className={styles["content-containerst"]}>
-        <div className={styles['cardsWrapperst']}>
-          {stocks.map((stock, idx) => (
-            <StockCard
-              key={idx}
-              stock={stock}
-              onEdit={handleOpenStockModal}
-              onDelete={handleDelete}
-              onVisualize
-            />
-          ))}
-        </div>
+        {stocks.length === 0 ? (
+          <p className={styles['defalt-text']}>Nenhum estoque cadastrado</p>
+        ) : (
+          <div className={styles['cardsWrapperst']}>
+            {stocks.map((stock, idx) => (
+              <StockCard
+                key={idx}
+                stock={stock}
+                onEdit={handleOpenStockModal}
+                onDelete={handleDelete}
+                onVisualize={handleVisualize}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <StockModal
