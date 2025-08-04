@@ -136,6 +136,7 @@ useEffect(() => {
             name={product.name}
             price={product.price}
             image_url={product.image}
+            id={product.id_product}
           />
         ))}
       </div>

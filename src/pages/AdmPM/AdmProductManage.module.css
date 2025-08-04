@@ -17,7 +17,15 @@ body {
   padding: 0 2rem;
   margin: 65px auto 0 auto;
 }
-
+.defalt-text{
+  /* Cadastrar uma Loja */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 500;
+font-size: 23px;
+line-height: 28px;
+color: #000000;
+}
 .element-1-breadcrumb-admmange,
 .element-2-breadcrumb-admmange {
   color: #6b7280;

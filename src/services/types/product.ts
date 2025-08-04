@@ -9,3 +9,10 @@ export interface Product {
   image?: string;
   quantity?: number;
 }
+
+export interface ProductStock {
+  id_product: number;
+  id_stock: number;
+  quantity: number;
+  last_update_date: string;
+}

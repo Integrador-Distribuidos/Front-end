@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from "../AdmSM/AdmStoreManage.module.css";
 import Header from '../../components/Header/Index.jsx';
 import { Link } from 'react-router-dom';
@@ -6,12 +6,31 @@ import Footer from '../../components/Footer/index.jsx';
 import NavBar from '../../components/SideBar/Index.jsx';
 import StoreModal from '../../components/StoreModal/Index.jsx';
 import StoreCard from '../../components/StoreCard/Index.jsx';
+import Pagination from '../../components/HomePage/Pagination/index.jsx'; 
+import {
+  deleteStore,
+} from '../../api/stores';
+import { createStore, updateStore, uploadImageStore, getAllStores, getStoresByUserID } from '../../services/apiStore.js';
 
 const AdmStoreManage = () => {
   const [stores, setStores] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingStore, setEditingStore] = useState(null);
   const [filter, setFilter] = useState("recent");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
+
+  useEffect(() => {
+    getStoresByUserID()
+      .then((res) => {
+        setStores(res.data);
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar lojas:", err);
+        alert("Erro ao buscar lojas.");
+      });
+  }, []);
 
   const handleOpenModal = (store = null) => {
     setEditingStore(store);
@@ -23,37 +42,69 @@ const AdmStoreManage = () => {
     setEditingStore(null);
   };
 
-  const handleSubmit = (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const newStore = {
-    name: form.name.value,
-    cnpj: form.cnpj.value,
-    city: form.city.value,
-    state: form.state.value,
-    cep: form.cep.value,
-    address: form.address.value,
-    email: form.email.value,
-    phone: form.phone.value,
-    author: 'nome elemento',
-    createdAt: new Date().toLocaleDateString('pt-BR')
-  };
 
-  if (editingStore) {
-    setStores(stores.map(s => s === editingStore ? newStore : s));
-  } else {
-    setStores([...stores, newStore]);
-  }
-
-  handleCloseModal();
-};
-
-  const handleDelete = (storeToDelete) => {
-    const confirmDelete = window.confirm('Tem certeza que deseja excluir esta loja?');
-    if (confirmDelete) {
-      setStores(stores.filter(s => s !== storeToDelete));
+  const fetchStores = async () => {
+    console.log("fetchProducts: iniciando busca dos produtos...");
+    try {
+      const res = await getStoresByUserID();
+      console.log("fetchProducts: produtos recebidos:", res.data);
+      setStores(res.data);
+    } catch (err) {
+      console.error("Erro ao buscar produtos:", err);
     }
   };
+
+const handleSubmit = async (formData) => {
+  console.log("handleSubmit: recebendo formData:", formData);
+
+  try {
+    let createdStore = null;
+
+    if (editingStore) {
+      console.log("Atualizando loja existente...");
+      await updateStore(editingStore.id_store, formData);
+      createdStore = { id_store: editingStore.id_store };
+
+    } else {
+      console.log("Criando nova loja...");
+      createdStore = await createStore(formData); // <-- IMPORTANTE
+    }
+
+    await fetchStores();
+    handleCloseModal();
+
+    return createdStore; // <-- Retorna aqui para ser usado na imagem
+  } catch (err) {
+    console.error("Erro ao salvar produto:", err);
+    throw err;
+  }
+};
+
+  const handleDelete = async (storeToDelete) => {
+    const confirmDelete = window.confirm('Tem certeza que deseja excluir esta loja?');
+    if (!confirmDelete) return;
+
+    try {
+      await deleteStore(storeToDelete.id_store);
+      setStores(stores.filter((s) => s.id_store !== storeToDelete.id_store));
+    } catch (err) {
+      console.error("Erro ao deletar loja:", err);
+      alert("Erro ao deletar loja.");
+    }
+  };
+
+  const filteredStores = [...stores].sort((a, b) => {
+    if (filter === "alphabetical") {
+      return a.name.localeCompare(b.name);
+    }
+    return new Date(b.creation_date) - new Date(a.creation_date);
+  });
+
+  const totalPages = Math.ceil(filteredStores.length / itemsPerPage);
+  const currentItems = filteredStores.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <>
@@ -67,7 +118,6 @@ const AdmStoreManage = () => {
       </div>
       <div className={styles['breadcrumb-separator-line-admmangest']}></div>
       <NavBar />
-
       <div className={styles["header-sectionst"]}>
         <h1 className={styles['h1-registed-stocks']}>Lojas Cadastradas</h1>
         <div className={styles["actions-containerst"]}>
@@ -79,7 +129,10 @@ const AdmStoreManage = () => {
             <select
               id="filter-select"
               value={filter}
-              onChange={(e) => setFilter(e.target.value)}
+              onChange={(e) => {
+                setFilter(e.target.value);
+                setCurrentPage(1);
+              }}
             >
               <option value="recent">Mais Recentes</option>
               <option value="alphabetical">A-Z</option>
@@ -87,20 +140,34 @@ const AdmStoreManage = () => {
           </div>
         </div>
       </div>
-
       <div className={styles["content-containerst"]}>
+
+      {stores.length === 0 ? (
+        <p className={styles['defalt-text']}>Nenhuma Loja cadastrada</p>
+      ) : (
         <div className={styles['cardsWrapperst']}>
-          {stores.map((store, idx) => (
+          {currentItems.map((store) => (
             <StoreCard
-              key={idx}
+              key={store.id_store}
               store={store}
               onEdit={handleOpenModal}
               onDelete={handleDelete}
             />
           ))}
         </div>
-      </div>
+      )}
 
+
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onNext={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onPrev={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+      </div>
       <StoreModal
         isOpen={modalOpen}
         onClose={handleCloseModal}
