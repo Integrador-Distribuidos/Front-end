@@ -29,6 +29,7 @@ const MyCart = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [addresses, setAddresses] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("");
 
   const navigate = useNavigate();
 
@@ -87,6 +88,10 @@ const MyCart = () => {
     setSelectedAddress(address);
   };
 
+  const handlePaymentMethodChange = (event) => {
+    setPaymentMethod(event.target.value);
+  };
+
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   useEffect(() => {
@@ -124,6 +129,19 @@ const MyCart = () => {
                 <span>Subtotal:</span>
                 <strong>R$ {subtotal.toFixed(2)}</strong>
               </div>
+
+              <div className={styles.paymentMethod}>
+                <select
+                  id="paymentMethod"
+                  value={paymentMethod}
+                  onChange={handlePaymentMethodChange}
+                >
+                  <option value="">Método de pagamento</option>
+                  <option value="pix">PIX</option>
+                  <option value="cartao">Cartão de Crédito</option>
+                </select>
+              </div>
+
               <button className={styles.orderButton}>Fazer Pedido</button>
             </div>
           </div>
