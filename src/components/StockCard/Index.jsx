@@ -1,8 +1,8 @@
 import React from 'react';
 import styles from './StockCard.module.css';
-import IconDeleteStore from '../../assets/icons/delete-icon-card-product.png'
-import IconEditStore from '../../assets/icons/edit-icon-card-product.png'
-import IconSeeStock from '../../assets/icons/visibility_icon.png'
+import IconDeleteStore from '../../assets/icons/delete-icon-card-product.png';
+import IconEditStore from '../../assets/icons/edit-icon-card-product.png';
+import IconSeeStock from '../../assets/icons/visibility_icon.png';
 
 const formatarData = (dataStr) => {
   if (!dataStr) return '';
@@ -15,14 +15,30 @@ const StockCard = ({ stock, onEdit, onDelete, onVisualize }) => {
     <div className={styles.card}>
       <div className={styles.info}>
         <strong className={styles.storeName}>{stock.name}</strong>
-        <p>Criado por: {stock.author}</p>
+        <p>{stock.city} - {stock.uf}</p>
+        <p>Criado por: {stock.author || 'Desconhecido'}</p>
         <p>Criado em: {formatarData(stock.creation_date)}</p>
       </div>
 
       <div className={styles.actions}>
-        <img src={IconEditStore} alt="edit" onClick={() => onEdit(stock)} />
-        <img src={IconSeeStock} alt="see_details" onClick={() => onVisualize(stock)}/>
-        <img src={IconDeleteStore} alt="delete" onClick={() => onDelete(stock)} />
+        <img
+          src={IconEditStore}
+          alt="editar"
+          onClick={() => onEdit && onEdit(stock)}
+          style={{ cursor: onEdit ? 'pointer' : 'default' }}
+        />
+        <img
+          src={IconSeeStock}
+          alt="visualizar"
+          onClick={() => onVisualize && onVisualize(stock)}
+          style={{ cursor: onVisualize ? 'pointer' : 'default' }}
+        />
+        <img
+          src={IconDeleteStore}
+          alt="excluir"
+          onClick={() => onDelete && onDelete(stock)}
+          style={{ cursor: onDelete ? 'pointer' : 'default' }}
+        />
       </div>
     </div>
   );

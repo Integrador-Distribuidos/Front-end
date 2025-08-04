@@ -1,35 +1,6 @@
 import React from 'react';
 import styles from './StockModal.module.css';
 
-
-const storesdata = [
-  {
-    name: "Livraria Central",
-    cnpj: "12.345.678/0001-90",
-    city: "Fortaleza",
-    uf: "CE",
-    zip_code: "60020-000",
-    address: "Rua 24 de Maio, 150",
-    creation_date: "2023-03-10",
-    email: "contato@livrariacentral.com.br",
-    phone_number: "(85) 3054-6789",
-    id_store: 1
-  },
-  {
-    name: "TecnoInfo",
-    cnpj: "23.456.789/0001-12",
-    city: "Natal",
-    uf: "RN",
-    zip_code: "59015-000",
-    address: "Av. Prudente de Morais, 230",
-    creation_date: "2022-11-05",
-    email: "vendas@tecnoinfo.com.br",
-    phone_number: "(84) 3210-1234",
-    id_store: 2
-  },
-  // ...adicione mais lojas se necessário
-];
-
 const StockModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, storeData }) => {
   if (!isOpen) return null;
 
@@ -38,6 +9,7 @@ const StockModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, storeData })
       onClose();
     }
   }
+
   return (
     <div className={styles.modalOverlay} onClick={handleOverlayClick}>
       <div className={styles.modalContent}>
@@ -48,11 +20,16 @@ const StockModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, storeData })
 
         <form onSubmit={onSubmit} className={styles.form}>
 
-          <select name="store" className={styles.storeselect} defaultValue="">
+          <select
+            name="store"
+            className={styles.storeselect}
+            defaultValue={stockData?.id_store || ''}
+            required
+          >
             <option value="" disabled>
               Selecione uma loja
             </option>
-            {storeData.map(store => (
+            {storeData.map((store) => (
               <option key={store.id_store} value={store.id_store}>
                 {store.name} - {store.cnpj}
               </option>
@@ -80,23 +57,26 @@ const StockModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, storeData })
               type="text"
               name="state"
               placeholder="UF"
-              defaultValue={stockData?.state || ''}
+              maxLength={2}
+              defaultValue={stockData?.uf || ''}
               required
             />
             <input
               type="text"
               name="cep"
               placeholder="CEP"
-              defaultValue={stockData?.cep || ''}
+              defaultValue={stockData?.zip_code || ''}
               required
             />
           </div>
+
           <textarea
             name="address"
             placeholder="Endereço"
             defaultValue={stockData?.address || ''}
             required
-          ></textarea>
+          />
+
           <button type="submit" className={styles.submitButton}>
             {isEdit ? 'Salvar Alterações' : 'Cadastrar Estoque'}
           </button>

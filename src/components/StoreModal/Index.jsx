@@ -4,11 +4,15 @@ import styles from './StoreModal.module.css';
 const StoreModal = ({ isOpen, onClose, onSubmit, storeData, isEdit }) => {
   if (!isOpen) return null;
 
-  function handleOverlayClick(e) {
+  const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
-  }
+  };
+
+  const handleOnlyDigits = (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '');
+  };
 
   return (
     <div className={styles.modalOverlay} onClick={handleOverlayClick}>
@@ -26,15 +30,14 @@ const StoreModal = ({ isOpen, onClose, onSubmit, storeData, isEdit }) => {
             defaultValue={storeData?.name || ''}
             required
           />
-
           <input
             type="text"
             name="cnpj"
             placeholder="CNPJ"
             defaultValue={storeData?.cnpj || ''}
+            onInput={handleOnlyDigits}
             required
           />
-
           <input
             type="text"
             name="city"
@@ -42,20 +45,20 @@ const StoreModal = ({ isOpen, onClose, onSubmit, storeData, isEdit }) => {
             defaultValue={storeData?.city || ''}
             required
           />
-
           <div className={styles.row}>
             <input
               type="text"
               name="state"
               placeholder="UF"
-              defaultValue={storeData?.state || ''}
+              defaultValue={storeData?.uf || ''}
               required
             />
             <input
               type="text"
               name="cep"
               placeholder="CEP"
-              defaultValue={storeData?.cep || ''}
+              defaultValue={storeData?.zip_code || ''}
+              onInput={handleOnlyDigits}
               required
             />
           </div>
@@ -78,7 +81,8 @@ const StoreModal = ({ isOpen, onClose, onSubmit, storeData, isEdit }) => {
               type="tel"
               name="phone"
               placeholder="Telefone"
-              defaultValue={storeData?.phone || ''}
+              defaultValue={storeData?.phone_number || ''}
+              onInput={handleOnlyDigits}
               required
             />
           </div>
