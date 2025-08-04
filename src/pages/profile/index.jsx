@@ -7,12 +7,49 @@ import Button from '../../components/Button/index.jsx';
 import NewAddressModal from '../../components/NewAddressModal/index.jsx';
 import ListAddressModal from '../../components/ListAddressModal/index.jsx';
 
+const CpfModal = ({ onClose, onSave }) => {
+    const [cpf, setCpf] = useState('');
+
+    const handleChange = (e) => {
+        setCpf(e.target.value);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (cpf.length === 11) {
+            onSave(cpf);
+        } else {
+            alert('Por favor, insira um CPF válido com 11 dígitos.');
+        }
+    };
+
+    return (
+        <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+                <h2>Informe seu CPF</h2>
+                <input
+                    type="text"
+                    value={cpf}
+                    onChange={handleChange}
+                    maxLength={11}
+                    placeholder="Digite seu CPF"
+                />
+                <div className={styles.modalButtons}>
+                    <Button onClick={onClose} text="Cancelar" width="130px" />
+                    <Button onClick={handleSubmit} text="Salvar" width="130px" />
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const Profile = () => {
     const [userData, setUserData] = useState(null);
     const [addresses, setAddresses] = useState([]);
     const [showNewAddressModal, setShowNewAddressModal] = useState(false);
     const [showListAddressModal, setShowListAddressModal] = useState(false);
     const [firstAddress, setFirstAddress] = useState(null);
+    const [showCpfModal, setShowCpfModal] = useState(false);
 
     const openNewAddressModal = () => setShowNewAddressModal(true);
     const closeNewAddressModal = () => setShowNewAddressModal(false);
@@ -47,6 +84,10 @@ const Profile = () => {
                 const data = await response.json();
                 setUserData(data);
                 handleProfileChange(data);
+
+                if (!data.cpf) {
+                    setShowCpfModal(true);
+                }
             } else {
                 alert('Erro ao carregar os dados do usuário');
             }
@@ -160,6 +201,39 @@ const Profile = () => {
         }
     };
 
+    const handleSaveCpf = async (cpf) => {
+        const token = localStorage.getItem('access_token');
+
+        if (!cpf || cpf.length !== 11) {
+            alert("Por favor, insira um CPF válido.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8001/api/users/${userData.id}/update_cpf/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ cpf }),
+            });
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+                alert('CPF atualizado com sucesso!');
+                setShowCpfModal(false);
+
+                fetchUserData();
+            } else {
+                const error = await response.json();
+                alert(`Erro: ${error.detail}`);
+            }
+        } catch (error) {
+            alert('Erro na conexão: ' + error.message);
+        }
+    };
+
     useEffect(() => {
         fetchUserData();
         fetchAddresses();
@@ -223,6 +297,9 @@ const Profile = () => {
                         <Button text="Tornar Admin" onClick={handleMakeAdmin} width="180px" />
                     )}
                 </div>
+                {showCpfModal && (
+                    <CpfModal onClose={() => setShowCpfModal(false)} onSave={handleSaveCpf} />
+                )}
                 {showNewAddressModal && (
                     <NewAddressModal
                         onSave={() => {
