@@ -19,7 +19,7 @@ const SalesReport = () => {
     setErrorMsg("");
 
     try {
-      const response = await axios.get(`http://localhost:8000/payments/invoices/sales_report/`, {
+      const response = await axios.get(`http://localhost:8002/payments/invoices/sales_report/`, {
         params: {
           start_date: startDate,
           end_date: endDate
