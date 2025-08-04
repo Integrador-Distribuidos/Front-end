@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Profile.module.css';
 import Header from '../../components/Header/Index.jsx';
 import Footer from '../../components/Footer/index.jsx';
@@ -56,6 +57,15 @@ const Profile = () => {
 
     const openListAddressModal = () => setShowListAddressModal(true);
     const closeListAddressModal = () => setShowListAddressModal(false);
+
+    const navigate = useNavigate();
+
+    const checkIfLoggedIn = () => {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+        navigate('/login');
+        }
+    };
 
     const truncateName = (name) => {
         if (name.length > 12) {
@@ -235,6 +245,7 @@ const Profile = () => {
     };
 
     useEffect(() => {
+        checkIfLoggedIn();
         fetchUserData();
         fetchAddresses();
     }, []);

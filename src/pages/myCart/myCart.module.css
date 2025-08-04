@@ -125,3 +125,38 @@
 button {
   transition: none;
 }
+
+.paymentMethod {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.paymentMethod select {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  color: #111111;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.paymentMethod select:focus {
+  outline: none;
+  border-color: #1e3a8a;
+  box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.3);
+}
+
+.paymentMethod::after {
+  content: ' ▼';
+  font-size: 12px;
+  color: #aaa;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
