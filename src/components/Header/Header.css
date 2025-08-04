@@ -249,5 +249,8 @@
     margin-bottom: 20px;
   }
 
+  .login-text-logout-text {
+    font-size: 0;
+}
 
 }
