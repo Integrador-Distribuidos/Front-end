@@ -9,7 +9,6 @@
 .text {
     color: #111111;
     font-size: 13px;
-    color: #99A1AF;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
