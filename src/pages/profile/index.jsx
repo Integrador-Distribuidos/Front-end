@@ -95,6 +95,8 @@ const Profile = () => {
                 setUserData(data);
                 handleProfileChange(data);
 
+                localStorage.setItem('user_type', data.type);
+
                 if (!data.cpf) {
                     setShowCpfModal(true);
                 }
