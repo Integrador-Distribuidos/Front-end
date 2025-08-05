@@ -161,7 +161,6 @@ const Profile = () => {
 
                     if (updateResponse.ok) {
                         const data = await updateResponse.json();
-                        alert(`Você agora é um administrador: ${data.first_name} ${data.last_name}`);
                         fetchUserData();
                     } else {
                         const error = await updateResponse.json();
@@ -200,7 +199,6 @@ const Profile = () => {
             });
 
             if (response.ok) {
-                alert('Endereço cadastrado com sucesso!');
                 fetchAddresses();
                 closeNewAddressModal();
             } else {
@@ -231,7 +229,6 @@ const Profile = () => {
 
             if (response.ok) {
                 const updatedUser = await response.json();
-                alert('CPF atualizado com sucesso!');
                 setShowCpfModal(false);
 
                 fetchUserData();
