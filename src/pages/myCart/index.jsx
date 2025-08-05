@@ -5,6 +5,7 @@ import CartItem from '../../components/CartItem/index.jsx';
 import Header from '../../components/Header/Index.jsx';
 import Footer from '../../components/Footer/index.jsx';
 import ListAddressModal from '../../components/ListAddressModal/index.jsx';
+import Button from '../../components/Button/index.jsx';
 
 const MyCart = () => {
   const [cartItems, setCartItems] = useState([
@@ -31,6 +32,9 @@ const MyCart = () => {
   const [addresses, setAddresses] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("");
 
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [invoiceDetails, setInvoiceDetails] = useState(null);
+
   const navigate = useNavigate();
 
   const checkIfLoggedIn = () => {
@@ -56,11 +60,9 @@ const MyCart = () => {
         if (data.length > 0) {
           setSelectedAddress(data[0]);
         }
-      } else {
-        
       }
     } catch (error) {
-      
+      console.error("Erro ao buscar endereços:", error);
     }
   };
 
@@ -93,6 +95,90 @@ const MyCart = () => {
   };
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+  const handleCheckout = async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      return navigate('/login');
+    }
+
+    try {
+      const userRes = await fetch('http://localhost:8001/api/users/me/', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const userData = await userRes.json();
+      const userId = userData.id;
+
+      const paymentType = paymentMethod === "pix" ? "PIX" : "CREDIT_CARD";
+      const value = subtotal.toFixed(2);
+      const id_order = Math.floor(Math.random() * 100000);
+
+      const invoiceData = {
+        payment_type: paymentType,
+        status: "pending",
+        value: value,
+        user_id: userId,
+        id_order: id_order,
+      };
+
+      const createResponse = await fetch('http://localhost:8002/api/invoices/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(invoiceData),
+      });
+
+      const createData = await createResponse.json();
+
+      if (!createResponse.ok) {
+        console.error(createData);
+        return alert("Erro ao criar fatura");
+      }
+
+      setInvoiceDetails({
+        id: createData.id,
+        value: Number(createData.value),
+        payment_type: createData.payment_type,
+      });
+
+      setIsPaymentModalOpen(true);
+
+    } catch (err) {
+      console.error("Erro no checkout:", err);
+      alert("Erro inesperado");
+    }
+  };
+
+  const finalizePayment = async () => {
+    const token = localStorage.getItem('access_token');
+
+    try {
+      const response = await fetch(`http://localhost:8002/api/invoices/${invoiceDetails.id}/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: 'completed' }),
+      });
+
+      if (response.ok) {
+        alert("Pagamento finalizado com sucesso!");
+        setIsPaymentModalOpen(false);
+        navigate('/');
+      } else {
+        alert("Erro ao finalizar pagamento");
+      }
+    } catch (err) {
+      console.error("Erro ao finalizar pagamento:", err);
+      alert("Erro ao finalizar pagamento");
+    }
+  };
 
   useEffect(() => {
     checkIfLoggedIn();
@@ -142,7 +228,9 @@ const MyCart = () => {
                 </select>
               </div>
 
-              <button className={styles.orderButton}>Fazer Pedido</button>
+              <button className={styles.orderButton} onClick={handleCheckout}>
+                Fazer Pedido
+              </button>
             </div>
           </div>
         </div>
@@ -156,6 +244,18 @@ const MyCart = () => {
           onSelectAddress={handleSelectAddress}
           onClose={handleCloseModal}
         />
+      )}
+
+      {isPaymentModalOpen && invoiceDetails && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <h2>Pagamento da Fatura</h2>
+            <p className={styles.invoiceText}>Valor: R$ {Number(invoiceDetails.value).toFixed(2)}</p>
+            <p className={styles.invoiceText}>Método: {invoiceDetails.payment_type === "PIX" ? "PIX" : "Cartão de Crédito"}</p>
+            <Button onClick={finalizePayment} text="Finalizar Pagamento" className={styles.confirmButton}/>
+            <Button onClick={() => setIsPaymentModalOpen(false)} text="Cancelar Pagamento" className={styles.cancelButton}/>
+          </div>
+        </div>
       )}
     </div>
   );
