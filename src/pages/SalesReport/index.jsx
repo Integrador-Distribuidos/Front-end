@@ -9,6 +9,8 @@ import axios from 'axios';
 const SalesReport = () => {
   const [startDate, setStartDate] = useState(() => localStorage.getItem("reportStartDate") || "");
   const [endDate, setEndDate] = useState(() => localStorage.getItem("reportEndDate") || "");
+  const [selectedStore, setSelectedStore] = useState(() => localStorage.getItem("reportSelectedStore") || "");
+  const [stores, setStores] = useState([]);
   const [reportData, setReportData] = useState(() => {
     const stored = localStorage.getItem("reportData");
     return stored ? JSON.parse(stored) : null;
@@ -16,8 +18,29 @@ const SalesReport = () => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
+  useEffect(() => {
+    // Buscar lista de lojas do backend
+    const fetchStores = async () => {
+      try {
+        const res = await axios.get("http://localhost:8002/api/stores/");
+        setStores(res.data);
+      } catch (error) {
+        console.error("Erro ao buscar lojas:", error);
+      }
+    };
+    fetchStores();
+
+    const savedData = localStorage.getItem("reportData");
+    if (savedData) {
+      setReportData(JSON.parse(savedData));
+    }
+    const savedStore = localStorage.getItem("reportSelectedStore");
+    if (savedStore) {
+      setSelectedStore(savedStore);
+    }
+  }, []);
+
   const handleFetchReport = async () => {
-    console.log("Datas enviadas:", startDate, endDate);
     setLoading(true);
     setErrorMsg("");
 
@@ -25,16 +48,17 @@ const SalesReport = () => {
       const response = await axios.get(`http://localhost:8002/payments/invoices/sales_report/`, {
         params: {
           start_date: startDate,
-          end_date: endDate
+          end_date: endDate,
+          store_id: selectedStore || undefined,
         }
       });
 
-      console.log("Resposta da API:", response.data);
       setReportData(response.data);
 
       localStorage.setItem("reportData", JSON.stringify(response.data));
       localStorage.setItem("reportStartDate", startDate);
       localStorage.setItem("reportEndDate", endDate);
+      localStorage.setItem("reportSelectedStore", selectedStore);
     } catch (error) {
       setErrorMsg("Erro ao buscar o relatório. Verifique os dados ou tente novamente.");
       console.error(error);
@@ -66,13 +90,6 @@ const SalesReport = () => {
 
     return `${inicio || "?"} à ${fim || "?"}`;
   };
-
-  useEffect(() => {
-    const savedData = localStorage.getItem("reportData");
-    if (savedData) {
-      setReportData(JSON.parse(savedData));
-    }
-  }, []);
 
   return (
     <>
@@ -106,6 +123,21 @@ const SalesReport = () => {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
             />
+          </div>
+          <div className={styles["filterst"]}>
+            <label htmlFor="storeSelect">Loja:</label>
+            <select
+              id="storeSelect"
+              value={selectedStore}
+              onChange={(e) => setSelectedStore(e.target.value)}
+            >
+              <option value="">Todas as lojas</option>
+              {stores.map((store) => (
+                <option key={store.id_store} value={store.id_store}>
+                  {store.name}
+                </option>
+              ))}
+            </select>
           </div>
           <button onClick={handleFetchReport} className={styles["button-cadastrarst"]}>
             Gerar Relatório
