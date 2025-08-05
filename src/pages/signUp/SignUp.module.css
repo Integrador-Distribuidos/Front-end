@@ -12,7 +12,7 @@
   max-width: 500px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #F9FAFB; 
+  background-color: #FFFFFF; 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,6 +57,17 @@
 
 .googleButton:hover{
   color: #033D62;
+}
+
+.errorMessage {
+  background-color: #ffc1c1;
+  color: #8b0000;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 1px solid #f08080;
+  text-align: center;
+  margin: 10px 0;
+  margin-top: 20px;
 }
 
 .nameBox {

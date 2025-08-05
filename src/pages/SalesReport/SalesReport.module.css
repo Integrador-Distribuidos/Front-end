@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+body {
+  background-color: #ffffff;
+  font-family: 'Inter', sans-serif;
+}
+
+.breadcrumb-sales-report {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  font-size: 14px;
+  color: #333;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+  margin: 65px auto 0 auto;
+}
+
+.element-1-breadcrumb-sales-report,
+.element-2-breadcrumb-sales-report {
+  color: #6b7280;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.element-1-breadcrumb-sales-report:hover,
+.element-2-breadcrumb-sales-report:hover {
+  color: #000000;
+  transition: 0.4s;
+}
+
+.element-2-breadcrumb-sales-report {
+  color: #000000;
+}
+
+.div-contentegt-1-sales-report {
+  color: #6b7280;
+  user-select: none;
+}
+
+.breadcrumb-separator-line-sales-report {
+  height: 1px;
+  background-color: #D9D9D9;
+  width: 100%;
+  max-width: 1200px;
+  margin: -15px auto;
+}
+
+.content-containerst {
+  padding: 1rem;
+  margin: 0 auto 50px auto;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cardsWrapperst {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.header-sectionst {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 2rem auto 1rem auto;
+}
+
+.h1-registed-stocks {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #000000;
+  margin: 0;
+  width: 100%;
+}
+
+.actions-containerst {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.button-cadastrarst {
+  padding: 0.75rem 1rem;
+  background-color: #003f69;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  max-width: 300px;
+  width: fit-content;
+}
+
+.button-cadastrarst:hover {
+  background-color: #00548a;
+}
+
+.filterst {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #444;
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+
+.filterst label {
+  font-size: 0.9rem;
+}
+
+.filterst select,
+.filterst input[type="date"] {
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  color: #333;
+  background-color: #fff;
+  cursor: pointer;
+
+  appearance: auto;
+  -webkit-appearance: auto;
+  -moz-appearance: auto;
+}
+
+.report-result {
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  padding: 1rem;
+  width: 80%;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border: 1px solid #99A1AF;
+  font-size: 1rem;
+  color: #222;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.report-result p {
+  margin: 0.5rem 0;
+}
+
+@media (max-width: 600px) {
+  body {
+    overflow-x: hidden;
+    font-size: 14px;
+  }
+
+  .breadcrumb-sales-report {
+    flex-wrap: wrap;
+    font-size: 12px;
+    padding: 0 1rem;
+    margin-top: 30px;
+  }
+
+  .element-1-breadcrumb-sales-report,
+  .element-2-breadcrumb-sales-report {
+    color: #6b7280;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 800;
+    transition: color 0.2s ease;
+    font-size: 13px;
+    gap: 1.5px;
+  }
+
+  .header-sectionst {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .actions-containerst {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .button-cadastrarst {
+    width: 100%;
+  }
+
+  .filterst {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0;
+  }
+
+  .filterst label,
+  .filterst select,
+  .filterst input[type="date"] {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .cardsWrapperst {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+
+  .content-containerst {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .report-result {
+    font-size: 14px;
+    padding: 1rem;
+  }
+}

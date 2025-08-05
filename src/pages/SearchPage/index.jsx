@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './SearchPage.css';
 import ProductCard from "../../components/HomePage/ProductCard";
-import mockProducts from '../HomePage/mockProducts';
 import Header from '../../components/Header/Index';
 import ProductFilter from '../../components/HomePage/ProductFilter';
 import Pagination from '../../components/HomePage/Pagination';
 import Footer from '../../components/Footer';
 import SearchNotFound from '../../components/SearchNotFound';
-import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+import { getAllProducts } from '../../services/apiProducts';
 
 function SearchPage() {
-
-  const [products] = useState(mockProducts); // dados ficticios de mocprod
-  const [filteredProducts, setFilteredProducts] = useState(mockProducts); // dados ficticios de 
-
-
-
-
   const location = useLocation();
   const query = new URLSearchParams(location.search).get('query') || '';
   const [searchText, setSearchText] = useState('');
@@ -25,10 +17,18 @@ function SearchPage() {
   const PRODUCTS_PER_PAGE = 15;
 
   const [currentPage, setCurrentPage] = useState(1);
-  //const [products, setProducts] = useState([]);
-  //const [filteredProducts, setFilteredProducts] = useState([]);
-  //const [randomStores, setRandomStores] = useState([]);
   const [filter, setFilter] = useState({ category: '', option: '' });
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
+  useEffect(() => {
+    getAllProducts().then(response => {
+      setProducts(response.data);
+    });
+  }, []);
+useEffect(() => {
+  setFilteredProducts(products);
+}, [products]);
 
 
   // Cálculo de páginas totais
@@ -106,19 +106,6 @@ useEffect(() => {
   }
 }, [query]);
 
-
-  // Buscar produtos
-  useEffect(() => {
-    axios.get('http://localhost:8000/api/products')
-      .then(response => {
-        //setProducts(response.data);descomentar
-        //setFilteredProducts(response.data);descomentar
-      })
-      .catch(error => {
-        console.error('Erro ao buscar produtos:', error);
-      });
-  }, []);
-
   const hasProducts = () => {
     return currentProducts && currentProducts.length > 0; 
   };
@@ -133,7 +120,7 @@ useEffect(() => {
     <div className="section">
       <div className="div_tittle_session1">
         <div className={filteredProducts.length === 0 ? 'hidden pagetittle_search_text' : 'pagetittle_search_text'}>
-            <h2 className="tittle_session">Resultados da Busca</h2>
+            <h2 className="tittle_session_searchpage">Resultados da Busca</h2>
             <h3 className="search_text"> - {query}</h3>
         </div>
 
@@ -148,6 +135,8 @@ useEffect(() => {
             key={product.id_product}
             name={product.name}
             price={product.price}
+            image_url={product.image}
+            id={product.id_product}
           />
         ))}
       </div>
@@ -169,8 +158,6 @@ useEffect(() => {
     </div>
   )
 }
-
-
 
       <Footer />
     </div>

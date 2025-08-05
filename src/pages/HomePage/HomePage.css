@@ -23,7 +23,7 @@ body {
 }
 
 /* TÍTULOS */
-.tittle_session {
+.tittle_session_homepage {
   width: 250px;
   height: 29px;
   font-family: 'Inter', sans-serif;
@@ -80,9 +80,9 @@ body {
 }
 
 /* CONTAINER DE CARDS */
-.cards-container {
+.cards-container-home {
   display: flex;
-  gap: 32px;
+  gap: 23px;
   flex-wrap: wrap;
   width: 100%;
   max-width: 1095px;
@@ -91,9 +91,9 @@ body {
 
 .cards-container-store {
   display: flex;
+  justify-content: center;
   gap: 32px;
   flex-wrap: wrap;
   width: 100%;
   max-width: 1095px;
-  justify-content: space-between;
 }

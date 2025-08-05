@@ -1,0 +1,115 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.errorMessage{
+  color: red;
+}
+
+
+.modalContent {
+  position: relative; 
+  background: white;
+  padding: 2rem 2rem 2rem 2rem;
+  border-radius: 4px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+
+.closeButton {
+  position: absolute;
+  top: 0rem;
+  right: 0rem;
+  background: transparent;
+  border: none;
+  color: #333;
+  font-size: 27px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1001;
+  transition: color 0.2s ease;
+}
+
+.closeButton:hover {
+  color: oklch(57.7% 0.245 27.325);
+  transition: 0.4s;
+}
+
+.h2-modal-product-edit-or-create {
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 0 0 1rem 0;
+  color: black;
+  margin-bottom: 2rem;
+}
+
+.form input,
+.form textarea {
+  color: #000000;
+  width: 95%;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #ffffffff;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row input {
+  flex: 1;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+
+.submitButton {
+  width: 100%;
+  background: #003e66;
+  color: white;
+  padding: 10px;
+  border: none;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Esses codigos abaixo, eu coloquei pra evitar que o input fique acinzentado */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+  box-shadow: 0 0 0px 1000px #ffffff inset;
+  -webkit-text-fill-color: #000000;
+}
+
+@media (max-width: 600px) {
+  .modalContent {
+    padding: 1rem;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+} 

@@ -44,7 +44,7 @@ border-radius: 4px;
 .loja-nome {
 /* PointCell */
 
-width: 86px;
+width: auto;
 height: 24px;
 
 font-family: 'Inter';

@@ -1,0 +1,25 @@
+.label {
+    color: #111111;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 10px;
+}
+
+.text {
+    color: #111111;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border: solid 1px #99A1AF;
+    border-radius: 4px;
+    padding: 9px;
+    background-color: #F5F5F4;
+    width: 280px;
+}
+
+.small {
+    width: 100px;
+    margin-right: 9px;
+}

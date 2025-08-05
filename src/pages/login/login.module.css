@@ -38,6 +38,16 @@
 
 }
 
+.errorMessage {
+  background-color: #ffc1c1;
+  color: #8b0000;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 1px solid #f08080;
+  text-align: center;
+  margin: 10px 0;
+}
+
 .googleButton {
   background-color: #F5F5F4;
   color: #111111;

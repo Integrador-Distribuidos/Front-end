@@ -7,17 +7,27 @@ import cartIcon from '../../assets/icons/icon-cart-header.png';
 import profileMobile from '../../assets/icons/account_circle.png';
 
 const Header = () => {
-  const navigate = useNavigate();
+  const [searchText, setSearchText] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const isLoggedIn = !!localStorage.getItem('access_token');
+  const userType = localStorage.getItem('user_type');
+  const isAdmin = isLoggedIn && userType === 'admin';
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchText.trim() !== '') {
+      navigate(`/search_page?query=${encodeURIComponent(searchText)}`);
+    }
+  };
 
   const toggleModal = () => setIsModalOpen(prev => !prev);
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    alert('Você saiu da sua conta.');
+    localStorage.removeItem('user_type');
     navigate('/login');
   };
 
@@ -30,7 +40,15 @@ const Header = () => {
 
         <div className="div-of-icon-header-logged">
           <img src={iconsearch} alt="Icon-search-header" className="icon-search-header" />
-          <input type="text" placeholder="Busque por produtos, lojas..." className="input-search-header-logged" />
+          <form onSubmit={handleSearch}>
+            <input
+              type="text"
+              placeholder="Buscar produtos..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="input-search-header-logged"
+            />
+          </form>
         </div>
 
         <div className="auth-section">
@@ -38,10 +56,19 @@ const Header = () => {
             <Link to="/myCart">
               <img src={cartIcon} alt="Carrinho" className="cart-icon" />
             </Link>
+
             {isLoggedIn ? (
-              <Link to="/profile">
-                <span className="create-account-link">Minha Conta</span>
-              </Link>
+              <>
+                <Link to="/profile">
+                  <span className="create-account-link">Minha Conta</span>
+                </Link>
+
+                {isAdmin && (
+                  <Link to="/control_panel/stores">
+                    <span className="create-account-link">Painel de Controle</span>
+                  </Link>
+                )}
+              </>
             ) : (
               <Link to="/signUp">
                 <span className="create-account-link">Criar Conta</span>
@@ -75,7 +102,13 @@ const Header = () => {
             <div className="modal-options">
               {isLoggedIn ? (
                 <>
+
+                {isAdmin && (
+                    <Link to="/control_panel/stores">Painel de Controle</Link>
+                  )}
+                  
                   <Link to="/profile">Minha Conta</Link>
+
                   <button onClick={handleLogout} className="logout-button">Sair</button>
                 </>
               ) : (
