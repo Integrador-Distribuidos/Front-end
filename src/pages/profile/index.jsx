@@ -101,10 +101,10 @@ const Profile = () => {
                     setShowCpfModal(true);
                 }
             } else {
-                alert('Erro ao carregar os dados do usuário');
+                console.log('Erro ao carregar os dados do usuário');
             }
         } catch (error) {
-            alert('Erro na conexão: ' + error.message);
+            console.error('Erro na conexão:', error);
         }
     };
 
@@ -129,10 +129,10 @@ const Profile = () => {
                     setFirstAddress(data.length > 0 ? data[0] : null);
                 }
             } else {
-                alert('Erro ao carregar os endereços');
+                console.log('Erro ao carregar os endereços');
             }
         } catch (error) {
-            alert('Erro na conexão: ' + error.message);
+            console.error('Erro na conexão:', error);
         }
     };
 
@@ -169,13 +169,13 @@ const Profile = () => {
                         alert(`Erro: ${error.detail}`);
                     }
                 } else {
-                    alert('Erro ao obter os dados do usuário.');
+                    console.log('Erro ao carregar os dados do usuário');
                 }
             } catch (error) {
-                alert('Erro na conexão: ' + error.message);
+                console.error('Erro na conexão:', error);
             }
         } else {
-            alert('Token de autenticação não encontrado.');
+            console.error('Token de acesso ausente');
         }
     };
 
