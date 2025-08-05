@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import styles from './ProductModal.module.css';
 import { uploadImageProduct } from '../../services/apiProducts';
 import defaultImage from '../../assets/default/product_image_default.jpg'
-
+import { addProductStock } from '../../services/apiProducts';
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const ProductModal = ({ isOpen, onClose, onSubmit, productData, isEdit, stocks}) => {
   const [preview, setPreview] = useState(''); 
   const [imageFile, setImageFile] = useState(null); 
+  const [errorMessage, setErrorMessage] = useState('');
   const imageSrc = productData?.image ? `${baseURL}/images/${productData.image}` : defaultImage;
   useEffect(() => {
     if (productData?.image) {
@@ -63,6 +64,19 @@ const handleSubmit = async (e) => {
     console.log("handleSubmit: enviando formData como JSON", formData);
     
     const createdProduct = await onSubmit(formData); // deve retornar { id_product }
+    const product_stockdata = {
+        id_product: createdProduct.id_product,
+        id_stock: createdProduct.id_stock,
+        quantity: createdProduct.quantity,
+        last_update_date: new Date().toISOString().split('T')[0],
+    }
+    try {
+      await addProductStock(product_stockdata)
+      onClose(); // fecha modal após sucesso
+    } catch (error) {
+      // Axios guarda o erro em error.response.data
+      const msg = error.response?.data?.detail || 'Erro inesperado no servidor';
+      setErrorMessage(msg);};
 
     console.log("id: ", createdProduct.id_product, "fim");
 
@@ -86,7 +100,8 @@ const uploadProductImage = async (formDataImage, id) => {
       console.log('Erro ao enviar a imagem');
     }
   } catch (error) {
-    console.error('Erro no upload da imagem:', error);
+    const msg = error.response?.data?.detail || 'Erro inesperado no servidor';
+    setErrorMessage(msg)
   }
 };
 
@@ -97,6 +112,7 @@ const uploadProductImage = async (formDataImage, id) => {
         <h2 className={styles['h2-modal-product-edit-or-create']}>
           {isEdit ? 'Editar Produto' : 'Cadastrar Produto'}
         </h2>
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           {isEdit && (

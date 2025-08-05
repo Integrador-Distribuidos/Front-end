@@ -11,6 +11,10 @@
   z-index: 1000;
 }
 
+.errorMessage{
+  color: red;
+}
+
 
 .modalContent {
   position: relative; 

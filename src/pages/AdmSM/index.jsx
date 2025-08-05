@@ -17,7 +17,7 @@ const AdmStoreManage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingStore, setEditingStore] = useState(null);
   const [filter, setFilter] = useState("recent");
-
+  const [errorMessage, setErrorMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
 
@@ -69,15 +69,36 @@ const handleSubmit = async (formData) => {
       console.log("Criando nova loja...");
       createdStore = await createStore(formData); // <-- IMPORTANTE
     }
+    setErrorMessage("")
 
     await fetchStores();
     handleCloseModal();
 
     return createdStore; // <-- Retorna aqui para ser usado na imagem
   } catch (err) {
-    console.error("Erro ao salvar produto:", err);
-    throw err;
+  console.error("Erro ao salvar loja:", err);
+
+  let errorMessage = "Erro desconhecido";
+
+  if (err.response && err.response.data) {
+    if (typeof err.response.data === 'string') {
+      errorMessage = err.response.data;
+    } else if (err.response.data.detail) {
+      errorMessage = err.response.data.detail;
+    } else if (err.response.data.message) {
+      errorMessage = err.response.data.message;
+    } else {
+      errorMessage = JSON.stringify(err.response.data);
+    }
+  } else if (err.message) {
+    errorMessage = err.message;
   }
+
+  // Aqui você pode exibir no modal, toast, ou salvar no estado:
+  setErrorMessage(errorMessage); // <- Exemplo de função para exibir no modal
+
+  throw err; // Opcionalmente, ainda lança o erro
+}
 };
 
   const handleDelete = async (storeToDelete) => {
@@ -174,6 +195,7 @@ const handleSubmit = async (formData) => {
         onSubmit={handleSubmit}
         storeData={editingStore}
         isEdit={!!editingStore}
+        error={errorMessage}
       />
       <Footer />
     </>
