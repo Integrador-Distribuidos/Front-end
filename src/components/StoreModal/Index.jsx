@@ -4,7 +4,7 @@ import defaultImage from '../../assets/default/product_image_default.jpg'
 import { uploadImageStore } from '../../services/apiStore';
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
-const StoreModal = ({ isOpen, onClose, onSubmit, storeData, isEdit }) => {
+const StoreModal = ({ isOpen, onClose, onSubmit, storeData, isEdit, error }) => {
   const [preview, setPreview] = useState(''); 
   const [imageFile, setImageFile] = useState(null); 
   const imageSrc = storeData?.image ? `${baseURL}/images/${storeData.image}` : defaultImage;
@@ -96,6 +96,7 @@ const uploadStoreImage = async (id, formDataImage) => {
         <h2 className={styles['h2-modal-product-edit-or-create']}>
           {isEdit ? 'Editar Loja' : 'Cadastrar uma Loja'}
         </h2>
+        {error && <div className={styles.errorMessage}>{error}</div>}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <input

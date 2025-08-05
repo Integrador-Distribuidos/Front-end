@@ -27,7 +27,7 @@ function PageStore() {
 
 
 
-  const [products] = useState([]);
+  const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   const location = useLocation();
@@ -67,6 +67,7 @@ useEffect(() => {
       console.log("Produtos únicos:", produtosUnicos);
 
       setAllStoreProducts(produtosUnicos);
+      setProducts(produtosUnicos)
       setFilteredProducts(produtosUnicos);
 
     } catch (error) {
@@ -148,7 +149,7 @@ useEffect(() => {
         <div className="section">
 
           <div className="div_tittle_session1">
-            <div className={filteredProducts.length === 0 ? 'hidden pagetittle_search_text' : 'pagetittle_search_text'}>
+            <div className={'pagetittle_search_text'}>
               <h2 className="tittle_session">Página da Loja</h2>
               <h3 className="search_text"> - {store.name}</h3>
             </div>
@@ -163,37 +164,40 @@ useEffect(() => {
 
           <div className='product_filter'>
             <h2 className='text_products'>Produtos Mais Vendidos</h2>
-            {filteredProducts.length > 0 && (
               <ProductFilter onFilter={handleFilterChange} />
-            )}
           </div>
 
-          {filteredProducts.length > 0 && (
-            <div className="cards-container">
-              {currentProducts.map((product) => (
-                <ProductCard
-                  key={product.id_product}
-                  name={product.name}
-                  price={product.price}
-                  id={product.id_product}
-                />
-              ))}
-            </div>
+        <div className="cards-container">
+          {currentProducts.length > 0 ? (
+            currentProducts.map((product) => (
+              <ProductCard
+                key={product.id_product}
+                name={product.name}
+                price={product.price}
+                id={product.id_product}
+              />
+            ))
+          ) : (
+            <p className="productnotfound">Nenhum Produto Encontrado!</p>
           )}
         </div>
-
-        {filteredProducts.length === 0 ? (
-          <SearchNotFound redirect_url={'/'} />
+          
+        </div>
+      <div className="section">
+        {currentProducts.length === 0 ? (
+          <p></p>
         ) : (
-          <div className="section">
+          
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
               onNext={handleNext}
               onPrev={handlePrev}
             />
-          </div>
+          
         )}
+        
+        </div>
         <Footer />
       </div>
     </>

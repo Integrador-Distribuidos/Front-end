@@ -11,7 +11,7 @@ function ProductCard({ name, price, id, image_url}) {
     <div className="product-card">
       <img className='product_img' src={imageSrc} alt="Imagem do produto" />
       <h3 className="product_name">{name}</h3>
-      <h3 className="product_price">R$ {price}</h3>
+      <h3 className="product_price">R$ {Number(price).toFixed(2)}</h3>
     </div>
     </Link>
   );

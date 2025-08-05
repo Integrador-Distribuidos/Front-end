@@ -12,23 +12,25 @@ import ProductCard from '../../components/HomePage/ProductCard/index.jsx';
 const baseURL = import.meta.env.VITE_API_BASE_URL;
   
 const ProductDetailContent = () => {
-  
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [products, setProducts] = useState(null);
-  const [store, setStore] = useState(null);
-  const [stock, setStock] = useState(null);
-  const imageSrc = product?.image ? `${baseURL}/images/${product.image}` : defaultImage;
-
-
-
   const navigate = useNavigate();
 
-  const handleSeeStore = () => {
-    if (stock && stock.id_store) {
-      navigate(`/page_store/${stock.id_store}`);
-    }
-  };
+  const [product, setProduct] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [store, setStore] = useState(null);
+  const [stock, setStock] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+
+  const imageSrc = product?.image ? `${baseURL}/images/${product.image}` : defaultImage;
+
+  // Autenticação
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    setIsAuthenticated(!!token);
+  }, []);
+
+  // Buscar produto principal
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -38,65 +40,80 @@ const ProductDetailContent = () => {
         console.error("Erro ao carregar produto:", error);
       }
     };
-
-  fetchProduct();
+    fetchProduct();
   }, [id]);
 
+  // Buscar todos os produtos (para produtos relacionados)
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProducts = async () => {
       try {
-        const response = await getAllProducts(id);
+        const response = await getAllProducts(); // Não precisa de `id`
         setProducts(response.data);
       } catch (error) {
         console.error("Erro ao carregar produtos:", error);
       }
     };
+    fetchProducts();
+  }, []);
 
-    fetchProduct();
-  }, [id]);
+  // Buscar estoque e loja do produto
+  useEffect(() => {
+    const fetchStore = async () => {
+      if (!product?.id_stock) return;
 
+      try {
+        const stockRes = await getStockById(product.id_stock);
+        setStock(stockRes.data);
+
+        const storeRes = await getStoreById(stockRes.data.id_store);
+        setStore(storeRes.data);
+      } catch (error) {
+        console.error("Erro ao carregar Loja:", error);
+      }
+    };
+
+    fetchStore();
+  }, [product]);
 useEffect(() => {
-  const fetchStore = async () => {
-    if (!product || !product.id_stock) return;
+  if (!products.length || !product) return;
 
-    try {
-      const stock_response = await getStockById(product.id_stock);
-      const stockData = stock_response.data;
-      console.log(stockData)
-      setStock(stockData);
-      
-      const store = await getStoreById(stockData.id_store);
-      console.log(store)
-      setStore(store.data); // ← supondo que você queria salvar a loja, não um "produto"
-    } catch (error) {
-      console.error("Erro ao carregar Loja:", error);
-    }
-  };
-
-  fetchStore();
-}, [product]);
-
-  if (!product) {
-    return <p className={styles['default-text']}>Carregando produto...</p>;
-  }
-
-const getRelatedProducts = () => {
-  if (!products || !product) return [];
-
+  // Filtra produtos com nome semelhante (exceto o próprio)
   const similar = products.filter(
     (p) =>
       p.id_product !== product.id_product &&
       p.name.toLowerCase().includes(product.name.toLowerCase())
   );
 
+  // Fallback para preencher até 3 se necessário
   const fallback = products
-    .filter((p) => p.id_product !== product.id_product && !similar.includes(p))
+    .filter(
+      (p) =>
+        p.id_product !== product.id_product &&
+        !similar.includes(p)
+    )
     .slice(0, 3 - similar.length);
 
-  return [...similar, ...fallback].slice(0, 3);
-};
+  // Combina os resultados
+  const combined = [...similar, ...fallback].slice(0, 3);
 
-const relatedProducts = getRelatedProducts();
+  // Define diretamente
+  setRelatedProducts(combined);
+}, [product, products]);
+  const handleSeeStore = () => {
+    if (stock?.id_store) {
+      navigate(`/page_store/${stock.id_store}`);
+    }
+  };
+
+  // Exibição de carregamento
+  if (!product) {
+    return <p className={styles['default-text']}>Carregando produto...</p>;
+  }
+
+  // Formatar preço com 2 casas decimais
+  const formattedPrice = product.price
+    ? Number(product.price).toFixed(2)
+    : '0.00';
 
 
   return (
@@ -111,9 +128,11 @@ const relatedProducts = getRelatedProducts();
         <p className={styles['lol']}>_</p>
       </div>
       <div className={styles['breadcrumb-separator-line']}></div>
-      <div className={styles['alert-div-account-not-logged']}>
-        <p className={styles['p-adanl']}>Entre com sua conta, para comprar esse produto!</p>
-      </div>
+        {!isAuthenticated && (
+          <div className={styles['alert-div-account-not-logged']}>
+            <p className={styles['p-adanl']}>Entre com sua conta, para comprar esse produto!</p>
+          </div>
+        )}
       <div className={styles['content-page-detail']}>
         <div className={styles['left-side-container']}>
           <div className={styles['image-div-content-detail']}>
@@ -129,7 +148,7 @@ const relatedProducts = getRelatedProducts();
         </div>
         <div className={styles['div-of-content-right']}>
           <p className={styles['name-of-product-detail']}>{product.name}</p>
-          <p className={styles['price-of-product-detail']}>{product.price}</p>
+          <p className={styles['price-of-product-detail']}>R$ {Number(product.price).toFixed(2)}</p>
           <p className={styles['description-product']}>
             {product.description}
           </p>
@@ -144,20 +163,19 @@ const relatedProducts = getRelatedProducts();
         <h2 className={styles['title']}>Produtos Relacionados</h2>
         <div className={styles['product-grid']}>
           {relatedProducts.map((product) => (
-            <Link to={`/product_detail/${product.id_product}`}>
-            <div key={product.id_product} className={styles['card']} onClick={() => setProduct(product)}>
-              <a href="#" className={styles['card-link']}>
-                <div className={styles['card-photo']}>
-                  <img 
+          <Link key={product.id_product} to={`/product_detail/${product.id_product}`} className={styles['card']}>
+            <div className={styles['card-link']}>
+              <div className={styles['card-photo']}>
+                <img 
                   src={product?.image ? `${baseURL}/images/${product.image}` : defaultImage} 
                   alt={`Imagem do produto ${product.name}`} 
-                  className={styles['card-photo']}/>
-                </div>
-                <div className={styles['card-name']}>{product.name}</div>
-                <div className={styles['card-price']}>R$ {product.price}</div>
-              </a>
+                  className={styles['card-photo']}
+                />
+              </div>
+              <div className={styles['card-name']}>{product.name}</div>
+              <div className={styles['card-price']}>R$ {Number(product.price).toFixed(2)}</div>
             </div>
-            </Link>
+          </Link>
           ))}
         </div>
       </div>

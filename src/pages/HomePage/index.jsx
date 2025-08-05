@@ -111,7 +111,7 @@ useEffect(() => {
           <ProductCard
             key={product.id_product}
             name={product.name}
-            price={product.price}
+            price={Number(product.price).toFixed(2)}
             id={product.id_product}
             image_url={product.image}
           />
