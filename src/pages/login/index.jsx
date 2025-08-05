@@ -40,7 +40,7 @@ const Login = () => {
       localStorage.setItem('access_token', data.access);
       localStorage.setItem('refresh_token', data.refresh);
 
-      navigate('/');
+      navigate('/profile');
     } catch (error) {
       console.error('Erro de conexão:', error);
       setErrorMessage('Erro de conexão. Tente novamente mais tarde.');
@@ -76,7 +76,7 @@ const Login = () => {
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
 
-        navigate('/');
+        navigate('/profile');
       } catch (error) {
         console.error('Erro na autenticação com Google:', error);
         setErrorMessage('Erro na autenticação com Google. Tente novamente.');
