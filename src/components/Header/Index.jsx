@@ -28,7 +28,6 @@ const Header = () => {
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    alert('Você saiu da sua conta.');
     navigate('/login');
   };
 

@@ -57,10 +57,10 @@ const MyCart = () => {
           setSelectedAddress(data[0]);
         }
       } else {
-        alert('Faça login para continuar!');
+        
       }
     } catch (error) {
-      alert('Erro na conexão: ' + error.message);
+      
     }
   };
 
