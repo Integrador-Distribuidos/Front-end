@@ -121,7 +121,7 @@ const handleAddToCart = async () => {
           id_user: userId,
           id_store: stock.id_store,
           status: "draft",
-          order_date: null,
+          order_date: today,
           total_value: product.price * quantity,
           creation_date: today,
         };

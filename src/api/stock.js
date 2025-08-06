@@ -1,8 +1,4 @@
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: 'http://localhost:8000/api', 
-});
+import api from './index.js';
 
 
 export const getAllStocks = () => api.get('/stocks/');
