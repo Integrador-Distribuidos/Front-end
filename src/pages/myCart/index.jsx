@@ -8,30 +8,13 @@ import ListAddressModal from '../../components/ListAddressModal/index.jsx';
 import Button from '../../components/Button/index.jsx';
 
 const MyCart = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      image: "/placeholder.png",
-      name: "Camisa Palmeiras X Kidsuper 25/26",
-      store: "Palmeiras Oficial",
-      price: 629.99,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      image: "/placeholder.png",
-      name: "Camisa Palmeiras X Kidsuper 25/26",
-      store: "Palmeiras Oficial",
-      price: 629.99,
-      quantity: 2,
-    },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+  const [draftOrderId, setDraftOrderId] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [addresses, setAddresses] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("");
-
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [invoiceDetails, setInvoiceDetails] = useState(null);
 
@@ -48,7 +31,6 @@ const MyCart = () => {
     try {
       const token = localStorage.getItem('access_token');
       const response = await fetch('http://localhost:8001/api/addresses/', {
-        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -57,74 +39,137 @@ const MyCart = () => {
       if (response.ok) {
         const data = await response.json();
         setAddresses(data);
-        if (data.length > 0) {
-          setSelectedAddress(data[0]);
-        }
+        if (data.length > 0) setSelectedAddress(data[0]);
       }
     } catch (error) {
       console.error("Erro ao buscar endereços:", error);
     }
   };
 
-  const handleRemoveItem = (id) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
+  const fetchCart = async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+
+    try {
+      const userRes = await fetch('http://localhost:8001/api/users/me/', {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      const userData = await userRes.json();
+
+      const ordersRes = await fetch(`http://localhost:8000/api/orders/`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      const orders = await ordersRes.json();
+
+      const draftOrder = orders.find(order => order.id_user === userData.id && order.status === 'draft');
+      if (!draftOrder) return;
+
+      setDraftOrderId(draftOrder.id_order);
+
+      const itemsRes = await fetch(`http://localhost:8000/api/orders/${draftOrder.id_order}/items/`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      const items = await itemsRes.json();
+
+      const enrichedItems = await Promise.all(items.map(async item => {
+        const productRes = await fetch(`http://localhost:8000/api/products/${item.id_product}/`);
+        const product = await productRes.json();
+        return {
+          id: item.id_product,
+          quantity: item.quantity,
+          price: item.unit_price,
+          name: product.name,
+          image: product.image ? `http://localhost:8000/images/${product.image}` : '/placeholder.png',
+          store: 'Loja Exemplo',
+          id_order_item: item.id_order_item,
+          id_order: item.id_order,
+        };
+      }));
+
+      setCartItems(enrichedItems);
+    } catch (err) {
+      console.error("Erro ao buscar carrinho:", err);
+    }
   };
 
-  const handleQuantityChange = (id, newQuantity) => {
-    setCartItems(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
+  const handleRemoveItem = async (id_order_item) => {
+    const token = localStorage.getItem('access_token');
+    try {
+      const res = await fetch(`http://localhost:8000/api/orders/items/${id_order_item}/`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      if (res.ok) {
+        setCartItems(prev => prev.filter(item => item.id_order_item !== id_order_item));
+      } else {
+        alert("Erro ao remover item");
+      }
+    } catch (err) {
+      console.error("Erro ao remover item:", err);
+    }
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
+  const handleQuantityChange = async (id_order_item, newQuantity) => {
+    const token = localStorage.getItem('access_token');
+    try {
+      const res = await fetch(`http://localhost:8000/api/orders/items/${id_order_item}/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ quantity: newQuantity })
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Erro ao atualizar quantidade:", errorData);
+        alert("Erro ao atualizar quantidade");
+        return;
+      }
+
+      setCartItems(prev =>
+        prev.map(item =>
+          item.id_order_item === id_order_item
+            ? { ...item, quantity: newQuantity }
+            : item
+        )
+      );
+    } catch (err) {
+      console.error("Erro na requisição PATCH:", err);
+      alert("Erro ao atualizar item no carrinho");
+    }
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleSelectAddress = (address) => {
-    setSelectedAddress(address);
-  };
-
-  const handlePaymentMethodChange = (event) => {
-    setPaymentMethod(event.target.value);
-  };
-
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+  const handleSelectAddress = (address) => setSelectedAddress(address);
+  const handlePaymentMethodChange = (e) => setPaymentMethod(e.target.value);
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
     const token = localStorage.getItem('access_token');
-    if (!token) {
-      return navigate('/login');
-    }
+    if (!token || !draftOrderId) return navigate('/login');
 
     try {
       const userRes = await fetch('http://localhost:8001/api/users/me/', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Authorization': `Bearer ${token}` },
       });
-
       const userData = await userRes.json();
-      const userId = userData.id;
 
+      const today = new Date().toISOString().split("T")[0];
       const paymentType = paymentMethod === "pix" ? "PIX" : "CREDIT_CARD";
-      const value = subtotal.toFixed(2);
-      const id_order = Math.floor(Math.random() * 100000);
 
       const invoiceData = {
         payment_type: paymentType,
         status: "pending",
-        value: value,
-        user_id: userId,
-        id_order: id_order,
+        value: subtotal.toFixed(2),
+        user_id: userData.id,
+        id_order: draftOrderId,
       };
 
-      const createResponse = await fetch('http://localhost:8002/api/invoices/', {
+      const invoiceRes = await fetch('http://localhost:8002/api/invoices/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,12 +178,12 @@ const MyCart = () => {
         body: JSON.stringify(invoiceData),
       });
 
-      const createData = await createResponse.json();
-
-      if (!createResponse.ok) {
-        console.error(createData);
+      if (!invoiceRes.ok) {
+        console.error(await invoiceRes.json());
         return alert("Erro ao criar fatura");
       }
+
+      const createData = await invoiceRes.json();
 
       setInvoiceDetails({
         id: createData.id,
@@ -147,7 +192,6 @@ const MyCart = () => {
       });
 
       setIsPaymentModalOpen(true);
-
     } catch (err) {
       console.error("Erro no checkout:", err);
       alert("Erro inesperado");
@@ -183,6 +227,7 @@ const MyCart = () => {
   useEffect(() => {
     checkIfLoggedIn();
     fetchAddresses();
+    fetchCart();
   }, []);
 
   return (
@@ -194,10 +239,10 @@ const MyCart = () => {
           <div className={styles.itemsList}>
             {cartItems.map((item) => (
               <CartItem
-                key={item.id}
+                key={item.id_order_item}
                 {...item}
-                onRemove={handleRemoveItem}
-                onQuantityChange={handleQuantityChange}
+                onRemove={() => handleRemoveItem(item.id_order_item)}
+                onQuantityChange={(newQty) => handleQuantityChange(item.id_order_item, newQty)}
               />
             ))}
           </div>
@@ -252,8 +297,8 @@ const MyCart = () => {
             <h2>Pagamento da Fatura</h2>
             <p className={styles.invoiceText}>Valor: R$ {Number(invoiceDetails.value).toFixed(2)}</p>
             <p className={styles.invoiceText}>Método: {invoiceDetails.payment_type === "PIX" ? "PIX" : "Cartão de Crédito"}</p>
-            <Button onClick={finalizePayment} text="Finalizar Pagamento" className={styles.confirmButton}/>
-            <Button onClick={() => setIsPaymentModalOpen(false)} text="Cancelar Pagamento" className={styles.cancelButton}/>
+            <Button onClick={finalizePayment} text="Finalizar Pagamento" className={styles.confirmButton} />
+            <Button onClick={() => setIsPaymentModalOpen(false)} text="Cancelar Pagamento" className={styles.cancelButton} />
           </div>
         </div>
       )}

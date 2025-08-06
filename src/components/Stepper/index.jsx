@@ -1,21 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './stepper.module.css';
 
-const Stepper = () => {
-  const [count, setCount] = useState(1);
-
-  const increment = () => setCount(count + 1);
-  const decrement = () => {
-    if (count > 1) setCount(count - 1);
-  };
+const Stepper = ({ value, setValue }) => {
+  const increment = () => setValue(prev => prev + 1);
+  const decrement = () => setValue(prev => (prev > 1 ? prev - 1 : 1));
 
   const handleChange = (e) => {
-    const value = e.target.value.replace(/^0+(?=\d)/, '');
-    const parsed = Number(value);
+    const raw = e.target.value.replace(/^0+(?=\d)/, '');
+    const parsed = Number(raw);
+
     if (!isNaN(parsed) && parsed >= 1) {
-      setCount(parsed);
-    } else if (value === '') {
-      setCount('');
+      setValue(parsed);
+    } else if (raw === '') {
+      setValue('');
     }
   };
 
@@ -25,7 +22,7 @@ const Stepper = () => {
       <input
         type="number"
         className={styles.input}
-        value={count}
+        value={value}
         onChange={handleChange}
         min="1"
       />

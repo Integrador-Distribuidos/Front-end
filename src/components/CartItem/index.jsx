@@ -1,19 +1,19 @@
 import { Trash2 } from 'lucide-react';
 import styles from './CartItem.module.css';
 
-const CartItem = ({ id, image, name, store, price, quantity, onRemove, onQuantityChange }) => {
+const CartItem = ({ image, name, store, price, quantity, onRemove, onQuantityChange }) => {
   const handleDecrease = () => {
     if (quantity > 1) {
-      onQuantityChange(id, quantity - 1);
+      onQuantityChange(quantity - 1);
     }
   };
 
   const handleIncrease = () => {
-    onQuantityChange(id, quantity + 1);
+    onQuantityChange(quantity + 1);
   };
 
   const handleRemove = () => {
-    onRemove(id);
+    onRemove();
   };
 
   return (
