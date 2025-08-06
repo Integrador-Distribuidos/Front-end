@@ -131,7 +131,9 @@ const MyCart = () => {
 
       setCartItems(prev =>
         prev.map(item =>
-          item.id_order_item === id_order_item ? { ...item, quantity: newQuantity } : item
+          item.id_order_item === id_order_item
+            ? { ...item, quantity: newQuantity }
+            : item
         )
       );
     } catch (err) {
