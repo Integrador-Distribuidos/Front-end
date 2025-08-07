@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './StoreModal.module.css';
 import defaultImage from '../../assets/default/product_image_default.jpg'
-import { uploadImageStore } from '../../services/apiStore';
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const StoreModal = ({ isOpen, onClose, onSubmit, storeData, isEdit, error }) => {
@@ -17,46 +16,27 @@ const StoreModal = ({ isOpen, onClose, onSubmit, storeData, isEdit, error }) => 
     setImageFile(null); 
   }, [storeData]);
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   const form = e.target;
 
-  const storeData = {
-    name: form.name.value,
-    cnpj: form.cnpj.value.replace(/\D/g, ''),
-    creation_date: new Date().toISOString().split("T")[0],
-    email: form.email.value,
-    phone_number: form.phone.value.replace(/\D/g, ''),
-  };
-
-  try {
-    console.log("handleSubmit: enviando dados da loja como JSON", storeData);
-    
-    const createdStore = await onSubmit(storeData); // deve retornar { id_store }
-
-    console.log("id da loja criada: ", createdStore.id_store);
-
-    if (imageFile && createdStore?.id_store) {
-      const formDataImage = new FormData();
-      formDataImage.append('file', imageFile);
-
-      await uploadStoreImage(createdStore.id_store, formDataImage);
-    }
-  } catch (error) {
-    console.error("Erro ao salvar loja ou imagem:", error);
+  const formData = new FormData();
+  formData.append("name", form.name.value);
+  formData.append("cnpj", form.cnpj.value.replace(/\D/g, ''));
+  formData.append("email", form.email.value);
+  formData.append("phone_number", form.phone.value.replace(/\D/g, ''));
+  formData.append('creation_date', new Date().toISOString().split('T')[0]);
+  const imageFile2 = form.image.files[0];
+  if (imageFile2) {
+    formData.append('image', imageFile2);
+    setImageFile(imageFile2);
   }
-};
 
-const uploadStoreImage = async (id, formDataImage) => {
   try {
-    const response = await uploadImageStore(id, formDataImage);
-    if (response.status === 200) {
-      console.log('Imagem enviada com sucesso');
-    } else {
-      console.log('Erro ao enviar a imagem');
-    }
+    const updatedStore = await onSubmit(formData);
+    console.log("Loja atualizada:", updatedStore);
   } catch (error) {
-    console.error('Erro no upload da imagem:', error);
+    console.error("Erro ao atualizar loja:", error);
   }
 };
 
@@ -132,7 +112,7 @@ const uploadStoreImage = async (id, formDataImage) => {
               required
             />
           </div>
-                    <input
+          <input
             type="file"
             name="image"
             accept="image/*"
