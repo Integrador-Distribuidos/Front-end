@@ -48,62 +48,38 @@ const handleSubmit = async (e) => {
   e.preventDefault();  
 
   const form = e.target;
-  const formData = {
-    id_stock: Number(form.stock.value),
-    name: form.name.value,
-    price: parseFloat(form.price.value),
-    sku: form.sku.value,
-    category: form.category.value,
-    description: form.description.value,
-    quantity: parseInt(form.quantity.value),
-    image: null, // a imagem será enviada separadamente
-    creation_date: new Date().toISOString().split('T')[0],
-  };
+const formData = new FormData();
 
-  try {
-    console.log("handleSubmit: enviando formData como JSON", formData);
-    
-    const createdProduct = await onSubmit(formData); // deve retornar { id_product }
-    const product_stockdata = {
-        id_product: createdProduct.id_product,
-        id_stock: createdProduct.id_stock,
-        quantity: createdProduct.quantity,
-        last_update_date: new Date().toISOString().split('T')[0],
-    }
-    try {
-      await addProductStock(product_stockdata)
-      onClose(); // fecha modal após sucesso
-    } catch (error) {
-      // Axios guarda o erro em error.response.data
-      const msg = error.response?.data?.detail || 'Erro inesperado no servidor';
-      setErrorMessage(msg);};
+formData.append('id_stock', Number(form.stock.value));
+formData.append('name', form.name.value);
+formData.append('price', parseFloat(form.price.value));
+formData.append('sku', form.sku.value);
+formData.append('category', form.category.value);
+formData.append('description', form.description.value);
+formData.append('quantity', parseInt(form.quantity.value));
+formData.append('creation_date', new Date().toISOString().split('T')[0]);
 
-    console.log("id: ", createdProduct.id_product, "fim");
+const imageFile2 = form.image.files[0];
+if (imageFile2) {
+  formData.append('image', imageFile2);
+  setImageFile(imageFile2);
+}
 
-    if (imageFile && createdProduct?.id_product) {
-      const formDataImage = new FormData();
-      formDataImage.append('file', imageFile);
+// Debug: visualizar FormData
+for (const [key, value] of formData.entries()) {
+  console.log(`${key}:`, value);
+}
 
-      await uploadProductImage(formDataImage, createdProduct.id_product);
-    }
-  } catch (error) {
-    console.error("Erro ao salvar produto ou imagem:", error);
-  }
-};
+try {
+  const createdProduct = await onSubmit(formData); // envia formData
+  onClose(); // fecha modal
 
-const uploadProductImage = async (formDataImage, id) => {
-  try {
-    const response = await uploadImageProduct(id, formDataImage);
-    if (response.status === 200) {
-      console.log('Imagem enviada com sucesso');
-    } else {
-      console.log('Erro ao enviar a imagem');
-    }
-  } catch (error) {
-    const msg = error.response?.data?.detail || 'Erro inesperado no servidor';
-    setErrorMessage(msg)
-  }
-};
+} catch (error) {
+  //console.error("Erro ao salvar produto ou imagem:", error);
+  const msg = error.response?.data?.detail || 'Erro inesperado no servidor';
+  setErrorMessage(msg);
+}}
+
 
   return (
     <div className={styles.modalOverlay} onClick={handleOverlayClick}>

@@ -6,12 +6,22 @@ export const getProductsforUser = () => api.get<Product[]>('/api/products/');
 export const getProductById = (id: number) => api.get<Product>(`/api/products/${id}`);
 
 export const createProduct = async (data: Product) => {
-  const response = await api.post('/api/products/', data);
-  return response.data; // ← isso retorna o produto criado, incluindo o id_product
+  const response = await api.post('/api/products/', data,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
+  return response.data;
 };
 
 export const updateProduct = async (id: number, data: Product) => {
-    const response = await api.put(`/api/products/${id}`, data);
+    const response = await api.put(`/api/products/${id}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
 }
 

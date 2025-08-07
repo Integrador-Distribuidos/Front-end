@@ -9,12 +9,21 @@ export const deleteStore = (id: number) => api.delete(`/api/stores/${id}`);
 
 
 export const createStore = async (data: Store) => {
-  const response = await api.post('/api/stores/', data);
+  const response = await api.post('/api/stores/', data,
+    {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return response.data;
 };
 
 export const updateStore = async (id: number, data: Store) => {
-    const response = await api.put(`/api/stores/${id}`, data);
+    const response = await api.put(`/api/stores/${id}`, data,{
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
 }
 
