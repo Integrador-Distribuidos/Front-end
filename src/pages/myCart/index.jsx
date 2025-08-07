@@ -10,7 +10,6 @@ import Button from '../../components/Button/index.jsx';
 const MyCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [draftOrderId, setDraftOrderId] = useState(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [addresses, setAddresses] = useState([]);
@@ -163,7 +162,7 @@ const MyCart = () => {
 
       const invoiceData = {
         payment_type: paymentType,
-        status: "pending",
+        status: "pending", 
         value: subtotal.toFixed(2),
         user_id: userData.id,
         id_order: draftOrderId,
@@ -212,9 +211,25 @@ const MyCart = () => {
       });
 
       if (response.ok) {
+        const finalizeRes = await fetch(`http://localhost:8000/api/orders/${draftOrderId}/finalize/`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!finalizeRes.ok) {
+          alert("Erro ao finalizar pedido");
+          return;
+        }
+       
+        const newOrder = await finalizeRes.json();
+        setDraftOrderId(newOrder.id_order); 
+
         alert("Pagamento finalizado com sucesso!");
         setIsPaymentModalOpen(false);
-        navigate('/');
+        navigate('/'); 
       } else {
         alert("Erro ao finalizar pagamento");
       }
