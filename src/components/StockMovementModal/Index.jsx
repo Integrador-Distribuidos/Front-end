@@ -19,7 +19,7 @@ const StockMovementModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, prod
 
         <form onSubmit={onSubmit} className={styles.form}>
 
-          <select name="product" className={styles.storeselect} defaultValue="">
+          <select name="product" className={styles.storeselect} defaultValue="" required>
             <option value="" disabled>
               Selecione o Produto
             </option>
@@ -30,7 +30,7 @@ const StockMovementModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, prod
             ))}
           </select>
 
-          <select name="stock_origin" className={styles.storeselect} defaultValue="">
+          <select name="stock_origin" className={styles.storeselect} defaultValue="" required>
             <option value="" disabled>
               Selecione o Estoque de Origem
             </option>
@@ -41,7 +41,7 @@ const StockMovementModal = ({ isOpen, onClose, onSubmit, stockData, isEdit, prod
             ))}
           </select>
 
-          <select name="stock_destination" className={styles.storeselect} defaultValue="">
+          <select name="stock_destination" className={styles.storeselect} defaultValue="" required>
             <option value="" disabled>
               Selecione o Estoque de Destino
             </option>

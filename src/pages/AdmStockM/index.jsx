@@ -108,6 +108,8 @@ const AdmStockManage = () => {
       creation_date: new Date().toISOString().split("T")[0],
     };
 
+    console.log("Movimentação de Estoque:", newStockMovement);
+
     try {
       await createMovementStock(newStockMovement);
       handleCloseMovementModal();
