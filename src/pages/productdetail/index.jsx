@@ -21,6 +21,7 @@ const ProductDetailContent = () => {
   const [quantity, setQuantity] = useState(1);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [showCartMessage, setShowCartMessage] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -129,10 +130,11 @@ const ProductDetailContent = () => {
         }, token);
       }
 
-      alert('Produto adicionado ao carrinho!');
+      setShowCartMessage(true);
+      setTimeout(() => setShowCartMessage(false), 10000);
     } catch (err) {
       console.error(err);
-      alert('Erro ao adicionar ao carrinho');
+      console.log('Erro ao adicionar ao carrinho');
     }
   };
 
@@ -158,50 +160,71 @@ const ProductDetailContent = () => {
         <p className={styles['lol']}>_</p>
       </div>
       <div className={styles['breadcrumb-separator-line']}></div>
-
       {!isAuthenticated && (
         <div className={styles['alert-div-account-not-logged']}>
           <p className={styles['p-adanl']}>Entre com sua conta, para comprar esse produto!</p>
         </div>
       )}
-
       <div className={styles['content-page-detail']}>
         <div className={styles['left-side-container']}>
           <div className={styles['image-div-content-detail']}>
             <img src={imageSrc} alt="Imagem do produto" className={styles['image-div-content-detail']} />
           </div>
           <div className={styles['list-name-of-store']}>
-            <div className={styles['imagem-of-store-of-cpd']}></div>
+            <img
+              src={store?.image ? `${baseURL}/images/${store.image}` : defaultImage}
+              alt={`Logo da loja ${store?.name}`}
+              className={styles['imagem-of-store-of-cpd']}
+            />
             <p className={styles['name-of-store-in-cpd']}>{store?.name}</p>
             <button onClick={handleSeeStore} className={styles['button-see-store-cpd']}>
-              Ver Loja
+              Visitar
             </button>
           </div>
         </div>
-
         <div className={styles['div-of-content-right']}>
           <p className={styles['name-of-product-detail']}>{product.name}</p>
-          <p className={styles['price-of-product-detail']}>R$ {formattedPrice}</p>
-          <p className={styles['description-product']}>{product.description}</p>
-
-          <div className={styles["cart-actions-container"]}>
-            <Stepper
-              value={quantity}
-              setValue={setQuantity}
-              min={1}
-              max={stock?.quantity || 1}
-            />
-            <button
-              className={styles["button-add-to-cart"]}
-              onClick={handleAddToCart}
-              disabled={stock?.quantity === 0}
-            >
-              {stock?.quantity === 0 ? "Indisponível" : "Adicionar ao carrinho"}
-            </button>
-          </div>
+          {product.quantity === 0 ? (
+            <p className={styles['product-out-of-stock']}>
+              Sinto muito :( <br />
+              Esse produto está <strong>esgotado</strong> no momento.
+            </p>
+          ) : (
+            <>
+              <p className={styles['quantity-stock-items']}>
+                {product.quantity <= 10 ? (
+                  <>Restam apenas <strong>{product.quantity}</strong> itens em estoque</>
+                ) : (
+                  <><strong>{product.quantity}</strong> itens em estoque</>
+                )}
+              </p>
+              <p className={styles['price-of-product-detail']}>R$ {formattedPrice}</p>
+              <p className={styles['description-product']}>{product.description}</p>
+              <div className={styles["cart-actions-container"]}>
+                {showCartMessage && (
+                  <p className={styles["cart-message"]}>
+                    Produto adicionado ao carrinho.{' '}
+                    <Link to="/Mycart" className={styles["cart-link"]}>Clique aqui para ver seu carrinho.</Link>
+                  </p>
+                )}
+                <Stepper
+                  value={quantity}
+                  setValue={setQuantity}
+                  min={1}
+                  max={stock?.quantity || 1}
+                />
+                <button
+                  className={styles["button-add-to-cart"]}
+                  onClick={handleAddToCart}
+                  disabled={stock?.quantity === 0}
+                >
+                  Adicionar ao carrinho
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
-
       <div className={styles['related-products-section']}>
         <h2 className={styles['title']}>Produtos Relacionados</h2>
         <div className={styles['product-grid']}>
@@ -222,7 +245,6 @@ const ProductDetailContent = () => {
           ))}
         </div>
       </div>
-
       <Footer />
     </>
   );
