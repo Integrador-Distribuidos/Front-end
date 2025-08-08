@@ -12,6 +12,7 @@ import {
 } from '../../api/stores';
 import { createStore, updateStore, uploadImageStore, getAllStores, getStoresByUserID } from '../../services/apiStore.js';
 
+
 const AdmStoreManage = () => {
   const [stores, setStores] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -63,7 +64,7 @@ const handleSubmit = async (formData) => {
     if (editingStore) {
       console.log("Atualizando loja existente...");
       await updateStore(editingStore.id_store, formData);
-      createdStore = { id_store: editingStore.id_store };
+      createdStore = { ...editingStore, ...formData }; // Atualiza os dados da loja editada
 
     } else {
       console.log("Criando nova loja...");

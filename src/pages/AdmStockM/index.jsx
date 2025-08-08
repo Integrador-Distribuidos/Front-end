@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from "../AdmStockM/AdmStockManage.module.css";
 import Header from '../../components/Header/Index.jsx';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Footer from '../../components/Footer/index.jsx';
 import NavBar from '../../components/SideBar/Index.jsx';
 import StockModal from '../../components/StockModal/Index.jsx';
@@ -19,6 +19,8 @@ import { getAllStores, getStoresByUserID} from '../../services/apiStore.js';
 import { getAllProducts } from '../../services/apiProducts.js';
 
 const AdmStockManage = () => {
+  const location = useLocation();
+  const storeId = location.state?.id_store;
   const navigate = useNavigate();
   const [filter, setFilter] = useState("recent");
   const [stocks, setStocks] = useState([]);
@@ -27,23 +29,44 @@ const AdmStockManage = () => {
   const [editingStock, setEditingStock] = useState(null);
   const [modalStockOpen, setModalStockOpen] = useState(false);
   const [modalMovementOpen, setModalMovementOpen] = useState(false);
+  const [filteredStocks, setFilteredStocks] = useState([]); 
 
   // Paginação
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
-    const filteredStocks = [...stocks].sort((a, b) => {
-    if (filter === "alphabetical") {
-      return a.name.localeCompare(b.name);
-    }
-    return new Date(b.creation_date) - new Date(a.creation_date);
-  });
+useEffect(() => {
+  let filtered = stocks;
+
+  // Filtra por loja específica, se houver
+  if (storeId) {
+    filtered = filtered.filter(stock => stock.id_store === storeId);
+  }
+
+  // Ordena conforme filtro selecionado
+  if (filter === "alphabetical") {
+    filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+  } else {
+    filtered = [...filtered].sort((a, b) =>
+      new Date(b.creation_date) - new Date(a.creation_date)
+    );
+  }
+
+  setFilteredStocks(filtered);
+}, [stocks, filter, storeId]);
   const totalPages = Math.ceil(stocks.length / itemsPerPage);
   const currentItems = filteredStocks.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-
+  useEffect(() => {
+    if (storeId) {
+      const filtered = stocks.filter(stock => stock.id_store === storeId);
+      setFilteredStocks(filtered);
+    } else {
+      setFilteredStocks(stocks);
+    }
+  }, [storeId, stocks]);
 
   const handleOpenMovementModal = (stock = null) => {
     setEditingStock(stock);
@@ -199,8 +222,8 @@ const AdmStockManage = () => {
       </div>
 
       <div className={styles["content-containerst"]}>
-        {stocks.length === 0 ? (
-          <p className={styles['defalt-text']}>Nenhum estoque cadastrado</p>
+        {currentItems.length === 0 ? (
+          <p className={styles['defalt-text']}>Nenhum Estoque Encontrado!</p>
         ) : (
           <div className={styles['cardsWrapperst']}>
             {currentItems.map((stock, idx) => (
