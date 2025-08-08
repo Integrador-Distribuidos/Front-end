@@ -15,6 +15,7 @@ const StoreCard = ({ store, onEdit, onDelete, onSeeStock }) => {
     phone_number,
     id_store,
     image,
+    balance,
   } = store;
   const navigate = useNavigate();
 
@@ -36,6 +37,7 @@ const StoreCard = ({ store, onEdit, onDelete, onSeeStock }) => {
       />
       <div className={styles.details}>
         <h3 className={styles.name}>{name}</h3>
+        <p className={styles.field_balance}><strong>Saldo:</strong> {balance}</p>
         <p className={styles.field}><strong>CNPJ:</strong> {cnpj}</p>
         <p className={styles.field}><strong>Email:</strong> {email}</p>
         <p className={styles.field}><strong>Telefone:</strong> {phone_number}</p>

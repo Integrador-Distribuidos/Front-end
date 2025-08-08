@@ -13,7 +13,17 @@
 .card:hover {
   transform: translateY(-4px);
 }
-
+.field_balance strong {
+  color: #555;
+}
+.field_balance:last-child {
+  font-weight: bold;
+  color: #2a7;
+}
+.field_balance{
+  color: #2a7;
+  margin: 0;
+}
 .image {
   width: 100%;
   height: 200px;

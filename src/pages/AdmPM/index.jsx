@@ -23,6 +23,7 @@ const AdmProductManage = () => {
   const [stocks, setStocks] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [sortedProducts, setSortedProducts] = useState([]);
   const [filter, setFilter] = useState("recent");
   const id_stock = location.state?.id_stock;
   const [currentPage, setCurrentPage] = useState(1);
@@ -110,17 +111,21 @@ const handleSubmit = async (formData) => {
     }
   };
 
-  const filtered = [...filteredProducts].sort((a, b) => {
+useEffect(() => {
+  const sorted = [...filteredProducts].sort((a, b) => {
     if (filter === "low") return a.price - b.price;
     if (filter === "high") return b.price - a.price;
     return new Date(b.creation_date) - new Date(a.creation_date);
   });
 
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const currentItems = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  setSortedProducts(sorted);
+}, [filteredProducts, filter]);
+
+const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+const currentItems = sortedProducts.slice(
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+);
 
   return (
     <>
