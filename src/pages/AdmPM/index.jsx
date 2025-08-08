@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from "../AdmPM/AdmProductManage.module.css";
 import Header from '../../components/Header/Index.jsx';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Footer from '../../components/Footer/index.jsx';
 import NavBar from '../../components/SideBar/Index.jsx';
 import ProductModal from '../../components/ProductModal/Index.jsx';
@@ -17,15 +17,24 @@ import {
 import { getAllStocks } from '../../services/apiStocks.js';
 
 const AdmProductManage = () => {
+  const location = useLocation();
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [stocks, setStocks] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [filter, setFilter] = useState("recent");
-
+  const id_stock = location.state?.id_stock;
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
-
+  useEffect(() => {
+    if (id_stock) {
+      const filtered = products.filter(product => product.id_stock === id_stock);
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [id_stock, products]);
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -101,7 +110,7 @@ const handleSubmit = async (formData) => {
     }
   };
 
-  const filteredProducts = [...products].sort((a, b) => {
+  const filtered = [...filteredProducts].sort((a, b) => {
     if (filter === "low") return a.price - b.price;
     if (filter === "high") return b.price - a.price;
     return new Date(b.creation_date) - new Date(a.creation_date);
@@ -153,7 +162,7 @@ const handleSubmit = async (formData) => {
 
       <div className={styles["content-container"]}>
         {currentItems.length === 0 ? (
-          <p className={styles["defalt-text"]}>Nenhum Produto cadastrado</p>
+          <p className={styles["defalt-text"]}>Nenhum Produto Encontrado!</p>
         ) : (
           <div className={styles['cardsWrapper']}>
             {currentItems.map((product) => (

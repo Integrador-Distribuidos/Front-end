@@ -7,6 +7,7 @@ const StoreModal = ({ isOpen, onClose, onSubmit, storeData, isEdit, error }) => 
   const [preview, setPreview] = useState(''); 
   const [imageFile, setImageFile] = useState(null); 
   const imageSrc = storeData?.image ? `${baseURL}/images/${storeData.image}` : defaultImage;
+  
   useEffect(() => {
     if (storeData?.image) {
       setPreview(imageSrc);

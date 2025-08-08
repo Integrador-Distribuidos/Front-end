@@ -1,53 +1,72 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
 .card {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 1rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 0.5rem;
-  width: 100%;
-  max-width: 320px;
   background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  width: 350px;
+  margin: 16px auto;
+  transition: transform 0.2s ease-in-out;
 }
 
-.info {
-  font-size: 14px;
-  color: rgb(0, 0, 0);
-  font-family: 'Inter', sans-serif;
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background-color: #f2f2f2;
+  flex-shrink: 0;
+}
+
+.details {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+  height: 2.5rem;        /* altura fixa para 1 linha */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.field {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 0;
+  height: 1.4rem;       /* altura fixa para 1 linha */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .actions {
+  margin-top: auto;     /* empurra ações para o fim da coluna */
   display: flex;
-  justify-content: space-around;
-  border-top: 1px solid #ddd;
-  padding-top: 0.5rem;
-  margin-top: 0.5rem;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.actions img {
-  width: 24px;
-  height: 24px;
+.icon {
+  width: 28px;
+  height: 28px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
 }
 
-.actions img:hover {
+.icon:hover {
   transform: scale(1.1);
-}
-
-@media (max-width: 600px) {
-  .card {
-    flex-direction: column;
-    margin: 0 auto;
-    
-  }
-
-  .editButton {
-    top: auto;
-    right: auto;
-    align-self: flex-end;
-  }
 }
