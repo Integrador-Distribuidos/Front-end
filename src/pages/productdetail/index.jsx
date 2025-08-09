@@ -98,8 +98,9 @@ const ProductDetailContent = () => {
       const items = await itemsRes.json();
       const exist = items.find(it => it.id_product === product.id_product);
 
- 
       if (exist) {
+        const totalQty = exist.quantity + quantity;
+
         await fetch(`http://localhost:8000/api/orders/items/${exist.id_order_item}/`, {
           method: 'PATCH',
           headers: {

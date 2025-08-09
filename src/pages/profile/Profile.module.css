@@ -151,3 +151,8 @@
   90% { opacity: 1; }
   100% { opacity: 0; }
 }
+
+.historicoPedidos {
+  background-color: #4a90e2;
+  color: white;
+}
