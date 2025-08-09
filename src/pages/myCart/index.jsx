@@ -166,6 +166,7 @@ const MyCart = () => {
         value: subtotal.toFixed(2),
         user_id: userData.id,
         id_order: draftOrderId,
+        user_cpf: userData.cpf,
       };
 
       const invoiceRes = await fetch('http://localhost:8002/api/invoices/', {
