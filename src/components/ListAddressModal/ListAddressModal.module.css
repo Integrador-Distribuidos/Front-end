@@ -2,65 +2,75 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .modalContent {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    max-height: 500px;
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    width: 700px;
+    max-width: 800px;
+    max-height: 85vh;
     overflow-y: auto;
-    color: black;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    color: #000;
+    box-sizing: border-box;
 }
 
-h2 {
+.modalContent h2 {
     text-align: center;
-    margin-bottom: 20px;
-    color: black;
+    margin-bottom: 24px;
+    color: #033D62;
+    font-size: 22px;
 }
 
 .addressList {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .addressItem {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 12px;
     cursor: pointer;
-    color: black;
+    transition: background 0.2s ease, border 0.2s ease;
+    color: #333;
 }
 
 .addressItem:hover {
-    background-color: #f4f4f4;
+    background-color: #f0f8ff;
 }
 
 .selected {
     border: 2px solid #033D62;
     background-color: #e7f3ff;
-    border-radius: 10px;
 }
 
 .modalActions {
     display: flex;
     justify-content: space-between;
+    gap: 10px;
 }
 
 button {
-    padding: 10px 20px;
+    flex: 1;
+    padding: 12px;
     font-size: 16px;
     border: none;
     background-color: #033D62;
     color: white;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
 }
 
 button:disabled {
@@ -68,4 +78,34 @@ button:disabled {
     cursor: not-allowed;
 }
 
+.cancelButton-laddm {
+  background-color: #E7000B;
+  transition: background-color 0.4s ease;
+}
+.cancelButton-laddm:hover {
+  background-color: #c20f18;
+}
 
+.modalContent::-webkit-scrollbar {
+    width: 10px; 
+}
+
+.modalContent::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 10px;
+}
+
+.modalContent::-webkit-scrollbar-thumb {
+    background-color: #033D62; 
+    border-radius: 10px;
+    border: 2px solid #f1f1f1; 
+}
+
+.modalContent::-webkit-scrollbar-thumb:hover {
+    background-color: #3b3b3b; 
+}
+
+.modalContent {
+    scrollbar-width: thin;
+    scrollbar-color: #3b3b3b #f1f1f1;
+}
