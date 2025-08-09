@@ -18,7 +18,7 @@ import Profile from './pages/profile/index.jsx';
 function App() {
   
   return (
-    <Router>
+    <Router basename='/Front-end'>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signUp" element={<SignUp />} />
