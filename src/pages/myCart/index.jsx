@@ -16,6 +16,7 @@ const MyCart = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [invoiceDetails, setInvoiceDetails] = useState(null);
+  const [qrCodeImage, setQrCodeImage] = useState(null);
 
   const navigate = useNavigate();
 
@@ -102,7 +103,7 @@ const MyCart = () => {
       if (res.ok) {
         setCartItems(prev => prev.filter(item => item.id_order_item !== id_order_item));
       } else {
-        alert("Erro ao remover item");
+       console.error("Erro ao remover item");
       }
     } catch (err) {
       console.error("Erro ao remover item:", err);
@@ -137,7 +138,7 @@ const MyCart = () => {
       );
     } catch (err) {
       console.error("Erro na requisição PATCH:", err);
-      alert("Erro ao atualizar item no carrinho");
+     console.error("Erro ao atualizar item no carrinho");
     }
   };
 
@@ -180,7 +181,7 @@ const MyCart = () => {
 
       if (!invoiceRes.ok) {
         console.error(await invoiceRes.json());
-        return alert("Erro ao criar fatura");
+        return console.log("Erro ao criar fatura");
       }
 
       const createData = await invoiceRes.json();
@@ -191,10 +192,47 @@ const MyCart = () => {
         payment_type: createData.payment_type,
       });
 
+      const paymentData = {
+        id: createData.id,
+      };
+
+      const paymentResponse = await fetch('http://localhost:8002/api/transactions/process_payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(paymentData),
+      });
+
+      if (paymentResponse.ok) {
+        console.log("Pagamento processado com sucesso!");
+
+        const qrCodeResponse = await fetch('http://localhost:8002/api/transactions/get_qr_code', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(paymentData),
+        });
+
+        if (qrCodeResponse.ok) {
+          const qrCodeData = await qrCodeResponse.json();
+          setQrCodeImage(qrCodeData.encodedImage);
+        } else {
+          console.error("Erro ao obter QR Code.");
+        }
+
+      } else {
+        console.log("Erro ao processar pagamento.");
+      }
+
       setIsPaymentModalOpen(true);
+
     } catch (err) {
       console.error("Erro no checkout:", err);
-      alert("Erro inesperado");
+     console.error("Erro inesperado");
     }
   };
 
@@ -221,22 +259,22 @@ const MyCart = () => {
         });
 
         if (!finalizeRes.ok) {
-          alert("Erro ao finalizar pedido");
+          console.error("Erro ao finalizar pedido");
           return;
         }
        
         const newOrder = await finalizeRes.json();
         setDraftOrderId(newOrder.id_order); 
 
-        alert("Pagamento finalizado com sucesso!");
+         console.log("Pagamento finalizado com sucesso!");
         setIsPaymentModalOpen(false);
         navigate('/'); 
       } else {
-        alert("Erro ao finalizar pagamento");
+        console.error("Erro ao finalizar pagamento");
       }
     } catch (err) {
       console.error("Erro ao finalizar pagamento:", err);
-      alert("Erro ao finalizar pagamento");
+     console.error("Erro ao finalizar pagamento");
     }
   };
 
@@ -310,9 +348,18 @@ const MyCart = () => {
       {isPaymentModalOpen && invoiceDetails && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
-            <h2>Pagamento da Fatura</h2>
-            <p className={styles.invoiceText}>Valor: R$ {Number(invoiceDetails.value).toFixed(2)}</p>
-            <p className={styles.invoiceText}>Método: {invoiceDetails.payment_type === "PIX" ? "PIX" : "Cartão de Crédito"}</p>
+            
+            {invoiceDetails.payment_type === "PIX" && qrCodeImage && (
+              <div className={styles.qrCodeContainer}>
+                <p>Aqui está o QR Code para o pagamento:</p>
+                <img
+                  src={`data:image/png;base64,${qrCodeImage}`}
+                  alt="QR Code"
+                  className={styles.qrCodeImage}
+                />
+              </div>
+            )}
+
             <Button onClick={finalizePayment} text="Finalizar Pagamento" className={styles.confirmButton} />
             <Button onClick={() => setIsPaymentModalOpen(false)} text="Cancelar Pagamento" className={styles.cancelButton} />
           </div>

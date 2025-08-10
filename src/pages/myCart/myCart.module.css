@@ -180,6 +180,8 @@ button {
   border-radius: 8px;
   text-align: center;
   width: 300px;
+ 
+  overflow-y: auto; /* Adiciona rolagem se o conteúdo exceder o limite de altura */
 }
 
 .confirmButton {
@@ -205,4 +207,15 @@ button {
 
 .invoiceText {
   color: #111111;
+}
+
+.qrCodeContainer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.qrCodeImage {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
 }
