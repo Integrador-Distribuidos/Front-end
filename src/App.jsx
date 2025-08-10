@@ -14,6 +14,7 @@ import AdmStockManage from './pages/AdmStockM/index.jsx';
 import AdmStockStoresManage from './pages/StStcM/index.jsx';
 import SalesReport from './pages/SalesReport/index.jsx';
 import Profile from './pages/profile/index.jsx';
+import StoryOrders from './pages/StoryOrders/index.jsx'
 
 function App() {
   
@@ -33,6 +34,7 @@ function App() {
         <Route path="/page_store/:id" element={<PageStore />} />
         <Route path="/control_panel/stores/:storeId/stock" element={<AdmStockStoresManage />} />
         <Route path="/control_panel/sales_report" element={<SalesReport />} />
+        <Route path="/historico_pedidos" element={<StoryOrders />} />
       </Routes>
     </Router>
   )

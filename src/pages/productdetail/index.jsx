@@ -22,6 +22,7 @@ const ProductDetailContent = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [showCartMessage, setShowCartMessage] = useState(false);
+  const [cartError, setCartError] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -70,7 +71,6 @@ const ProductDetailContent = () => {
   const handleAddToCart = async () => {
     const token = localStorage.getItem('access_token');
     if (!token) return navigate('/login');
-    if (!stock) return alert('Estoque não disponível');
 
     try {
       const userRes = await fetch('http://localhost:8001/api/users/me/', {
@@ -98,14 +98,9 @@ const ProductDetailContent = () => {
       const items = await itemsRes.json();
       const exist = items.find(it => it.id_product === product.id_product);
 
-      const currentQty = exist ? exist.quantity : 0;
-      const totalQty = currentQty + quantity;
-
-      if (totalQty > stock.quantity) {
-        return alert(`Estoque insuficiente. Você já tem ${currentQty} no carrinho. Máximo permitido: ${stock.quantity}`);
-      }
-
       if (exist) {
+        const totalQty = exist.quantity + quantity;
+
         await fetch(`http://localhost:8000/api/orders/items/${exist.id_order_item}/`, {
           method: 'PATCH',
           headers: {
@@ -131,10 +126,13 @@ const ProductDetailContent = () => {
       }
 
       setShowCartMessage(true);
+      setCartError('');
       setTimeout(() => setShowCartMessage(false), 10000);
     } catch (err) {
       console.error(err);
-      console.log('Erro ao adicionar ao carrinho');
+      const message = err.message || 'Erro ao adicionar ao carrinho.';
+      setCartError(message);
+      setTimeout(() => setCartError(''), 8000);
     }
   };
 
@@ -201,6 +199,11 @@ const ProductDetailContent = () => {
               <p className={styles['price-of-product-detail']}>R$ {formattedPrice}</p>
               <p className={styles['description-product']}>{product.description}</p>
               <div className={styles["cart-actions-container"]}>
+                {cartError && (
+                  <p className={styles["cart-error-message"]}>
+                    Você excedeu o limite de produtos do estoque!
+                  </p>
+                )}
                 {showCartMessage && (
                   <p className={styles["cart-message"]}>
                     Produto adicionado ao carrinho.{' '}
