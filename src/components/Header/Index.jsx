@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../Header/Header.css';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/stock2sell-logo.png';
 import iconsearch from '../../assets/icons/icon-search-header.png';
 import cartIcon from '../../assets/icons/icon-cart-header.png';
-import profileMobile from '../../assets/icons/account_circle.png';
+import accountIcon from '../../assets/icons/account_icon.png';
 
 const Header = () => {
   const [searchText, setSearchText] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const modalRef = useRef(null);
   const navigate = useNavigate();
 
   const isLoggedIn = !!localStorage.getItem('access_token');
@@ -31,6 +32,22 @@ const Header = () => {
     navigate('/login');
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsModalOpen(false);
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isModalOpen]);
+
   return (
     <>
       <header className="header-logged">
@@ -52,76 +69,40 @@ const Header = () => {
         </div>
 
         <div className="auth-section">
-          <div className="create-account">
+          <div className="account-actions">
             <Link to="/myCart">
               <img src={cartIcon} alt="Carrinho" className="cart-icon" />
             </Link>
 
-            {isLoggedIn ? (
-              <>
-                <Link to="/profile">
-                  <span className="create-account-link">Minha Conta</span>
-                </Link>
-
-                {isAdmin && (
-                  <Link to="/control_panel/stores">
-                    <span className="create-account-link">Painel de Controle</span>
-                  </Link>
-                )}
-              </>
-            ) : (
-              <Link to="/signUp">
-                <span className="create-account-link">Criar Conta</span>
-              </Link>
-            )}
-          </div>
-
-          <div className="divider" />
-
-          {isLoggedIn ? (
-            <span className="login-text-logout-text" onClick={handleLogout}>
-              Sair
-            </span>
-          ) : (
-            <Link to="/login">
-              <span className="login-text">Entrar</span>
-            </Link>
-          )}
-        </div>
-
-        <div className="user-icon-mobile" onClick={toggleModal}>
-          <img src={profileMobile} alt="profile_mobile" className="user-icon-img" />
-        </div>
-      </header>
-
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={toggleModal}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <h2>Bem-vindo!</h2>
-            <p>O que você deseja fazer?</p>
-            <div className="modal-options">
-              {isLoggedIn ? (
-                <>
-
-                {isAdmin && (
-                    <Link to="/control_panel/stores">Painel de Controle</Link>
-                  )}
-                  
-                  <Link to="/profile">Minha Conta</Link>
-
-                  <button onClick={handleLogout} className="logout-button">Sair</button>
-                </>
-              ) : (
-                <>
-                  <Link to="/login">Entrar</Link>
-                  <Link to="/signUp">Criar Conta</Link>
-                </>
+            <div className="account-icon-wrapper" onClick={toggleModal}>
+              <img src={accountIcon} alt="Conta" className="account-icon" />
+              {isModalOpen && (
+                <div className="dropdown-modal" ref={modalRef}>
+                  <p className="dropdown-title">Bem-vindo!</p>
+                  <hr />
+                  <div className="dropdown-options">
+                    {isLoggedIn ? (
+                      <>
+                        {isAdmin && (
+                          <Link to="/control_panel/stores"><span className='span-control'>Painel de Controle</span></Link>
+                        )}
+                        <Link to="/profile"><span className='span-my-account'>Minha Conta</span></Link>
+                        <Link to="/historico_pedidos"><span className='span-my-history'>Histórico de Pedidos</span></Link>
+                        <button onClick={handleLogout}>Sair</button>
+                      </>
+                    ) : (
+                      <>
+                        <Link to="/login"><span className='span-enter'>Entrar</span></Link>
+                        <Link to="/signUp"><span className='span-register'>Criar Conta</span></Link>
+                      </>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
-            <button onClick={toggleModal}>Fechar</button>
           </div>
         </div>
-      )}
+      </header>
     </>
   );
 };
