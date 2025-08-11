@@ -74,13 +74,20 @@ const MyCart = () => {
       const enrichedItems = await Promise.all(items.map(async item => {
         const productRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/products/${item.id_product}/`);
         const product = await productRes.json();
+
+        const stockRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stocks/${item.id_stock}/`);
+        const stock = await stockRes.json();
+
+        const storeRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stores/${stock.id_store}`);
+        const store = await storeRes.json();
+
         return {
           id: item.id_product,
           quantity: item.quantity,
           price: item.unit_price,
           name: product.name,
           image: product.image ? `${import.meta.env.VITE_API_BASE_URL}/images/${product.image}` : '/placeholder.png',
-          store: 'Loja Exemplo',
+          store: store.name,
           id_order_item: item.id_order_item,
           id_order: item.id_order,
         };
