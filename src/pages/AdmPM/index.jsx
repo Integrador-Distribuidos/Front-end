@@ -7,6 +7,7 @@ import NavBar from '../../components/SideBar/Index.jsx';
 import ProductModal from '../../components/ProductModal/Index.jsx';
 import ProductCard from '../../components/ProductCard/Index.jsx';
 import Pagination from '../../components/HomePage/Pagination/index.jsx';
+
 import {
   getProductsforUser,
   createProduct,
@@ -15,6 +16,69 @@ import {
 } from '../../services/apiProducts';
 
 import { getAllStocks } from '../../services/apiStocks.js';
+
+const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, productName }) => {
+  if (!isOpen) return null;
+
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  return (
+    <div className={styles.modalOverlay} onClick={handleOverlayClick} style={{
+      position: 'fixed',
+      top:0, left:0, right:0, bottom:0,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 9999
+    }}>
+      <div style={{
+        background: 'white',
+        padding: '20px 30px',
+        borderRadius: '8px',
+        maxWidth: '400px',
+        textAlign: 'center',
+        boxShadow: '0 0 10px rgba(0,0,0,0.25)'
+      }}>
+        <h2>Confirmar Exclusão</h2>
+        <p>Tem certeza que deseja excluir o produto <strong>{productName}</strong>?</p>
+        <div style={{ marginTop: 20, display: 'flex', justifyContent: 'space-around' }}>
+          <button
+            onClick={onConfirm}
+            style={{
+              backgroundColor: '#e53935',
+              border: 'none',
+              padding: '8px 16px',
+              color: 'white',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              marginRight: '20px'
+            }}
+          >
+            Sim
+          </button>
+          <button
+            onClick={onClose}
+            style={{
+              backgroundColor: '#9e9e9e',
+              border: 'none',
+              padding: '8px 16px',
+              color: 'white',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const AdmProductManage = () => {
   const location = useLocation();
@@ -28,6 +92,9 @@ const AdmProductManage = () => {
   const id_stock = location.state?.id_stock;
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+
   useEffect(() => {
     if (id_stock) {
       const filtered = products.filter(product => product.id_stock === id_stock);
@@ -36,6 +103,7 @@ const AdmProductManage = () => {
       setFilteredProducts(products);
     }
   }, [id_stock, products]);
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -69,63 +137,69 @@ const AdmProductManage = () => {
     setEditingProduct(null);
   };
 
-  // handleSubmit foi ajustado para receber formData diretamente
-const handleSubmit = async (formData) => {
-  console.log("handleSubmit: recebendo formData:", formData);
+  const handleSubmit = async (formData) => {
+    console.log("handleSubmit: recebendo formData:", formData);
 
-  try {
-    let createdProduct = null;
+    try {
+      let createdProduct = null;
 
-    if (editingProduct) {
-      console.log("Atualizando produto existente...");
-      await updateProduct(editingProduct.id_product, formData);
-      createdProduct = { id_product: editingProduct.id_product };
+      if (editingProduct) {
+        console.log("Atualizando produto existente...");
+        await updateProduct(editingProduct.id_product, formData);
+        createdProduct = { id_product: editingProduct.id_product };
+      } else {
+        console.log("Criando novo produto...");
+        createdProduct = await createProduct(formData);
+      }
 
-    } else {
-      console.log("Criando novo produto...");
-      createdProduct = await createProduct(formData); // <-- IMPORTANTE
+      await fetchProducts();
+      handleCloseModal();
+
+      return createdProduct;
+    } catch (err) {
+      console.error("Erro ao salvar produto:", err);
+      throw err;
     }
+  };
 
-    await fetchProducts();
-    handleCloseModal();
+  const openDeleteModal = (product) => {
+    setProductToDelete(product);
+    setDeleteModalOpen(true);
+  };
 
-    return createdProduct; // <-- Retorna aqui para ser usado na imagem
-  } catch (err) {
-    console.error("Erro ao salvar produto:", err);
-    throw err;
-  }
-};
+  const closeDeleteModal = () => {
+    setProductToDelete(null);
+    setDeleteModalOpen(false);
+  };
 
-
-  const handleDelete = async (productToDelete) => {
-    console.log("handleDelete: produto a ser excluído id =", productToDelete.id_product);
-    const confirmDelete = window.confirm('Tem certeza que deseja excluir este produto?');
-    if (!confirmDelete) return;
+  const handleDeleteConfirmed = async () => {
+    if (!productToDelete) return;
 
     try {
       await deleteProduct(productToDelete.id_product);
       setProducts(products.filter((p) => p.id_product !== productToDelete.id_product));
-      console.log("handleDelete: produto excluído com sucesso");
+      console.log("Produto excluído com sucesso");
+      closeDeleteModal();
     } catch (err) {
       console.error("Erro ao deletar produto:", err);
     }
   };
 
-useEffect(() => {
-  const sorted = [...filteredProducts].sort((a, b) => {
-    if (filter === "low") return a.price - b.price;
-    if (filter === "high") return b.price - a.price;
-    return new Date(b.creation_date) - new Date(a.creation_date);
-  });
+  useEffect(() => {
+    const sorted = [...filteredProducts].sort((a, b) => {
+      if (filter === "low") return a.price - b.price;
+      if (filter === "high") return b.price - a.price;
+      return new Date(b.creation_date) - new Date(a.creation_date);
+    });
 
-  setSortedProducts(sorted);
-}, [filteredProducts, filter]);
+    setSortedProducts(sorted);
+  }, [filteredProducts, filter]);
 
-const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
-const currentItems = sortedProducts.slice(
-  (currentPage - 1) * itemsPerPage,
-  currentPage * itemsPerPage
-);
+  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+  const currentItems = sortedProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <>
@@ -175,14 +249,13 @@ const currentItems = sortedProducts.slice(
                 key={product.id_product}
                 product={product}
                 onEdit={handleOpenModal}
-                onDelete={handleDelete}
+                onDelete={() => openDeleteModal(product)} 
                 image_url={product.image}
               />
             ))}
           </div>
         )}
       </div>
-
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Pagination
@@ -197,11 +270,19 @@ const currentItems = sortedProducts.slice(
       <ProductModal
         isOpen={modalOpen}
         onClose={handleCloseModal}
-        onSubmit={handleSubmit}  
+        onSubmit={handleSubmit}
         productData={editingProduct}
         isEdit={!!editingProduct}
         stocks={stocks}
       />
+
+      <DeleteConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleDeleteConfirmed}
+        productName={productToDelete?.name || ''}
+      />
+
       <Footer />
     </>
   );
