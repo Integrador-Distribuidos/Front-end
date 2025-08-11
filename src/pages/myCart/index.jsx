@@ -30,7 +30,7 @@ const MyCart = () => {
   const fetchAddresses = async () => {
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://localhost:8001/api/addresses/', {
+      const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/addresses/`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -51,12 +51,12 @@ const MyCart = () => {
     if (!token) return;
 
     try {
-      const userRes = await fetch('http://localhost:8001/api/users/me/', {
+      const userRes = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/me/`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       const userData = await userRes.json();
 
-      const ordersRes = await fetch(`http://localhost:8000/api/orders/`, {
+      const ordersRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/orders/`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       const orders = await ordersRes.json();
@@ -66,20 +66,20 @@ const MyCart = () => {
 
       setDraftOrderId(draftOrder.id_order);
 
-      const itemsRes = await fetch(`http://localhost:8000/api/orders/${draftOrder.id_order}/items/`, {
+      const itemsRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/orders/${draftOrder.id_order}/items/`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       const items = await itemsRes.json();
 
       const enrichedItems = await Promise.all(items.map(async item => {
-        const productRes = await fetch(`http://localhost:8000/api/products/${item.id_product}/`);
+        const productRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/products/${item.id_product}/`);
         const product = await productRes.json();
         return {
           id: item.id_product,
           quantity: item.quantity,
           price: item.unit_price,
           name: product.name,
-          image: product.image ? `http://localhost:8000/images/${product.image}` : '/placeholder.png',
+          image: product.image ? `${import.meta.env.VITE_API_BASE_URL}/images/${product.image}` : '/placeholder.png',
           store: 'Loja Exemplo',
           id_order_item: item.id_order_item,
           id_order: item.id_order,
@@ -95,7 +95,7 @@ const MyCart = () => {
   const handleRemoveItem = async (id_order_item) => {
     const token = localStorage.getItem('access_token');
     try {
-      const res = await fetch(`http://localhost:8000/api/orders/items/${id_order_item}/`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/orders/items/${id_order_item}/`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` },
       });
@@ -113,7 +113,7 @@ const MyCart = () => {
   const handleQuantityChange = async (id_order_item, newQuantity) => {
     const token = localStorage.getItem('access_token');
     try {
-      const res = await fetch(`http://localhost:8000/api/orders/items/${id_order_item}/`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/orders/items/${id_order_item}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -153,7 +153,7 @@ const MyCart = () => {
     if (!token || !draftOrderId) return navigate('/login');
 
     try {
-      const userRes = await fetch('http://localhost:8001/api/users/me/', {
+      const userRes = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/me/`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       const userData = await userRes.json();
@@ -170,7 +170,7 @@ const MyCart = () => {
         user_cpf: userData.cpf,
       };
 
-      const invoiceRes = await fetch('http://localhost:8002/api/invoices/', {
+      const invoiceRes = await fetch(`${import.meta.env.VITE_API_PAYMENTS_BASE_URL}/api/invoices/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -196,7 +196,7 @@ const MyCart = () => {
         id: createData.id,
       };
 
-      const paymentResponse = await fetch('http://localhost:8002/api/transactions/process_payment', {
+      const paymentResponse = await fetch(`${import.meta.env.VITE_API_PAYMENTS_BASE_URL}/api/transactions/process_payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -208,7 +208,7 @@ const MyCart = () => {
       if (paymentResponse.ok) {
         console.log("Pagamento processado com sucesso!");
 
-        const qrCodeResponse = await fetch('http://localhost:8002/api/transactions/get_qr_code', {
+        const qrCodeResponse = await fetch(`${import.meta.env.VITE_API_PAYMENTS_BASE_URL}/api/transactions/get_qr_code`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ const MyCart = () => {
     const token = localStorage.getItem('access_token');
 
     try {
-      const response = await fetch(`http://localhost:8002/api/invoices/${invoiceDetails.id}/`, {
+      const response = await fetch(`${import.meta.env.VITE_API_PAYMENTS_BASE_URL}/api/invoices/${invoiceDetails.id}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -250,7 +250,7 @@ const MyCart = () => {
       });
 
       if (response.ok) {
-        const finalizeRes = await fetch(`http://localhost:8000/api/orders/${draftOrderId}/finalize/`, {
+        const finalizeRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/orders/${draftOrderId}/finalize/`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

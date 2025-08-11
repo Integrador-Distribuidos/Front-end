@@ -112,7 +112,7 @@ const Profile = () => {
     const fetchUserData = async () => {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('http://localhost:8001/api/users/me/', {
+            const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/me/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ const Profile = () => {
     const fetchAddresses = async () => {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('http://localhost:8001/api/addresses/', {
+            const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/addresses/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ const Profile = () => {
 
         if (token) {
             try {
-                const response = await fetch('http://localhost:8001/api/users/me/', {
+                const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/me/`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -182,7 +182,7 @@ const Profile = () => {
                     const userData = await response.json();
                     const userId = userData.id;
 
-                    const updateResponse = await fetch(`http://localhost:8001/api/users/${userId}/make_admin/`, {
+                    const updateResponse = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/${userId}/make_admin/`, {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',
@@ -219,7 +219,7 @@ const Profile = () => {
 
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('http://localhost:8001/api/addresses/', {
+            const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/addresses/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -249,7 +249,7 @@ const Profile = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8001/api/users/${userData.id}/update_cpf/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/${userData.id}/update_cpf/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -279,7 +279,7 @@ const Profile = () => {
     const handleSelectAddress = async (address) => {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch(`http://localhost:8001/api/addresses/${address.id}/set_default/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/addresses/${address.id}/set_default/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

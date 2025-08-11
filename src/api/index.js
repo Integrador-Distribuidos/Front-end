@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
 // Intercepta todas as requisições e adiciona o access token
@@ -31,7 +31,7 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_API_USERS_BASE || 'http://localhost:8001'}/token/refresh`,
+          `${import.meta.env.VITE_API_USERS_BASE}/token/refresh`,
           { refresh_token: refreshToken }
         );
 

@@ -19,7 +19,7 @@ import StoryOrders from './pages/StoryOrders/index.jsx'
 function App() {
   
   return (
-    <Router basename='/Front-end'>
+    <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signUp" element={<SignUp />} />

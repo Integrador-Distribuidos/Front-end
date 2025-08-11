@@ -67,7 +67,7 @@ const NewAddressModal = ({ onClose, onSave, onMessage }) => {
 
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://localhost:8001/api/addresses/', {
+      const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/addresses/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

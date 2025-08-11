@@ -73,7 +73,7 @@ const ProductDetailContent = () => {
     if (!token) return navigate('/login');
 
     try {
-      const userRes = await fetch('http://localhost:8001/api/users/me/', {
+      const userRes = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/me/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const { id: userId } = await userRes.json();
@@ -92,7 +92,7 @@ const ProductDetailContent = () => {
         draft = await createOrder(newOrder, token);
       }
 
-      const itemsRes = await fetch(`http://localhost:8000/api/orders/${draft.id_order}/items/`, {
+      const itemsRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/orders/${draft.id_order}/items/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const items = await itemsRes.json();
@@ -101,7 +101,7 @@ const ProductDetailContent = () => {
       if (exist) {
         const totalQty = exist.quantity + quantity;
 
-        await fetch(`http://localhost:8000/api/orders/items/${exist.id_order_item}/`, {
+        await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/orders/items/${exist.id_order_item}/`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
