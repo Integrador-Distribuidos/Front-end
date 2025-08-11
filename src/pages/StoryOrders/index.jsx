@@ -117,7 +117,7 @@ const StoryOrders = () => {
 
   const handleReorderClick = (productId) => {
     if (!productId) {
-      alert("Produto inválido.");
+      console.log("Produto inválido.");
       return;
     }
     navigate(`/product_detail/${productId}`);
@@ -144,7 +144,7 @@ const StoryOrders = () => {
 
         if (!response.ok) {
           const body = await response.text();
-          console.error("❌ Erro no fetch:", response.status, body);
+          console.error("Erro no fetch:", response.status, body);
           throw new Error("Erro ao buscar pedidos");
         }
 
@@ -153,7 +153,7 @@ const StoryOrders = () => {
         setOrders(paidOrders);
         setHasAccess(true);
       } catch (error) {
-        console.error("❌ Erro geral:", error);
+        console.error("Erro geral:", error);
         setHasAccess(false);
       } finally {
         setLoading(false);

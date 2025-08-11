@@ -78,8 +78,6 @@ const Header = () => {
               <img src={accountIcon} alt="Conta" className="account-icon" />
               {isModalOpen && (
                 <div className="dropdown-modal" ref={modalRef}>
-                  <p className="dropdown-title">Bem-vindo!</p>
-                  <hr />
                   <div className="dropdown-options">
                     {isLoggedIn ? (
                       <>

@@ -247,6 +247,7 @@
   align-items: center;
   position: relative;
   gap: 20px;
+  margin-right: 40px;
 }
 
 /* Ícone da conta */
@@ -260,11 +261,10 @@
   height: 30px;
 }
 
-/* Dropdown Modal */
 .dropdown-modal {
   position: absolute;
   top: 40px;
-  right: 0;
+  right: -95px;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 8px;

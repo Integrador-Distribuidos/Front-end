@@ -125,7 +125,7 @@ const MyCart = () => {
       if (!res.ok) {
         const errorData = await res.json();
         console.error("Erro ao atualizar quantidade:", errorData);
-        alert("Erro ao atualizar quantidade");
+        console.log("Erro ao atualizar quantidade");
         return;
       }
 
