@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Profile.module.css';
 import Header from '../../components/Header/Index.jsx';
+import { Link } from 'react-router-dom';
 import Footer from '../../components/Footer/index.jsx';
 import TextContent from '../../components/TextContent/index.jsx';
 import Button from '../../components/Button/index.jsx';
@@ -307,6 +308,14 @@ const Profile = () => {
     return (
         <>
             <Header />
+
+            <div className={styles['breadcrumb-admmange-store']}>
+            <Link to="/" className={styles['element-1-breadcrumb-admmangest']}>Página Inicial</Link>
+            <p className={styles['div-contentegt-1-admmangest']}>&gt;</p>
+            <Link to="/profile" className={styles['element-1-breadcrumb-admmangest']}>Meu Perfil</Link>
+            </div>
+            <div className={styles['breadcrumb-separator-line-admmangest']}></div>
+
             <div className={styles.profileContainer}>
                 <h3 className={styles.title}>Perfil</h3>
                 {message && (

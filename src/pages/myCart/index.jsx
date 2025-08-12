@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from "./myCart.module.css";
 import CartItem from '../../components/CartItem/index.jsx';
 import Header from '../../components/Header/Index.jsx';
+import { Link } from 'react-router-dom';
 import Footer from '../../components/Footer/index.jsx';
 import ListAddressModal from '../../components/ListAddressModal/index.jsx';
 import Button from '../../components/Button/index.jsx';
@@ -294,6 +295,13 @@ const MyCart = () => {
   return (
     <div className={`${styles.pageWrapper} my-cart-wrapper`}>
       <Header />
+
+      <div className={styles['breadcrumb-admmange-store']}>
+            <Link to="/" className={styles['element-1-breadcrumb-admmangest']}>Página Inicial</Link>
+            <p className={styles['div-contentegt-1-admmangest']}>&gt;</p>
+            <Link to="/myCart" className={styles['element-1-breadcrumb-admmangest']}>Meu Carrinho</Link>
+            </div>
+            <div className={styles['breadcrumb-separator-line-admmangest']}></div>
       <div className={styles.container}>
         <h1 className={styles.title}>Meu Carrinho</h1>
         <div className={styles.content}>

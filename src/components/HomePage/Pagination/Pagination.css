@@ -1,67 +1,106 @@
-/* Paginação */
 .pagination {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 10px;
   flex-wrap: wrap;
   border: 1px solid #ccc;
-  width: 450px;
+  width: 100%;
+  max-width: 480px;
   height: 44px;
   border-radius: 4px;
   margin-bottom: 15px;
+  padding: 0 12px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.button_left, .button_hight{
-    background-color: transparent;
-    color: black;
-    border: none;
+.button_left,
+.button_right {
+  background-color: transparent;
+  color: black;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px 10px;
+  transition: background-color 0.3s ease;
 }
 
-
-.page_box{
-/* Rectangle 194 */
-display: flex;
-align-items: center;
-justify-content: center;
-width: 23px;
-height: 27px;
-background: #CAD5E2;
-border-radius: 4px;
+.button_left:disabled,
+.button_right:disabled {
+  color: #aaa;
+  cursor: not-allowed;
+  background-color: white;
 }
 
-.atual_page_box{
-background: #90A1B9;
+.button_left:hover:not(:disabled),
+.button_right:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  border-radius: 4px;
 }
 
-.pontos{
-    /* ... */
-
-width: 12px;
-height: 17px;
-
-font-family: 'Inter';
-font-style: normal;
-font-weight: 500;
-font-size: 14px;
-line-height: 17px;
-/* identical to box height */
-
-color: #000000;
-
-
+.page_box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #CAD5E2;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+  cursor: pointer;
 }
 
-.num_page{
-   /* 1 */
-width: 23px;
-height: 17px;
-margin: 0;
-font-family: 'Inter';
-font-style: normal;
-font-weight: 500;
-font-size: 14px;
-line-height: 17px;
-/* identical to box height */
-color: #000000;
+.page_box:hover {
+  background: #A1B4C3;
+}
+
+.atual_page_box {
+  background: #90A1B9;
+  font-weight: bold;
+  color: #fff;
+}
+
+.pontos {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+  line-height: 32px;
+  padding: 0 6px;
+}
+
+.num_page {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #000;
+  line-height: 32px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .pagination {
+    max-width: 100%;
+    width: 100%;
+    height: 40px;
+  }
+
+  .button_left,
+  .button_right {
+    font-size: 14px;
+    padding: 5px 8px;
+  }
+
+  .page_box {
+    width: 28px;
+    height: 28px;
+  }
+
+  .num_page {
+    font-size: 12px;
+  }
+
+  .pontos {
+    font-size: 12px;
+  }
 }
