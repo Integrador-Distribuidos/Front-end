@@ -37,10 +37,10 @@ margin-right: 10px;
 
 
 .campo_select{
-    /* Rectangle 64 */
+  color: #000000;
   width: 130px;
   height: 28px;
-  background: #6A7282;
+  background: #ffffff;
   border-radius: 4px;
   padding: 0.3rem 0.5rem;
   border: 1px solid #ccc;

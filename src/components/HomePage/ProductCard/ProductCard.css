@@ -1,4 +1,3 @@
-/* src/components/HomePage/ProductCard.css */
 .product-card {
   display: flex;
   flex-direction: column;
@@ -6,8 +5,7 @@
   width: 200px;
   height: 243px;
   box-sizing: border-box;
-  background: #FAFAF9;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #99A1AF;
   border-radius: 4px;
   transition: box-shadow 0.2s ease;
   

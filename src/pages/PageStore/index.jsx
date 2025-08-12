@@ -6,6 +6,7 @@ import Header from '../../components/Header/Index';
 import ProductFilter from '../../components/HomePage/ProductFilter';
 import Pagination from '../../components/HomePage/Pagination';
 import Footer from '../../components/Footer';
+import { Link } from 'react-router-dom';
 import SearchNotFound from '../../components/SearchNotFound';
 import { useLocation, useParams } from 'react-router-dom';
 import defaultImage from "../../assets/default/image_store_default.png";
@@ -147,63 +148,64 @@ useEffect(() => {
   return (
     <>
       <Header />
+      <div className='breadcrumb-admmange-store-p'>
+        <Link to="/" className='element-1-breadcrumb-admmangest-p'>Página Inicial</Link>
+        <p className='div-contentegt-1-admmangest-p'>&gt;</p>
+        <Link to="/" className='element-1-breadcrumb-admmangest-p'>Resultados da Busca</Link>
+        <p className='div-contentegt-1-admmangest-p'>&gt;</p>
+        <span className='element-2-breadcrumb-admmangest-p'>{store.name}</span>
+      </div> 
+      <div className='breadcrumb-separator-line-admmangest-p'></div>
 
-      <div className='searchpage-container'>
-        <div className="section">
+      <div className="searchpage-container">
+  <div className="section">
 
-          <div className="div_tittle_session1">
-            <div className={'pagetittle_search_text'}>
-              <h2 className="tittle_session">Página da Loja</h2>
-              <h3 className="search_text"> - {store.name}</h3>
-            </div>
-          </div>
-
-          <div className='store_name_img'>
-            <img className='store_img' src={imageSrc} alt="Imagem da Loja" />
-            <h3 className="store_name">{store.name}</h3>
-          </div>
-
-          <div className="line"></div>
-
-          <div className='product_filter'>
-            <h2 className='text_products'>Produtos Mais Vendidos</h2>
-              <ProductFilter onFilter={handleFilterChange} />
-          </div>
-
-        <div className="cards-container">
-          {currentProducts.length > 0 ? (
-            currentProducts.map((product) => (
-              <ProductCard
-                key={product.id_product}
-                name={product.name}
-                price={product.price}
-                id={product.id_product}
-                image_url={product.image}
-              />
-            ))
-          ) : (
-            <p className="productnotfound">Nenhum Produto Encontrado!</p>
-          )}
-        </div>
-          
-        </div>
-      <div className="section">
-        {currentProducts.length === 0 ? (
-          <p></p>
-        ) : (
-          
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onNext={handleNext}
-              onPrev={handlePrev}
-            />
-          
-        )}
-        
-        </div>
-        <Footer />
+    <div className="store-header">
+      <img className="store-img" src={imageSrc} alt="Imagem da Loja" />
+      <div className="store-info">
+        <h2 className="store-title">{store.name}</h2>
+        <p className="store-subtitle">Página da Loja</p>
       </div>
+    </div>
+
+    <div className="line"></div>
+
+    <div className="product-header">
+      <h2 className="text-products">Produtos Mais Vendidos</h2>
+      <ProductFilter onFilter={handleFilterChange} />
+    </div>
+
+    <div className="cards-container">
+      {currentProducts.length > 0 ? (
+        currentProducts.map((product) => (
+          <ProductCard
+            key={product.id_product}
+            name={product.name}
+            price={product.price}
+            id={product.id_product}
+            image_url={product.image}
+          />
+        ))
+      ) : (
+        <p className="product-not-found">Nenhum Produto Encontrado!</p>
+      )}
+    </div>
+  </div>
+
+  {currentProducts.length > 0 && (
+    <div className="section">
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onNext={handleNext}
+        onPrev={handlePrev}
+      />
+    </div>
+  )}
+
+  <Footer />
+</div>
+
     </>
   );
 }
