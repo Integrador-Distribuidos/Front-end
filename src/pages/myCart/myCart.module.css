@@ -219,3 +219,13 @@ button {
   height: auto;
   margin-top: 10px;
 }
+
+.errorBox {
+  background-color: #ffe6e6;
+  color: #b00020;
+  border: 1px solid #b00020;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  text-align: center;
+}
