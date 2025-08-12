@@ -15,12 +15,15 @@ const baseURL = import.meta.env.VITE_API_BASE_URL;
 function PageStore() {
     
     const { id } = useParams();
-    const [store, setStore] = useState([]);
+    const [store, setStore] = useState({});
   
     useEffect(() => {
-      getStoreById(id).then(response => {
+      const fetchStore = async () => {
+        const response = await getStoreById(id);
+        console.log("Loja recebida:", response.data);
         setStore(response.data);
-      });
+      };
+      fetchStore();
     }, []);
 
   const imageSrc = store.image ? `${baseURL}/images/${store.image}` : defaultImage;
@@ -175,6 +178,7 @@ useEffect(() => {
                 name={product.name}
                 price={product.price}
                 id={product.id_product}
+                image_url={product.image}
               />
             ))
           ) : (

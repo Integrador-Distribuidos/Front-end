@@ -1,66 +1,87 @@
 import React, { useState, useEffect } from 'react';
 import styles from './StoreModal.module.css';
-import defaultImage from '../../assets/default/product_image_default.jpg'
-import { uploadImageStore } from '../../services/apiStore';
+import defaultImage from '../../assets/default/product_image_default.jpg';
+
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const StoreModal = ({ isOpen, onClose, onSubmit, storeData, isEdit, error }) => {
-  const [preview, setPreview] = useState(''); 
-  const [imageFile, setImageFile] = useState(null); 
+  const [preview, setPreview] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [cnpj, setCnpj] = useState('');
+  const [phone, setPhone] = useState('');
+
   const imageSrc = storeData?.image ? `${baseURL}/images/${storeData.image}` : defaultImage;
+
+  const formatCNPJ = (value) => {
+    const digits = value.replace(/\D/g, '');
+    return digits
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2')
+      .substring(0, 18);
+  };
+
+  const formatPhone = (value) => {
+    const digits = value.replace(/\D/g, '');
+    if (digits.length <= 10) {
+      return digits
+        .replace(/^(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{4})(\d)/, '$1-$2')
+        .substring(0, 14);
+    } else {
+      return digits
+        .replace(/^(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2')
+        .substring(0, 15);
+    }
+  };
+
   useEffect(() => {
     if (storeData?.image) {
       setPreview(imageSrc);
     } else {
       setPreview('');
     }
-    setImageFile(null); 
+    setImageFile(null);
+    setCnpj(storeData?.cnpj ? formatCNPJ(storeData.cnpj) : '');
+    setPhone(storeData?.phone_number ? formatPhone(storeData.phone_number) : '');
   }, [storeData]);
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  const form = e.target;
-
-  const storeData = {
-    name: form.name.value,
-    cnpj: form.cnpj.value.replace(/\D/g, ''),
-    creation_date: new Date().toISOString().split("T")[0],
-    email: form.email.value,
-    phone_number: form.phone.value.replace(/\D/g, ''),
+  const handleCnpjChange = (e) => {
+    const formatted = formatCNPJ(e.target.value);
+    setCnpj(formatted);
   };
 
-  try {
-    console.log("handleSubmit: enviando dados da loja como JSON", storeData);
-    
-    const createdStore = await onSubmit(storeData); // deve retornar { id_store }
+  const handlePhoneChange = (e) => {
+    const formatted = formatPhone(e.target.value);
+    setPhone(formatted);
+  };
 
-    console.log("id da loja criada: ", createdStore.id_store);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
 
-    if (imageFile && createdStore?.id_store) {
-      const formDataImage = new FormData();
-      formDataImage.append('file', imageFile);
+    const formData = new FormData();
+    formData.append("name", form.name.value);
+    formData.append("cnpj", cnpj.replace(/\D/g, ''));
+    formData.append("email", form.email.value);
+    formData.append("phone_number", phone.replace(/\D/g, ''));
+    formData.append('creation_date', new Date().toISOString().split('T')[0]);
 
-      await uploadStoreImage(createdStore.id_store, formDataImage);
+    const imageFile2 = form.image.files[0];
+    if (imageFile2) {
+      formData.append('image', imageFile2);
+      setImageFile(imageFile2);
     }
-  } catch (error) {
-    console.error("Erro ao salvar loja ou imagem:", error);
-  }
-};
 
-const uploadStoreImage = async (id, formDataImage) => {
-  try {
-    const response = await uploadImageStore(id, formDataImage);
-    if (response.status === 200) {
-      console.log('Imagem enviada com sucesso');
-    } else {
-      console.log('Erro ao enviar a imagem');
+    try {
+      const updatedStore = await onSubmit(formData);
+      console.log("Loja atualizada:", updatedStore);
+    } catch (error) {
+      console.error("Erro ao atualizar loja:", error);
     }
-  } catch (error) {
-    console.error('Erro no upload da imagem:', error);
-  }
-};
-
-
+  };
 
   if (!isOpen) return null;
 
@@ -70,16 +91,13 @@ const uploadStoreImage = async (id, formDataImage) => {
     }
   };
 
-  const handleOnlyDigits = (e) => {
-    e.target.value = e.target.value.replace(/\D/g, '');
-  };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result);  
+        setPreview(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -89,6 +107,7 @@ const uploadStoreImage = async (id, formDataImage) => {
     setImageFile(null);
     setPreview('');
   };
+
   return (
     <div className={styles.modalOverlay} onClick={handleOverlayClick}>
       <div className={styles.modalContent}>
@@ -106,12 +125,13 @@ const uploadStoreImage = async (id, formDataImage) => {
             defaultValue={storeData?.name || ''}
             required
           />
+
           <input
             type="text"
             name="cnpj"
             placeholder="CNPJ"
-            defaultValue={storeData?.cnpj || ''}
-            onInput={handleOnlyDigits}
+            value={cnpj}
+            onChange={handleCnpjChange}
             required
           />
 
@@ -127,12 +147,13 @@ const uploadStoreImage = async (id, formDataImage) => {
               type="tel"
               name="phone"
               placeholder="Telefone"
-              defaultValue={storeData?.phone_number || ''}
-              onInput={handleOnlyDigits}
+              value={phone}
+              onChange={handlePhoneChange}
               required
             />
           </div>
-                    <input
+
+          <input
             type="file"
             name="image"
             accept="image/*"
@@ -147,15 +168,18 @@ const uploadStoreImage = async (id, formDataImage) => {
                 className={styles.imagePreview}
                 style={{ marginTop: '10px', maxHeight: '200px' }}
               />
-              <button
-                type="button"
-                className={styles.removeImageButton}
-                onClick={handleRemoveImage}
-              >
-                Remover Imagem
-              </button>
+              <div style={{ textAlign: 'center', marginTop: '8px' }}>
+                <button
+                  type="button"
+                  className={styles.removeImageButton}
+                  onClick={handleRemoveImage}
+                >
+                  Remover Imagem
+                </button>
+              </div>
             </div>
           )}
+
           <button type="submit" className={styles.submitButton}>
             {isEdit ? 'Salvar Alterações' : 'Cadastrar Loja'}
           </button>

@@ -1,4 +1,4 @@
-.modalOverlay {
+.overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -13,52 +13,119 @@
   box-sizing: border-box;
 }
 
-.modalTitle {
-  color: #111111;
-}
-
-.modalContent {
-  background-color: #f7f7f5;
-  padding: 16px;
-  border-radius: 6px;
+.modal {
+  background: #fff;
+  padding: 24px 16px;
+  border-radius: 8px;
+  max-width: 430px;
   width: 100%;
-  max-width: 364px;
-  max-height: 70vh;
-  overflow-y: auto;
-  position: relative;
+  max-height: none;
+  overflow-y: visible;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+}
+
+.title {
+  text-align: center;
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #111;
+}
+
+.label {
+  display: flex;
+  text-align: left;
+  flex-direction: column;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.input {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #111;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.input:focus {
+  border-color: #003b5c;
+  outline: none;
 }
 
 .row {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
-.saveButton,
-.cancelButton {
-  width: 314px;
-  padding: 10px;
+.uf {
+  width: 60px !important;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.cep {
+  width: 120px !important;
+  text-align: center;
+}
+
+.number {
+  width: 100px !important;
+  text-align: center;
+}
+
+.saveButton {
+  width: 100%;
+  padding: 12px 0;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
   box-sizing: border-box;
+  transition: background-color 0.3s ease;
+  user-select: none;
+  border: none;
+}
+
+.cancelButton-nadm {
+  background-color: #E7000B;
+  transition: background-color 0.4s ease;
+}
+.cancelButton-nadm:hover {
+  background-color: #c20f18;
 }
 
 .saveButton {
   background-color: #003b5c;
   color: white;
-  border: none;
-  margin-bottom: 8px;
+  margin-top: 10px;
+}
+
+.saveButton:disabled {
+  background-color: #a0a0a0;
+  cursor: not-allowed;
 }
 
 .cancelButton {
   background-color: white;
   color: #003b5c;
   border: 1px solid #003b5c;
+}
+
+.error {
+  color: #cc0000;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  margin-bottom: 6px;
 }

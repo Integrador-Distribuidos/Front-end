@@ -1,4 +1,4 @@
-// api.ts
+// src/api/index.js
 import axios from 'axios';
 
 const api = axios.create({
@@ -20,7 +20,6 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Verifica se o erro é 401 (token expirado) e se já não tentou renovar
     if (
       error.response &&
       error.response.status === 401 &&
@@ -32,24 +31,20 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_API_USERS_BASE_URL}/token/refresh`,
-          {
-            refresh_token: refreshToken,
-          }
+          `${import.meta.env.VITE_API_USERS_BASE}/token/refresh`,
+          { refresh_token: refreshToken }
         );
 
         const newAccessToken = response.data.access_token;
 
-        // Salva novo access token e refaz a requisição original
         localStorage.setItem('access_token', newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh falhou — talvez redirect para login
         console.error('Erro ao renovar token', refreshError);
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        window.location.href = '/login'; // ou use router.push
+        window.location.href = '/login'; 
       }
     }
 
@@ -58,4 +53,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-

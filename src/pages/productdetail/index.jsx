@@ -1,120 +1,150 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import styles from '../productdetail/DetailProduct.module.css'
-import Header from '../../components/Header/Index.jsx'
-import Stepper from '../../components/Stepper/index.jsx'
-import Footer from '../../components/Footer/index.jsx'
+import styles from '../productdetail/DetailProduct.module.css';
+import Header from '../../components/Header/Index.jsx';
+import Stepper from '../../components/Stepper/index.jsx';
+import Footer from '../../components/Footer/index.jsx';
 import { getAllProducts, getProductById } from '../../services/apiProducts.js';
 import defaultImage from '../../assets/default/product_image_default.jpg';
 import { getStockById } from '../../services/apiStocks.js';
 import { getStoreById } from '../../services/apiStore.js';
-import ProductCard from '../../components/HomePage/ProductCard/index.jsx';
+import { createOrder, createOrderItem, getDraftOrder } from '../../services/apiOrders.js';
+
 const baseURL = import.meta.env.VITE_API_BASE_URL;
-  
+
 const ProductDetailContent = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [product, setProduct] = useState(null);
-  const [products, setProducts] = useState([]);
-  const [store, setStore] = useState(null);
   const [stock, setStock] = useState(null);
+  const [store, setStore] = useState(null);
+  const [quantity, setQuantity] = useState(1);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [showCartMessage, setShowCartMessage] = useState(false);
+  const [cartError, setCartError] = useState('');
 
-  const imageSrc = product?.image ? `${baseURL}/images/${product.image}` : defaultImage;
-
-  // Autenticação
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     setIsAuthenticated(!!token);
   }, []);
 
-  // Buscar produto principal
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await getProductById(id);
-        setProduct(response.data);
-      } catch (error) {
-        console.error("Erro ao carregar produto:", error);
-      }
-    };
-    fetchProduct();
+    getProductById(id).then(res => setProduct(res.data));
   }, [id]);
 
-  // Buscar todos os produtos (para produtos relacionados)
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getAllProducts(); // Não precisa de `id`
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Erro ao carregar produtos:", error);
-      }
-    };
-    fetchProducts();
-  }, []);
-
-  // Buscar estoque e loja do produto
-  useEffect(() => {
-    const fetchStore = async () => {
-      if (!product?.id_stock) return;
-
-      try {
-        const stockRes = await getStockById(product.id_stock);
-        setStock(stockRes.data);
-
-        const storeRes = await getStoreById(stockRes.data.id_store);
-        setStore(storeRes.data);
-      } catch (error) {
-        console.error("Erro ao carregar Loja:", error);
-      }
-    };
-
-    fetchStore();
+    if (product?.id_stock) {
+      getStockById(product.id_stock).then(res => {
+        setStock(res.data);
+        getStoreById(res.data.id_store).then(sr => setStore(sr.data));
+      });
+    }
   }, [product]);
-useEffect(() => {
-  if (!products.length || !product) return;
 
-  // Filtra produtos com nome semelhante (exceto o próprio)
-  const similar = products.filter(
-    (p) =>
-      p.id_product !== product.id_product &&
-      p.name.toLowerCase().includes(product.name.toLowerCase())
-  );
+  useEffect(() => {
+    const fetchRelated = async () => {
+      const res = await getAllProducts();
+      const all = res.data;
 
-  // Fallback para preencher até 3 se necessário
-  const fallback = products
-    .filter(
-      (p) =>
-        p.id_product !== product.id_product &&
-        !similar.includes(p)
-    )
-    .slice(0, 3 - similar.length);
+      const similar = all.filter(p =>
+        p.id_product !== product?.id_product &&
+        p.name.toLowerCase().includes(product?.name.toLowerCase())
+      );
 
-  // Combina os resultados
-  const combined = [...similar, ...fallback].slice(0, 3);
+      const fallback = all
+        .filter(p => p.id_product !== product?.id_product && !similar.includes(p))
+        .slice(0, 3 - similar.length);
 
-  // Define diretamente
-  setRelatedProducts(combined);
-}, [product, products]);
+      setRelatedProducts([...similar, ...fallback].slice(0, 3));
+    };
+
+    if (product) fetchRelated();
+  }, [product]);
+
   const handleSeeStore = () => {
     if (stock?.id_store) {
       navigate(`/page_store/${stock.id_store}`);
     }
   };
 
-  // Exibição de carregamento
+  const handleAddToCart = async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) return navigate('/login');
+
+    try {
+      const userRes = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/me/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const { id: userId } = await userRes.json();
+      const today = new Date().toISOString().split('T')[0];
+
+      let draft = await getDraftOrder(userId, token);
+      if (!draft) {
+        const newOrder = {
+          id_user: userId,
+          id_store: stock.id_store,
+          status: 'draft',
+          order_date: null,
+          total_value: product.price * quantity,
+          creation_date: today
+        };
+        draft = await createOrder(newOrder, token);
+      }
+
+      const itemsRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/orders/${draft.id_order}/items/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const items = await itemsRes.json();
+      const exist = items.find(it => it.id_product === product.id_product);
+
+      if (exist) {
+        const totalQty = exist.quantity + quantity;
+
+        await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/orders/items/${exist.id_order_item}/`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            quantity: totalQty,
+            subtotal: product.price * totalQty,
+            date_change: today
+          })
+        });
+      } else {
+        await createOrderItem(draft.id_order, {
+          id_product: product.id_product,
+          id_stock: product.id_stock,
+          unit_price: product.price,
+          quantity,
+          subtotal: product.price * quantity,
+          creation_date: today,
+          date_change: today
+        }, token);
+      }
+
+      setShowCartMessage(true);
+      setCartError('');
+      setTimeout(() => setShowCartMessage(false), 10000);
+    } catch (err) {
+      console.error(err);
+      const message = err.message || 'Erro ao adicionar ao carrinho.';
+      setCartError(message);
+      setTimeout(() => setCartError(''), 8000);
+    }
+  };
+
   if (!product) {
     return <p className={styles['default-text']}>Carregando produto...</p>;
   }
 
-  // Formatar preço com 2 casas decimais
   const formattedPrice = product.price
     ? Number(product.price).toFixed(2)
     : '0.00';
 
+  const imageSrc = product?.image ? `${baseURL}/images/${product.image}` : defaultImage;
 
   return (
     <>
@@ -124,58 +154,97 @@ useEffect(() => {
           Página Inicial
         </Link>
         <p className={styles['div-contentegt-1']}>&gt;</p>
-        <a href="#" className={styles['element-2-breadcrumb']}>{product.name}</a>
+        <span className={styles['element-2-breadcrumb']}>{product.name}</span>
         <p className={styles['lol']}>_</p>
       </div>
       <div className={styles['breadcrumb-separator-line']}></div>
-        {!isAuthenticated && (
-          <div className={styles['alert-div-account-not-logged']}>
-            <p className={styles['p-adanl']}>Entre com sua conta, para comprar esse produto!</p>
-          </div>
-        )}
+      {!isAuthenticated && (
+        <div className={styles['alert-div-account-not-logged']}>
+          <p className={styles['p-adanl']}>Entre com sua conta, para comprar esse produto!</p>
+        </div>
+      )}
       <div className={styles['content-page-detail']}>
         <div className={styles['left-side-container']}>
           <div className={styles['image-div-content-detail']}>
-            <img src={imageSrc} alt="" className={styles['image-div-content-detail']}/>
+            <img src={imageSrc} alt="Imagem do produto" className={styles['image-div-content-detail']} />
           </div>
           <div className={styles['list-name-of-store']}>
-            <div className={styles['imagem-of-store-of-cpd']}></div>
+            <img
+              src={store?.image ? `${baseURL}/images/${store.image}` : defaultImage}
+              alt={`Logo da loja ${store?.name}`}
+              className={styles['imagem-of-store-of-cpd']}
+            />
             <p className={styles['name-of-store-in-cpd']}>{store?.name}</p>
             <button onClick={handleSeeStore} className={styles['button-see-store-cpd']}>
-              Ver Loja
+              Visitar
             </button>
           </div>
         </div>
         <div className={styles['div-of-content-right']}>
           <p className={styles['name-of-product-detail']}>{product.name}</p>
-          <p className={styles['price-of-product-detail']}>R$ {Number(product.price).toFixed(2)}</p>
-          <p className={styles['description-product']}>
-            {product.description}
-          </p>
-          <a href="#" className={styles['button-buy-product-detail']}>Comprar esse produto</a>
-          <div className={styles["cart-actions-container"]}>
-            <Stepper />
-            <a href="#" className={styles["button-add-to-cart"]}>Adicionar ao carrinho</a>
-          </div>
+          {product.quantity === 0 ? (
+            <p className={styles['product-out-of-stock']}>
+              Sinto muito :( <br />
+              Esse produto está <strong>esgotado</strong> no momento.
+            </p>
+          ) : (
+            <>
+              <p className={styles['quantity-stock-items']}>
+                {product.quantity <= 10 ? (
+                  <>Restam apenas <strong>{product.quantity}</strong> itens em estoque</>
+                ) : (
+                  <><strong>{product.quantity}</strong> itens em estoque</>
+                )}
+              </p>
+              <p className={styles['price-of-product-detail']}>R$ {formattedPrice}</p>
+              <p className={styles['description-product']}>{product.description}</p>
+              <div className={styles["cart-actions-container"]}>
+                {cartError && (
+                  <p className={styles["cart-error-message"]}>
+                    Você excedeu o limite de produtos do estoque!
+                  </p>
+                )}
+                {showCartMessage && (
+                  <p className={styles["cart-message"]}>
+                    Produto adicionado ao carrinho.{' '}
+                    <Link to="/Mycart" className={styles["cart-link"]}>Clique aqui para ver seu carrinho.</Link>
+                  </p>
+                )}
+                <Stepper
+                  value={quantity}
+                  setValue={setQuantity}
+                  min={1}
+                  max={stock?.quantity || 1}
+                />
+                <button
+                  className={styles["button-add-to-cart"]}
+                  onClick={handleAddToCart}
+                  disabled={stock?.quantity === 0}
+                >
+                  Adicionar ao carrinho
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
       <div className={styles['related-products-section']}>
         <h2 className={styles['title']}>Produtos Relacionados</h2>
         <div className={styles['product-grid']}>
           {relatedProducts.map((product) => (
-          <Link key={product.id_product} to={`/product_detail/${product.id_product}`} className={styles['card']}>
-            <div className={styles['card-link']}>
-              <div className={styles['card-photo']}>
-                <img 
-                  src={product?.image ? `${baseURL}/images/${product.image}` : defaultImage} 
-                  alt={`Imagem do produto ${product.name}`} 
-                  className={styles['card-photo']}
-                />
+            <Link key={product.id_product} to={`/product_detail/${product.id_product}`} className={styles['card']}>
+              <div className={styles['card-link']}>
+                <div className={styles['card-photo']}>
+                  <img
+                    src={product?.image ? `${baseURL}/images/${product.image}` : defaultImage}
+                    alt={`Imagem do produto ${product.name}`}
+                    className={styles['card-photo']}
+                  />
+                </div>
+                <div className={styles['card-name']}>{product.name}</div>
+                <div className={styles['card-price']}>R$ {Number(product.price).toFixed(2)}</div>
               </div>
-              <div className={styles['card-name']}>{product.name}</div>
-              <div className={styles['card-price']}>R$ {Number(product.price).toFixed(2)}</div>
-            </div>
-          </Link>
+            </Link>
           ))}
         </div>
       </div>

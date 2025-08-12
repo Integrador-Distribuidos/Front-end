@@ -10,9 +10,20 @@ import ListAddressModal from '../../components/ListAddressModal/index.jsx';
 
 const CpfModal = ({ onClose, onSave }) => {
     const [cpf, setCpf] = useState('');
+    const [error, setError] = useState('');
+
+    const maskCPF = (value) => {
+        return value
+            .replace(/\D/g, '')
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    };
 
     const handleChange = (e) => {
-        setCpf(e.target.value);
+        const rawValue = e.target.value.replace(/\D/g, '');
+        setCpf(rawValue);
+        setError('');
     };
 
     const handleSubmit = (e) => {
@@ -20,7 +31,7 @@ const CpfModal = ({ onClose, onSave }) => {
         if (cpf.length === 11) {
             onSave(cpf);
         } else {
-            alert('Por favor, insira um CPF válido com 11 dígitos.');
+            setError('Por favor, insira um CPF válido com 11 dígitos.');
         }
     };
 
@@ -28,11 +39,18 @@ const CpfModal = ({ onClose, onSave }) => {
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
                 <h2>Informe seu CPF</h2>
+                
+                {error && (
+                    <div className={styles['cart-error-message']}>
+                        {error}
+                    </div>
+                )}
+
                 <input
                     type="text"
-                    value={cpf}
+                    value={maskCPF(cpf)}
                     onChange={handleChange}
-                    maxLength={11}
+                    maxLength={14}
                     placeholder="Digite seu CPF"
                 />
                 <div className={styles.modalButtons}>
@@ -51,6 +69,8 @@ const Profile = () => {
     const [showListAddressModal, setShowListAddressModal] = useState(false);
     const [firstAddress, setFirstAddress] = useState(null);
     const [showCpfModal, setShowCpfModal] = useState(false);
+    const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState('');
 
     const openNewAddressModal = () => setShowNewAddressModal(true);
     const closeNewAddressModal = () => setShowNewAddressModal(false);
@@ -63,9 +83,18 @@ const Profile = () => {
     const checkIfLoggedIn = () => {
         const token = localStorage.getItem('access_token');
         if (!token) {
-        navigate('/login');
+            navigate('/login');
         }
     };
+
+     const showMessage = (msg, type = 'success') => {
+        setMessage(msg);
+        setMessageType(type);
+        setTimeout(() => {
+        setMessage('');
+        setMessageType('');
+        }, 4000);
+    }
 
     const truncateName = (name) => {
         if (name.length > 12) {
@@ -83,7 +112,7 @@ const Profile = () => {
     const fetchUserData = async () => {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('http://localhost:8001/api/users/me/', {
+            const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/me/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -111,7 +140,7 @@ const Profile = () => {
     const fetchAddresses = async () => {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('http://localhost:8001/api/addresses/', {
+            const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/addresses/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -141,7 +170,7 @@ const Profile = () => {
 
         if (token) {
             try {
-                const response = await fetch('http://localhost:8001/api/users/me/', {
+                const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/me/`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -153,7 +182,7 @@ const Profile = () => {
                     const userData = await response.json();
                     const userId = userData.id;
 
-                    const updateResponse = await fetch(`http://localhost:8001/api/users/${userId}/make_admin/`, {
+                    const updateResponse = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/${userId}/make_admin/`, {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',
@@ -162,11 +191,10 @@ const Profile = () => {
                     });
 
                     if (updateResponse.ok) {
-                        const data = await updateResponse.json();
                         fetchUserData();
                     } else {
                         const error = await updateResponse.json();
-                        alert(`Erro: ${error.detail}`);
+                        console.log(`Erro: ${error.detail}`);
                     }
                 } else {
                     console.log('Erro ao carregar os dados do usuário');
@@ -191,7 +219,7 @@ const Profile = () => {
 
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('http://localhost:8001/api/addresses/', {
+            const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/addresses/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -203,24 +231,25 @@ const Profile = () => {
             if (response.ok) {
                 fetchAddresses();
                 closeNewAddressModal();
+                showMessage('Endereço cadastrado com sucesso!', 'success');
             } else {
-                alert('Erro ao cadastrar o endereço');
+                showMessage('Erro ao cadastrar o endereço', 'error');
             }
-        } catch (error) {
-            alert('Erro na conexão: ' + error.message);
-        }
-    };
+            } catch (error) {
+            showMessage('Erro na conexão: ' + error.message, 'error');
+            }
+        };
 
     const handleSaveCpf = async (cpf) => {
         const token = localStorage.getItem('access_token');
 
         if (!cpf || cpf.length !== 11) {
-            alert("Por favor, insira um CPF válido.");
+            showMessage("Por favor, insira um CPF válido.");
             return;
         }
 
         try {
-            const response = await fetch(`http://localhost:8001/api/users/${userData.id}/update_cpf/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/${userData.id}/update_cpf/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -230,16 +259,14 @@ const Profile = () => {
             });
 
             if (response.ok) {
-                const updatedUser = await response.json();
                 setShowCpfModal(false);
-
                 fetchUserData();
             } else {
                 const error = await response.json();
-                alert(`Erro: ${error.detail}`);
+                showMessage(`Erro: ${error.detail}`);
             }
         } catch (error) {
-            alert('Erro na conexão: ' + error.message);
+            showMessage('Erro na conexão: ' + error.message);
         }
     };
 
@@ -252,7 +279,7 @@ const Profile = () => {
     const handleSelectAddress = async (address) => {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch(`http://localhost:8001/api/addresses/${address.id}/set_default/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/addresses/${address.id}/set_default/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -266,10 +293,10 @@ const Profile = () => {
                 fetchAddresses();
             } else {
                 const error = await response.json();
-                alert('Erro ao definir o endereço como padrão: ' + error.detail);
+                console.log('Erro ao definir o endereço como padrão: ' + error.detail);
             }
         } catch (error) {
-            alert('Erro na conexão: ' + error.message);
+            console.log('Erro na conexão: ' + error.message);
         }
     };
 
@@ -282,6 +309,15 @@ const Profile = () => {
             <Header />
             <div className={styles.profileContainer}>
                 <h3 className={styles.title}>Perfil</h3>
+                {message && (
+                <div
+                    className={`${styles.message} ${
+                    messageType === 'success' ? styles.success : styles.error
+                    }`}
+                >
+                    {message}
+                </div>
+                )}
                 <div className={styles.content}>
                     <TextContent label={"Nome"} text={userData.first_name || 'Indisponível'} />
                     <TextContent label={"Sobrenome"} text={userData.last_name || 'Indisponível'} />
@@ -311,15 +347,15 @@ const Profile = () => {
                     <CpfModal onClose={() => setShowCpfModal(false)} onSave={handleSaveCpf} />
                 )}
                 {showNewAddressModal && (
-                    <NewAddressModal
-                        onSave={() => {
-                            fetchAddresses();
-                            closeNewAddressModal();
-                        }}
-                        onClose={closeNewAddressModal}
-                    />
+                <NewAddressModal
+                    onSave={() => {
+                    fetchAddresses();
+                    closeNewAddressModal();
+                    }}
+                    onClose={closeNewAddressModal}
+                    onMessage={showMessage} 
+                />
                 )}
-
                 {showListAddressModal && (
                     <ListAddressModal
                         addresses={addresses}

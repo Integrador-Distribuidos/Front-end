@@ -3,20 +3,23 @@ import styles from './ProductModal.module.css';
 import { uploadImageProduct } from '../../services/apiProducts';
 import defaultImage from '../../assets/default/product_image_default.jpg'
 import { addProductStock } from '../../services/apiProducts';
+
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
-const ProductModal = ({ isOpen, onClose, onSubmit, productData, isEdit, stocks}) => {
-  const [preview, setPreview] = useState(''); 
-  const [imageFile, setImageFile] = useState(null); 
+const ProductModal = ({ isOpen, onClose, onSubmit, productData, isEdit, stocks }) => {
+  const [preview, setPreview] = useState('');
+  const [imageFile, setImageFile] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+
   const imageSrc = productData?.image ? `${baseURL}/images/${productData.image}` : defaultImage;
+
   useEffect(() => {
     if (productData?.image) {
       setPreview(imageSrc);
     } else {
       setPreview('');
     }
-    setImageFile(null); 
+    setImageFile(null);
   }, [productData]);
 
   if (!isOpen) return null;
@@ -33,7 +36,7 @@ const ProductModal = ({ isOpen, onClose, onSubmit, productData, isEdit, stocks})
       setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result);  
+        setPreview(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -44,66 +47,35 @@ const ProductModal = ({ isOpen, onClose, onSubmit, productData, isEdit, stocks})
     setPreview('');
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const form = e.target;
-  const formData = {
-    id_stock: Number(form.stock.value),
-    name: form.name.value,
-    price: parseFloat(form.price.value),
-    sku: form.sku.value,
-    category: form.category.value,
-    description: form.description.value,
-    quantity: parseInt(form.quantity.value),
-    image: null, // a imagem será enviada separadamente
-    creation_date: new Date().toISOString().split('T')[0],
-  };
+    const form = e.target;
+    const formData = new FormData();
 
-  try {
-    console.log("handleSubmit: enviando formData como JSON", formData);
-    
-    const createdProduct = await onSubmit(formData); // deve retornar { id_product }
-    const product_stockdata = {
-        id_product: createdProduct.id_product,
-        id_stock: createdProduct.id_stock,
-        quantity: createdProduct.quantity,
-        last_update_date: new Date().toISOString().split('T')[0],
+    formData.append('id_stock', Number(form.stock.value));
+    formData.append('name', form.name.value);
+    formData.append('price', parseFloat(form.price.value));
+    formData.append('sku', form.sku.value);
+    formData.append('category', form.category.value);
+    formData.append('description', form.description.value);
+    formData.append('quantity', parseInt(form.quantity.value));
+    formData.append('creation_date', new Date().toISOString().split('T')[0]);
+
+    const imageFile2 = form.image.files[0];
+    if (imageFile2) {
+      formData.append('image', imageFile2);
+      setImageFile(imageFile2);
     }
+
     try {
-      await addProductStock(product_stockdata)
-      onClose(); // fecha modal após sucesso
+      const createdProduct = await onSubmit(formData);
+      onClose();
     } catch (error) {
-      // Axios guarda o erro em error.response.data
       const msg = error.response?.data?.detail || 'Erro inesperado no servidor';
-      setErrorMessage(msg);};
-
-    console.log("id: ", createdProduct.id_product, "fim");
-
-    if (imageFile && createdProduct?.id_product) {
-      const formDataImage = new FormData();
-      formDataImage.append('file', imageFile);
-
-      await uploadProductImage(formDataImage, createdProduct.id_product);
+      setErrorMessage(msg);
     }
-  } catch (error) {
-    console.error("Erro ao salvar produto ou imagem:", error);
-  }
-};
-
-const uploadProductImage = async (formDataImage, id) => {
-  try {
-    const response = await uploadImageProduct(id, formDataImage);
-    if (response.status === 200) {
-      console.log('Imagem enviada com sucesso');
-    } else {
-      console.log('Erro ao enviar a imagem');
-    }
-  } catch (error) {
-    const msg = error.response?.data?.detail || 'Erro inesperado no servidor';
-    setErrorMessage(msg)
-  }
-};
+  };
 
   return (
     <div className={styles.modalOverlay} onClick={handleOverlayClick}>
@@ -147,24 +119,26 @@ const uploadProductImage = async (formDataImage, id) => {
             required
           />
 
-          <input
-            type="number"
-            name="price"
-            placeholder="Preço"
-            step="0.01"
-            min="0"
-            defaultValue={productData?.price || ''}
-            required
-          />
-
-          <input
-            type="number"
-            name="quantity"
-            placeholder="Quantidade"
-            min="0"
-            defaultValue={productData?.quantity || ''}
-            required
-          />
+          {/* Preço e Quantidade lado a lado */}
+          <div className={styles.row}>
+            <input
+              type="number"
+              name="price"
+              placeholder="Preço"
+              step="0.01"
+              min="0"
+              defaultValue={productData?.price || ''}
+              required
+            />
+            <input
+              type="number"
+              name="quantity"
+              placeholder="Quantidade"
+              min="0"
+              defaultValue={productData?.quantity || ''}
+              required
+            />
+          </div>
 
           <div className={styles.row}>
             <input
@@ -202,7 +176,6 @@ const uploadProductImage = async (formDataImage, id) => {
                 src={preview}
                 alt="Preview"
                 className={styles.imagePreview}
-                style={{ marginTop: '10px', maxHeight: '200px' }}
               />
               <button
                 type="button"

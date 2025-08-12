@@ -20,6 +20,7 @@ Siga os passos abaixo para clonar e configurar o projeto localmente:
     ```bash
     VITE_API_BASE_URL=http://localhost:8000
     VITE_API_USERS_BASE_URL=http://localhost:8001
+    VITE_API_PAYMENTS_BASE_URL=http://localhost:8002
 
 
 4. Rode o projeto

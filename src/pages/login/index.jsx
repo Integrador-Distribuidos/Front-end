@@ -23,7 +23,7 @@ const Login = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8001/api/token/', {
+      const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/token/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -57,7 +57,7 @@ const Login = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:8001/users/auth/google/', {
+        const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/users/auth/google/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

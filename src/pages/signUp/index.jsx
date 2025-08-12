@@ -20,7 +20,7 @@ const SignUp = () => {
   const loginWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        const resp = await fetch('http://localhost:8001/users/auth/google/', {
+        const resp = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/users/auth/google/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ access_token: tokenResponse.access_token }),
@@ -63,7 +63,7 @@ const SignUp = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8001/api/users/', {
+      const response = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/users/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -86,7 +86,7 @@ const SignUp = () => {
         return;
       }
 
-      const loginResp = await fetch('http://localhost:8001/api/token/', {
+      const loginResp = await fetch(`${import.meta.env.VITE_API_USERS_BASE_URL}/api/token/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, password: password }),

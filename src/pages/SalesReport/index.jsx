@@ -22,7 +22,7 @@ const SalesReport = () => {
     // Buscar lista de lojas do backend
     const fetchStores = async () => {
       try {
-        const res = await axios.get("http://localhost:8002/api/stores/");
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stores/`);
         setStores(res.data);
       } catch (error) {
         console.error("Erro ao buscar lojas:", error);
@@ -45,7 +45,7 @@ const SalesReport = () => {
     setErrorMsg("");
 
     try {
-      const response = await axios.get(`http://localhost:8002/payments/invoices/sales_report/`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_PAYMENTS_BASE_URL}/payments/invoices/sales_report/`, {
         params: {
           start_date: startDate,
           end_date: endDate,

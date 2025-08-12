@@ -1,19 +1,13 @@
 import { Trash2 } from 'lucide-react';
 import styles from './CartItem.module.css';
 
-const CartItem = ({ id, image, name, store, price, quantity, onRemove, onQuantityChange }) => {
+const CartItem = ({ image, name, store, price, quantity, onRemove, onQuantityChange }) => {
   const handleDecrease = () => {
-    if (quantity > 1) {
-      onQuantityChange(id, quantity - 1);
-    }
+    if (quantity > 1) onQuantityChange(quantity - 1);
   };
 
   const handleIncrease = () => {
-    onQuantityChange(id, quantity + 1);
-  };
-
-  const handleRemove = () => {
-    onRemove(id);
+    onQuantityChange(quantity + 1);
   };
 
   return (
@@ -21,11 +15,13 @@ const CartItem = ({ id, image, name, store, price, quantity, onRemove, onQuantit
       <div className={styles.imageContainer}>
         <img src={image} alt={name} className={styles.image} />
       </div>
-      <div className={styles.details}>
-        <div>
+
+      <div className={styles.infoContainer}>
+        <div className={styles.topSection}>
           <h2 className={styles.name}>{name}</h2>
           <p className={styles.store}>{store}</p>
         </div>
+
         <div className={styles.bottomRow}>
           <div className={styles.quantityControl}>
             <button onClick={handleDecrease}>-</button>
@@ -35,7 +31,8 @@ const CartItem = ({ id, image, name, store, price, quantity, onRemove, onQuantit
           <p className={styles.price}>R$ {(price * quantity).toFixed(2)}</p>
         </div>
       </div>
-      <button className={styles.removeButton} onClick={handleRemove}>
+
+      <button className={styles.removeButton} onClick={onRemove} title="Remover item">
         <Trash2 size={20} />
       </button>
     </div>

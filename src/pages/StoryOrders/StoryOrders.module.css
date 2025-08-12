@@ -1,0 +1,256 @@
+.breadcrumb-storyorders {
+  display: flex;
+  background-color: #ffffff;
+  align-items: center;
+  justify-content: flex-start; 
+  gap: 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #333;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem; 
+  margin: 58px auto 0 auto; 
+}
+.element-1-breadcrumb-storyorders, .element-2-breadcrumb-storyorders {
+  color: #6b7280; 
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: color 0.2s ease;
+  text-align: left;
+}
+
+.element-1-breadcrumb-storyorders:hover, .element-2-breadcrumb-storyorders:hover {
+  color: #000000; 
+  transition: 0.4s;
+}
+
+.element-2-breadcrumb-storyorders {
+  color: #000000;
+}
+.element-2-breadcrumb-storyorders:hover {
+  color: #5f5f5f;
+}
+
+.div-contentegt-1-storyorders {
+  color: #6b7280; 
+  user-select: none;
+}
+
+.breadcrumb-separator-line-storyorders {
+  height: 1px;
+  background-color: #D9D9D9;
+  width: 100%;
+  max-width: 1200px;
+  margin: -15px auto;
+}
+
+.orders-container {
+  padding: 0 32px 32px;
+}
+
+.orders-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  margin-top: 50px;
+  color: #222;
+  text-align: center;
+}
+
+.loading-text,
+.no-orders-text {
+  font-size: 16px;
+  color: #666;
+  text-align: center;
+  margin-top: 32px;
+}
+
+.orders-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.order-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.order-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.order-field {
+  font-size: 16px;
+  margin: 6px 0;
+  color: #333;
+}
+
+.details-button{
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+}
+
+.details-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.details-button:hover {
+  background-color: #0056b3;
+}
+
+.reorder-button {
+  background-color: #28a745;
+  margin: 0 auto;
+  width: 180px;
+  margin-top: 20px; 
+  display: inline-block;
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.reorder-button:hover {
+  background-color: #218838;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 16px;
+}
+
+.modal {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #555;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+.h3-modal-0-products {
+  color: #000;
+  font-size: 20px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.p-modal-0-products {
+  color: #000;
+  text-align: center;
+  font-size: 16px;
+}
+
+.modal-products-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 12px;
+}
+
+.modal-product-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-product-item:last-child {
+  border-bottom: none;
+}
+
+.modal-product-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 16px;
+  border: 1px solid #ddd;
+}
+
+.modal-product-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: #333;
+}
+
+.modal-total {
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 16px;
+  text-align: right;
+  color: #222;
+  border-top: 1px solid #ddd;
+  padding-top: 12px;
+}
+
+.modal-buttons {
+  margin-top: 20px;
+  text-align: right;
+}
