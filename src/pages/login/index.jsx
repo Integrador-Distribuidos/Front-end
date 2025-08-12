@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import styles from './Login.module.css';
+import styles from './login.module.css';
 import logo from '../../assets/stock2sell-logo.png';
 import InputField from '../../components/InputField';
 import PasswordInput from '../../components/PasswordInput';
