@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from "./MyCart.module.css";
+import styles from "./myCart.module.css";
 import CartItem from '../../components/CartItem/index.jsx';
 import Header from '../../components/Header/Index.jsx';
 import Footer from '../../components/Footer/index.jsx';
