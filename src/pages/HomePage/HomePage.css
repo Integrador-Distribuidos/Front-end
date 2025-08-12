@@ -8,21 +8,67 @@ body {
   overflow-x: hidden;
 }
 
-/* CONTAINER PRINCIPAL */
+.breadcrumb-admmange-product {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  font-size: 14px;
+  color: #333;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+  margin: 65px auto 0 auto;
+}
+
+.defalt-text{
+font-family: 'Inter';
+font-style: normal;
+font-weight: 500;
+font-size: 23px;
+line-height: 28px;
+color: #000000;
+}
+.element-1-breadcrumb-admmange {
+  color: #6b7280;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.element-1-breadcrumb-admmange:hover {
+  color: #000000;
+  transition: 0.4s;
+}
+
+.div-contentegt-1-admmange {
+  color: #F9FAFB;
+}
+
+
+.breadcrumb-separator-line-admmange {
+  height: 1px;
+  background-color: #D9D9D9;
+  width: 100%;
+  max-width: 1200px;
+  margin: -15px auto;
+}
+
 .homepage-container {
   background-color: #F9FAFB;
   padding: 20px;
-  margin-top: 50px;
+  margin-top: 60px;
+
 }
 
-/* SEÇÕES */
 .section {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 40px;
 }
 
-/* TÍTULOS */
 .tittle_session_homepage {
   width: 250px;
   height: 29px;
@@ -44,7 +90,6 @@ body {
   color: #000000;
 }
 
-/* LINHA DIVISÓRIA */
 .line {
   width: 100%;
   max-width: 1095px;
@@ -53,7 +98,6 @@ body {
   margin: 0;
 }
 
-/* TÍTULOS ESTRUTURA */
 .tittle_line {
   display: flex;
   flex-direction: column;
@@ -73,13 +117,11 @@ body {
   max-width: 1095px;
 }
 
-/* Comportamento controlado do espaço entre itens */
 .div_tittle_session1 {
   justify-content: space-between;
   overflow: hidden;
 }
 
-/* CONTAINER DE CARDS */
 .cards-container-home {
   display: flex;
   gap: 23px;

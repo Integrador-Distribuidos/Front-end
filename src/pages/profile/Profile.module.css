@@ -1,11 +1,66 @@
+.breadcrumb-admmange-store {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  font-size: 14px;
+  color: #333;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+  margin: 65px auto 0 auto;
+}
+
+.element-1-breadcrumb-admmangest,
+.element-2-breadcrumb-admmangest {
+  color: #6b7280;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.element-1-breadcrumb-admmangest:hover,
+.element-2-breadcrumb-admmangest:hover {
+  color: #000000;
+  transition: 0.4s;
+}
+
+.element-2-breadcrumb-admmangest {
+  color: #000000;
+}
+
+.div-contentegt-1-admmangest {
+  color: #6b7280;
+  user-select: none;
+}
+
+.breadcrumb-separator-line-admmangest {
+  height: 1px;
+  background-color: #D9D9D9;
+  width: 100%;
+  max-width: 1200px;
+  margin: -15px auto;
+}
+
+.content-containerst {
+  padding: 1rem;
+  margin: 0 auto 50px auto;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .profileContainer {
     display: flex;
     flex-direction: column;
     width: 90%;
     max-width: 643px;
-    height: 548px;
+    height: 650px;
     min-height: 300px;
-    margin: 120px auto 60px auto;
+    margin: 70px auto 60px auto;
     padding-left: 34px;
     padding-right: 34px;
     border: solid 2px #99A1AF;

@@ -1,29 +1,72 @@
-/* src/pages/home_page/homepage.css */
+.breadcrumb-admmange-store {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  font-size: 14px;
+  color: #333;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+  margin: 65px auto 0 auto;
+}
 
+.element-1-breadcrumb-admmangest,
+.element-2-breadcrumb-admmangest {
+  color: #6b7280;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
 
+.element-1-breadcrumb-admmangest:hover,
+.element-2-breadcrumb-admmangest:hover {
+  color: #000000;
+  transition: 0.4s;
+}
+
+.element-2-breadcrumb-admmangest {
+  color: #000000;
+}
+
+.div-contentegt-1-admmangest {
+  color: #6b7280;
+  user-select: none;
+}
+
+.breadcrumb-separator-line-admmangest {
+  height: 1px;
+  background-color: #D9D9D9;
+  width: 100%;
+  max-width: 1200px;
+  margin: -15px auto;
+}
+
+.content-containerst {
+  padding: 1rem;
+  margin: 0 auto 50px auto;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
 body {
-  background-color: #F9FAFB;
+  background-color: #ffffff;
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
 }
 
-/* CONTAINER PRINCIPAL */
-.searchpage-container {
-  background-color: #F9FAFB;
+.searchpage-content {
+  background-color: #ffffff;
   padding: 20px;
-  margin-top: 50px;
+  margin-top: 20px; 
+  margin-bottom: 30px; 
 }
 
-/* SEÇÕES */
-.section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* TÍTULOS */
 .tittle_session_searchpage {
   width: 240px;
   height: 29px;
@@ -44,7 +87,7 @@ body {
   line-height: 18px;
   color: #000000;
 }
-/* TÍTULOS ESTRUTURA */
+
 .tittle_line {
   display: flex;
   flex-direction: column;
@@ -60,13 +103,11 @@ body {
   max-width: 1095px;
 }
 
-/* Comportamento controlado do espaço entre itens */
 .div_tittle_session1 {
   justify-content: space-between;
   overflow: hidden;
 }
 
-/* CONTAINER DE CARDS */
 .cards-container {
   display: flex;
   gap: 23px;
@@ -75,28 +116,27 @@ body {
   max-width: 1095px;
 }
 
-.pagination{
+.pagination {
   margin-top: 37px;
 }
 
-
-.pagetittle_search_text{
+.pagetittle_search_text {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
-.search_text{
-font-family: 'Inter';
-font-style: normal;
-font-weight: 400;
-font-size: 18px;
-line-height: 22px;
-color: #000000;
-height: 29px;
-display: flex;
-align-items: center;
-}
 
+.search_text {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  color: #000000;
+  height: 29px;
+  display: flex;
+  align-items: center;
+}
 
 .hidden {
   top: 70px;

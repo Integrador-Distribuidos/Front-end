@@ -6,12 +6,10 @@ const Pagination = ({ currentPage, totalPages, onNext, onPrev, onPageChange }) =
     const pages = [];
 
     if (totalPages <= 5) {
-      // Caso com poucas páginas: mostrar todas
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Sempre mostra a 1ª, 3 próximas, último, e ...
       pages.push(1);
 
       if (currentPage > 3) {
@@ -34,7 +32,7 @@ const Pagination = ({ currentPage, totalPages, onNext, onPrev, onPageChange }) =
 
     return pages.map((page, index) => {
       if (page === '...') {
-        return <h2 key={index} className="pontos">...</h2>;
+        return <div key={index} className="pontos">...</div>;
       }
 
       return (
@@ -51,13 +49,21 @@ const Pagination = ({ currentPage, totalPages, onNext, onPrev, onPageChange }) =
 
   return (
     <div className="pagination">
-      <button className="button_left" onClick={onPrev} disabled={currentPage === 1}>
+      <button
+        className="button_left"
+        onClick={onPrev}
+        disabled={currentPage === 1}
+      >
         ◀ Voltar
       </button>
 
       {renderPageNumbers()}
 
-      <button className="button_hight" onClick={onNext} disabled={currentPage === totalPages}>
+      <button
+        className="button_right"
+        onClick={onNext}
+        disabled={currentPage === totalPages}
+      >
         Próximo ▶
       </button>
     </div>

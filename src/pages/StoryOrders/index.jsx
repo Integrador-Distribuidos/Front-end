@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../StoryOrders/StoryOrders.module.css';
 import Header from '../../components/Header/Index.jsx';
@@ -16,7 +16,7 @@ const StoryOrders = () => {
   const [orderItems, setOrderItems] = useState([]);
   const [loadingItems, setLoadingItems] = useState(false);
   const [hasAccess, setHasAccess] = useState(true);
-
+  const [filterOption, setFilterOption] = useState(''); // Estado para o filtro
   const navigate = useNavigate();
 
   const indexOfLastOrder = currentPage * ITEMS_PER_PAGE;
@@ -176,6 +176,28 @@ const StoryOrders = () => {
     }
   };
 
+  useEffect(() => {
+    const applyFilter = () => {
+      let filteredOrders = [...orders];
+
+      if (filterOption === 'less_price') {
+        filteredOrders.sort((a, b) => (a.total_value || 0) - (b.total_value || 0));
+      } else if (filterOption === 'more_price') {
+        filteredOrders.sort((a, b) => (b.total_value || 0) - (a.total_value || 0));
+      } else if (filterOption === 'recent') {
+        filteredOrders.sort((a, b) => new Date(b.creation_date) - new Date(a.creation_date));
+      } else if (filterOption === 'oldest') {
+        filteredOrders.sort((a, b) => new Date(a.creation_date) - new Date(b.creation_date));
+      }
+
+      setOrders(filteredOrders);
+    };
+
+    if (orders.length > 0) { 
+      applyFilter();
+    }
+  }, [filterOption]); 
+
   return (
     <>
       <Header />
@@ -187,7 +209,25 @@ const StoryOrders = () => {
       <div className={styles['breadcrumb-separator-line-storyorders']}></div>
 
       <div className={styles['orders-container']}>
-        <h2 className={styles['orders-title']}>Meus Pedidos</h2>
+        <div className={styles["orders-title-container"]}>
+          <h2 className={styles['orders-title']}>Meus Pedidos</h2>
+
+          {/* Filtro */}
+          <div className={styles["filter-container"]}>
+            <label className={styles["filter-label"]}>Filtrar por:</label>
+            <select
+              className={styles["filter-select"]}
+              value={filterOption}
+              onChange={(e) => setFilterOption(e.target.value)}
+            >
+              <option value="">Todos</option>
+              <option value="less_price">Menor Preço</option>
+              <option value="more_price">Maior Preço</option>
+              <option value="recent">Mais Recente</option>
+              <option value="oldest">Mais Antigo</option>
+            </select>
+          </div>
+        </div>
 
         {loading ? (
           <p className={styles['loading-text']}>Carregando...</p>

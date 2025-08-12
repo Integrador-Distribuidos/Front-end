@@ -6,6 +6,7 @@ import ProductCard from '../../components/HomePage/ProductCard/index.jsx';
 import StoreCard from '../../components/HomePage/StoreCard/index.jsx';
 import Pagination from '../../components/HomePage/Pagination/index.jsx';
 import ProductFilter from '../../components/HomePage/ProductFilter/index.jsx';
+import { Link } from 'react-router-dom';
 import Header from '../../components/Header/Index.jsx';
 import Footer from '../../components/Footer/index.jsx';
 import './HomePage.css';
@@ -94,11 +95,11 @@ useEffect(() => {
   return (
     <>
       <Header />
-      <div className="homepage-container">
-      <div className='tittle_line'>
-      <h2 className="page_tittle">Página Inicial</h2>
-      <div className="line"></div>
+      <div className='breadcrumb-admmange-product'>
+        <Link to="/" className='element-1-breadcrumb-admmange'>Página Inicial</Link>
+        <p className='div-contentegt-1-admmange'>&gt;</p>
       </div>
+      <div className='breadcrumb-separator-line-admmange'></div>
 
     <div className="section">
       <div className="div_tittle_session1">
@@ -141,7 +142,6 @@ useEffect(() => {
           onPrev={handlePrev}
         />
         </div>
-      </div>
       <Footer />
     </>
   );
