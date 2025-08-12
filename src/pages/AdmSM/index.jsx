@@ -6,11 +6,18 @@ import Footer from '../../components/Footer/index.jsx';
 import NavBar from '../../components/SideBar/Index.jsx';
 import StoreModal from '../../components/StoreModal/Index.jsx';
 import StoreCard from '../../components/StoreCard/Index.jsx';
-import Pagination from '../../components/HomePage/Pagination/index.jsx'; 
+import Pagination from '../../components/HomePage/Pagination/index.jsx';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal/Index.jsx';
+
 import {
   deleteStore,
 } from '../../api/stores';
-import { createStore, updateStore, uploadImageStore, getAllStores, getStoresByUserID } from '../../services/apiStore.js';
+
+import {
+  createStore,
+  updateStore,
+  getStoresByUserID,
+} from '../../services/apiStore.js';
 
 
 const AdmStoreManage = () => {
@@ -20,18 +27,22 @@ const AdmStoreManage = () => {
   const [filter, setFilter] = useState("recent");
   const [errorMessage, setErrorMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [storeToDelete, setStoreToDelete] = useState(null);
   const itemsPerPage = 9;
 
   useEffect(() => {
-    getStoresByUserID()
-      .then((res) => {
-        setStores(res.data);
-      })
-      .catch((err) => {
-        console.error("Erro ao buscar lojas:", err);
-        alert("Erro ao buscar lojas.");
-      });
+    fetchStores();
   }, []);
+
+  const fetchStores = async () => {
+    try {
+      const res = await getStoresByUserID();
+      setStores(res.data);
+    } catch (err) {
+      console.error("Erro ao buscar lojas:", err);
+    }
+  };
 
   const handleOpenModal = (store = null) => {
     setEditingStore(store);
@@ -43,75 +54,60 @@ const AdmStoreManage = () => {
     setEditingStore(null);
   };
 
-
-  const fetchStores = async () => {
-    console.log("fetchProducts: iniciando busca dos produtos...");
+  const handleSubmit = async (formData) => {
     try {
-      const res = await getStoresByUserID();
-      console.log("fetchProducts: produtos recebidos:", res.data);
-      setStores(res.data);
+      let createdStore = null;
+
+      if (editingStore) {
+        await updateStore(editingStore.id_store, formData);
+        createdStore = { ...editingStore, ...formData };
+      } else {
+        createdStore = await createStore(formData);
+      }
+
+      setErrorMessage('');
+      await fetchStores();
+      handleCloseModal();
+
+      return createdStore;
     } catch (err) {
-      console.error("Erro ao buscar produtos:", err);
+      console.error("Erro ao salvar loja:", err);
+
+      let errorMessage = "Erro desconhecido";
+      if (err.response && err.response.data) {
+        if (typeof err.response.data === 'string') {
+          errorMessage = err.response.data;
+        } else if (err.response.data.detail) {
+          errorMessage = err.response.data.detail;
+        } else if (err.response.data.message) {
+          errorMessage = err.response.data.message;
+        } else {
+          errorMessage = JSON.stringify(err.response.data);
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      setErrorMessage(errorMessage);
+      throw err;
     }
   };
 
-const handleSubmit = async (formData) => {
-  console.log("handleSubmit: recebendo formData:", formData);
+  const openDeleteModal = (store) => {
+    setStoreToDelete(store);
+    setDeleteModalOpen(true);
+  };
 
-  try {
-    let createdStore = null;
-
-    if (editingStore) {
-      console.log("Atualizando loja existente...");
-      await updateStore(editingStore.id_store, formData);
-      createdStore = { ...editingStore, ...formData }; // Atualiza os dados da loja editada
-
-    } else {
-      console.log("Criando nova loja...");
-      createdStore = await createStore(formData); // <-- IMPORTANTE
-    }
-    setErrorMessage("")
-
-    await fetchStores();
-    handleCloseModal();
-
-    return createdStore; // <-- Retorna aqui para ser usado na imagem
-  } catch (err) {
-  console.error("Erro ao salvar loja:", err);
-
-  let errorMessage = "Erro desconhecido";
-
-  if (err.response && err.response.data) {
-    if (typeof err.response.data === 'string') {
-      errorMessage = err.response.data;
-    } else if (err.response.data.detail) {
-      errorMessage = err.response.data.detail;
-    } else if (err.response.data.message) {
-      errorMessage = err.response.data.message;
-    } else {
-      errorMessage = JSON.stringify(err.response.data);
-    }
-  } else if (err.message) {
-    errorMessage = err.message;
-  }
-
-  // Aqui você pode exibir no modal, toast, ou salvar no estado:
-  setErrorMessage(errorMessage); // <- Exemplo de função para exibir no modal
-
-  throw err; // Opcionalmente, ainda lança o erro
-}
-};
-
-  const handleDelete = async (storeToDelete) => {
-    const confirmDelete = window.confirm('Tem certeza que deseja excluir esta loja?');
-    if (!confirmDelete) return;
+  const confirmDelete = async () => {
+    if (!storeToDelete) return;
 
     try {
       await deleteStore(storeToDelete.id_store);
       setStores(stores.filter((s) => s.id_store !== storeToDelete.id_store));
+      setDeleteModalOpen(false);
+      setStoreToDelete(null);
     } catch (err) {
       console.error("Erro ao deletar loja:", err);
-      alert("Erro ao deletar loja.");
     }
   };
 
@@ -131,6 +127,7 @@ const handleSubmit = async (formData) => {
   return (
     <>
       <Header />
+
       <div className={styles['breadcrumb-admmange-store']}>
         <Link to="/" className={styles['element-1-breadcrumb-admmangest']}>Página Inicial</Link>
         <p className={styles['div-contentegt-1-admmangest']}>&gt;</p>
@@ -138,8 +135,11 @@ const handleSubmit = async (formData) => {
         <p className={styles['div-contentegt-1-admmangest']}>&gt;</p>
         <span className={styles['element-2-breadcrumb-admmangest']}>Lojas</span>
       </div>
+
       <div className={styles['breadcrumb-separator-line-admmangest']}></div>
+
       <NavBar />
+
       <div className={styles["header-sectionst"]}>
         <h1 className={styles['h1-registed-stocks']}>Lojas Cadastradas</h1>
         <div className={styles["actions-containerst"]}>
@@ -162,23 +162,22 @@ const handleSubmit = async (formData) => {
           </div>
         </div>
       </div>
+
       <div className={styles["content-containerst"]}>
-
-      {stores.length === 0 ? (
-        <p className={styles['defalt-text']}>Nenhuma Loja cadastrada</p>
-      ) : (
-        <div className={styles['cardsWrapperst']}>
-          {currentItems.map((store) => (
-            <StoreCard
-              key={store.id_store}
-              store={store}
-              onEdit={handleOpenModal}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
-      )}
-
+        {stores.length === 0 ? (
+          <p className={styles['defalt-text']}>Nenhuma Loja cadastrada</p>
+        ) : (
+          <div className={styles['cardsWrapperst']}>
+            {currentItems.map((store) => (
+              <StoreCard
+                key={store.id_store}
+                store={store}
+                onEdit={handleOpenModal}
+                onDelete={() => openDeleteModal(store)}
+              />
+            ))}
+          </div>
+        )}
 
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Pagination
@@ -190,6 +189,7 @@ const handleSubmit = async (formData) => {
           />
         </div>
       </div>
+
       <StoreModal
         isOpen={modalOpen}
         onClose={handleCloseModal}
@@ -198,6 +198,14 @@ const handleSubmit = async (formData) => {
         isEdit={!!editingStore}
         error={errorMessage}
       />
+
+      <ConfirmDeleteModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        storeName={storeToDelete?.name}
+      />
+
       <Footer />
     </>
   );

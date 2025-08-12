@@ -230,19 +230,6 @@
     margin-top: 10px;
   }
 
-  .modal-options a {
-    text-decoration: none;
-    color: #fff;
-    background-color: #1e40af;
-    padding: 10px;
-    border-radius: 6px;
-    font-weight: bold;
-    transition: background 0.2s;
-  }
-
-  .modal-options a:hover {
-    background-color: #1c3f95;
-  }
 
   h2, p {
     color: #000;
@@ -254,3 +241,131 @@
 }
 
 }
+
+.account-actions {
+  display: flex;
+  align-items: center;
+  position: relative;
+  gap: 20px;
+  margin-right: 40px;
+}
+
+/* Ícone da conta */
+.account-icon-wrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.account-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.dropdown-modal {
+  position: absolute;
+  top: 40px;
+  right: -95px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 15px;
+  width: 200px;
+  z-index: 999;
+}
+
+.dropdown-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.dropdown-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dropdown-options a {
+  text-decoration: none;
+  color: #1e40af;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.dropdown-options a:hover {
+  text-decoration: underline;
+}
+
+.dropdown-options button {
+  background-color: #e7000b;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.dropdown-options button:hover {
+  background-color: #bd0812;
+}
+
+@media (min-width: 601px) {
+  .create-account-link,
+  .login-text,
+  .login-text-logout-text,
+  .divider {
+    display: none !important;
+  }
+}
+
+
+Link {
+  text-decoration: none;
+}
+
+.span-my-account {
+  color: rgb(75, 75, 75);
+}
+.span-my-account:hover {
+  color: rgb(0, 0, 0);
+  font-weight: 700;
+  transition: 0.4s;
+}
+
+.span-my-history {
+  color: rgb(75, 75, 75);
+}
+.span-my-history:hover {
+  color: rgb(0, 0, 0);
+  font-weight: 700;
+  transition: 0.4s;
+}
+
+.span-control {
+  color: rgb(75, 75, 75);
+}
+.span-control:hover {
+  color: rgb(0, 0, 0);
+  font-weight: 700;
+  transition: 0.4s;
+}
+
+.span-enter {
+  color: rgb(75, 75, 75);
+}
+.span-enter:hover {
+  color: rgb(0, 0, 0);
+  font-weight: 700;
+  transition: 0.4s;
+}
+.span-register {
+  color: rgb(75, 75, 75);
+}
+.span-register:hover {
+  color: rgb(0, 0, 0);
+  font-weight: 700;
+  transition: 0.4s;
+}
+

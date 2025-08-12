@@ -342,11 +342,6 @@ const Profile = () => {
                     {userData.type === 'client' && (
                         <Button text="Tornar Admin" onClick={handleMakeAdmin} width="180px" />
                     )}
-                      <Button
-                    text="Histórico de Pedidos"
-                    onClick={() => navigate('/historico_pedidos')}
-                    width="180px"
-                />
                 </div>
                 {showCpfModal && (
                     <CpfModal onClose={() => setShowCpfModal(false)} onSave={handleSaveCpf} />

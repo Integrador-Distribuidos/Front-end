@@ -15,13 +15,14 @@ import {
   deleteStock,
   createMovementStock,
 } from '../../services/apiStocks.js';
-import { getAllStores, getStoresByUserID} from '../../services/apiStore.js';
+import { getStoresByUserID } from '../../services/apiStore.js';
 import { getAllProducts } from '../../services/apiProducts.js';
 
 const AdmStockManage = () => {
   const location = useLocation();
   const storeId = location.state?.id_store;
   const navigate = useNavigate();
+
   const [filter, setFilter] = useState("recent");
   const [stocks, setStocks] = useState([]);
   const [products, setProducts] = useState([]);
@@ -29,44 +30,49 @@ const AdmStockManage = () => {
   const [editingStock, setEditingStock] = useState(null);
   const [modalStockOpen, setModalStockOpen] = useState(false);
   const [modalMovementOpen, setModalMovementOpen] = useState(false);
-  const [filteredStocks, setFilteredStocks] = useState([]); 
-
-  // Paginação
+  const [filteredStocks, setFilteredStocks] = useState([]);
+  const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
+  const [stockToDelete, setStockToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
-useEffect(() => {
-  let filtered = stocks;
 
-  // Filtra por loja específica, se houver
-  if (storeId) {
-    filtered = filtered.filter(stock => stock.id_store === storeId);
-  }
+  useEffect(() => {
+    let filtered = stocks;
 
-  // Ordena conforme filtro selecionado
-  if (filter === "alphabetical") {
-    filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
-  } else {
-    filtered = [...filtered].sort((a, b) =>
-      new Date(b.creation_date) - new Date(a.creation_date)
-    );
-  }
+    if (storeId) {
+      filtered = filtered.filter(stock => stock.id_store === storeId);
+    }
 
-  setFilteredStocks(filtered);
-}, [stocks, filter, storeId]);
-  const totalPages = Math.ceil(stocks.length / itemsPerPage);
+    if (filter === "alphabetical") {
+      filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+      filtered = [...filtered].sort((a, b) =>
+        new Date(b.creation_date) - new Date(a.creation_date)
+      );
+    }
+
+    setFilteredStocks(filtered);
+  }, [stocks, filter, storeId]);
+
+  const totalPages = Math.ceil(filteredStocks.length / itemsPerPage);
   const currentItems = filteredStocks.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
   useEffect(() => {
-    if (storeId) {
-      const filtered = stocks.filter(stock => stock.id_store === storeId);
-      setFilteredStocks(filtered);
-    } else {
-      setFilteredStocks(stocks);
-    }
-  }, [storeId, stocks]);
+    getAllStocks()
+      .then((res) => setStocks(res.data))
+      .catch((err) => console.error('Erro ao buscar estoques:', err));
+
+    getAllProducts()
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error('Erro ao buscar produtos:', err));
+
+    getStoresByUserID()
+      .then((res) => setStores(res.data))
+      .catch((err) => console.error('Erro ao buscar lojas:', err));
+  }, []);
 
   const handleOpenMovementModal = (stock = null) => {
     setEditingStock(stock);
@@ -88,15 +94,44 @@ useEffect(() => {
     setEditingStock(null);
   };
 
+  const handleOpenDeleteModal = (stock) => {
+    setStockToDelete(stock);
+    setModalDeleteOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setModalDeleteOpen(false);
+    setStockToDelete(null);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    if (!stockToDelete) return;
+    try {
+      await deleteStock(stockToDelete.id_stock);
+      setStocks(stocks.filter((s) => s.id_stock !== stockToDelete.id_stock));
+      handleCloseDeleteModal();
+    } catch (err) {
+      console.error('Erro ao deletar estoque:', err);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
 
+    const formatCEP = (cep) => {
+      let numbers = cep.replace(/\D/g, '');
+      if (numbers.length > 5) {
+        return numbers.slice(0, 5) + '-' + numbers.slice(5, 8);
+      }
+      return numbers;
+    };
+
     const newStock = {
       name: form.name.value,
       city: form.city.value,
-      uf: form.state.value,
-      zip_code: form.cep.value,
+      uf: form.state.value.toUpperCase(), 
+      zip_code: formatCEP(form.cep.value),
       address: form.address.value,
       id_store: Number(form.store.value),
       creation_date: new Date().toISOString().split("T")[0],
@@ -131,8 +166,6 @@ useEffect(() => {
       creation_date: new Date().toISOString().split("T")[0],
     };
 
-    console.log("Movimentação de Estoque:", newStockMovement);
-
     try {
       await createMovementStock(newStockMovement);
       handleCloseMovementModal();
@@ -141,45 +174,10 @@ useEffect(() => {
     }
   };
 
-  const handleDelete = async (stockToDelete) => {
-    const confirmDelete = window.confirm('Tem certeza que deseja excluir este Estoque?');
-    if (!confirmDelete) return;
-
-    try {
-      await deleteStock(stockToDelete.id_stock);
-      setStocks(stocks.filter((s) => s.id_stock !== stockToDelete.id_stock));
-    } catch (err) {
-      console.error('Erro ao deletar estoque:', err);
-    }
-  };
-
-  useEffect(() => {
-    getAllStocks()
-      .then((res) => setStocks(res.data))
-      .catch((err) => console.error('Erro ao buscar estoques:', err));
-  }, []);
-
-  useEffect(() => {
-    getAllProducts()
-      .then((res) => setProducts(res.data))
-      .catch((err) => console.error('Erro ao buscar produtos:', err));
-  }, []);
-
-  useEffect(() => {
-    getStoresByUserID()
-      .then((res) => setStores(res.data))
-      .catch((err) => console.error('Erro ao buscar lojas:', err));
-  }, []);
-
-
-
-
   const handleVisualize = (stock) => {
     localStorage.setItem('id_stock', stock.id_stock);
     navigate(`/control_panel/stock/${stock.id_stock}/products`);
   };
-
-
 
   return (
     <>
@@ -231,7 +229,7 @@ useEffect(() => {
                 key={idx}
                 stock={stock}
                 onEdit={handleOpenStockModal}
-                onDelete={handleDelete}
+                onDelete={() => handleOpenDeleteModal(stock)} 
                 onVisualize={handleVisualize}
               />
             ))}
@@ -266,6 +264,23 @@ useEffect(() => {
         productData={products}
         isEdit={!!editingStock}
       />
+
+      {modalDeleteOpen && (
+        <div className={styles['modalOverlay']}>
+          <div className={styles['modalDelete']}>
+            <h2>Confirmar Exclusão</h2>
+            <p>Tem certeza que deseja excluir o estoque "{stockToDelete?.name}"?</p>
+            <div className={styles['modalActions']}>
+              <button onClick={handleDeleteConfirmed} className={styles['buttonConfirm']}>
+                Sim, excluir
+              </button>
+              <button onClick={handleCloseDeleteModal} className={styles['buttonCancel']}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </>
