@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from "./myCart.module.css";
 import CartItem from '../../components/CartItem/index.jsx';
@@ -18,7 +18,7 @@ const MyCart = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [invoiceDetails, setInvoiceDetails] = useState(null);
   const [qrCodeImage, setQrCodeImage] = useState(null);
-
+  const [qrCodeData, setQrCodeData] = useState({});
   const navigate = useNavigate();
 
   const checkIfLoggedIn = () => {
@@ -227,6 +227,8 @@ const MyCart = () => {
 
         if (qrCodeResponse.ok) {
           const qrCodeData = await qrCodeResponse.json();
+          setQrCodeData(qrCodeData);
+          console.log("QR Code obtido com sucesso!", qrCodeData);
           setQrCodeImage(qrCodeData.encodedImage);
         } else {
           console.error("Erro ao obter QR Code.");
@@ -291,7 +293,45 @@ const MyCart = () => {
     fetchAddresses();
     fetchCart();
   }, []);
+  const inputRef = useRef(null);
 
+
+  const pixLink = qrCodeData.payload;
+
+  const copyPixLink = () => {
+    navigator.clipboard.writeText(pixLink)
+      .then(() => {
+        alert("Link PIX copiado para a área de transferência!");
+      })
+      .catch((err) => {
+        console.error("Erro ao copiar:", err);
+      });
+  };
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const expiration = new Date(qrCodeData.expirationDate);
+      const diff = expiration - now;
+
+      if (diff <= 0) {
+        setTimeLeft("Expirado");
+        clearInterval(interval);
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setTimeLeft(`${hours.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [qrCodeData.expirationDate]);
   return (
     <div className={`${styles.pageWrapper} my-cart-wrapper`}>
       <Header />
@@ -366,7 +406,10 @@ const MyCart = () => {
             
             {invoiceDetails.payment_type === "PIX" && qrCodeImage && (
               <div className={styles.qrCodeContainer}>
-                <p>Aqui está o QR Code para o pagamento:</p>
+                <p style={{ margin: 'none' }}>Aqui está o QR Code para o pagamento:</p>
+
+                <p>Data de Expiração: {timeLeft}</p>
+                <p className={styles.totalpix}>Valor: <strong>{subtotal.toFixed(2)}</strong></p>
                 <img
                   src={`data:image/png;base64,${qrCodeImage}`}
                   alt="QR Code"
@@ -374,7 +417,7 @@ const MyCart = () => {
                 />
               </div>
             )}
-
+            <button onClick={copyPixLink}>Copiar Link</button>
             <Button onClick={finalizePayment} text="Finalizar Pagamento" className={styles.confirmButton} />
             <Button onClick={() => setIsPaymentModalOpen(false)} text="Cancelar Pagamento" className={styles.cancelButton} />
           </div>
