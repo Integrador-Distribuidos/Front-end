@@ -15,7 +15,7 @@ import {
   deleteProduct
 } from '../../services/apiProducts';
 
-import { getAllStocks } from '../../services/apiStocks.js';
+import { getAllStocks, getstocksbyuserid } from '../../services/apiStocks.js';
 
 const DeleteConfirmModal = ({ isOpen, onClose, onConfirm, productName }) => {
   if (!isOpen) return null;
@@ -109,7 +109,7 @@ const AdmProductManage = () => {
   }, []);
 
   useEffect(() => {
-    getAllStocks()
+    getstocksbyuserid()
       .then((res) => setStocks(res.data))
       .catch((err) => console.error('Erro ao buscar estoques:', err));
   }, []);

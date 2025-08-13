@@ -343,7 +343,6 @@ const MyCart = () => {
             </div>
             <div className={styles['breadcrumb-separator-line-admmangest']}></div>
       <div className={styles.container}>
-        <h1 className={styles.title}>Meu Carrinho</h1>
         <div className={styles.content}>
           <div className={styles.itemsList}>
             {cartItems.map((item) => (
@@ -358,6 +357,7 @@ const MyCart = () => {
 
           <div className={styles.sidebar}>
             <div className={styles.addressBox} onClick={handleOpenModal}>
+              <p> <strong>Endereço de Entrega</strong></p>
               <p className={styles.addressText}>
                 {selectedAddress ? `${selectedAddress.street}, ${selectedAddress.number}` : 'Selecione um endereço'}<br />
                 {selectedAddress ? `${selectedAddress.neighborhood}, ${selectedAddress.city}, ${selectedAddress.uf}, ${selectedAddress.zip_code}` : ''}

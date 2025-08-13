@@ -14,6 +14,7 @@ import {
   createStock,
   deleteStock,
   createMovementStock,
+  getstocksbyuserid,
 } from '../../services/apiStocks.js';
 import { getStoresByUserID } from '../../services/apiStore.js';
 import { getAllProducts } from '../../services/apiProducts.js';
@@ -61,7 +62,7 @@ const AdmStockManage = () => {
   );
 
   useEffect(() => {
-    getAllStocks()
+    getstocksbyuserid()
       .then((res) => setStocks(res.data))
       .catch((err) => console.error('Erro ao buscar estoques:', err));
 
